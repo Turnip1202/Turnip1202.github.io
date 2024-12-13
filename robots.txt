@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fuwari.vercel.app/sitemap-index.xml
+Sitemap: https://turnip1202.github.io/sitemap-index.xml
