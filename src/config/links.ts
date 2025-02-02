@@ -2,6 +2,13 @@ import type { LinkCategory, SearchEngine } from '../types';
 
 export const linkCategories: LinkCategory[] = [
   {
+    id: 0,
+    name: "Turnip",
+    links: [
+      { id: 1, name: "Turnip's Blog", url: "https://turnip1202.github.io/my-blog-astro/", icon: "🥕" },
+    ]
+  },
+  {
     id: 1,
     name: "开发工具",
     links: [
