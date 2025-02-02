@@ -31,7 +31,7 @@ const App: React.FC = () => {
   return (
     <AppContainer>
       <Header>
-        <Title>My Start Page</Title>
+        <Title>Turnip起始页</Title>
       </Header>
       <MainContent>
         <SearchBar />
