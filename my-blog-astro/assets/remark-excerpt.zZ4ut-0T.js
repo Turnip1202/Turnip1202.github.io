@@ -1,1 +1,0 @@
-import{toString}from"mdast-util-to-string";function remarkExcerpt(){return(r,{data:t})=>{let e="";for(let t of r.children)if("paragraph"===t.type){e=toString(t);break}t.astro.frontmatter.excerpt=e}}export{remarkExcerpt};

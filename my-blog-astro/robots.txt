@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://turnip1202.github.io/sitemap-index.xml

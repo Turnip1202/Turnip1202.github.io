@@ -1,20 +1,26 @@
 {
-  "name": "turnip1202.github.io",
+  "name": "rs-react-app",
+  "private": true,
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "publish": "git add . && git commit -m 'update'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rsbuild build",
+    "check": "biome check --write",
+    "dev": "rsbuild dev --open",
+    "format": "biome format --write",
+    "preview": "rsbuild preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Turnip1202/Turnip1202.github.io.git"
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
-  "author": "Turnip",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Turnip1202/Turnip1202.github.io/issues"
-  },
-  "homepage": "https://github.com/Turnip1202/Turnip1202.github.io#readme",
-  "description": ""
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.3",
+    "@rsbuild/core": "^1.1.8",
+    "@rsbuild/plugin-react": "^1.0.7",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.2"
+  }
 }
