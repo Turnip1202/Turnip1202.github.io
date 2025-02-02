@@ -6,6 +6,10 @@ export const linkCategories: LinkCategory[] = [
     name: "Turnip",
     links: [
       { id: 1, name: "Turnip's Blog", url: "https://turnip1202.github.io/my-blog-astro/", icon: "🥕" },
+      { id: 2, name: "GitHub", url: "https://github.com/Turnip1202", icon: "⭐" },      // 替代：使用星星图标
+      { id: 3, name: "稀土掘金", url: "https://juejin.cn/user/1684912023022440", icon: "🔨" },         // 替代：使用工具图标
+      { id: 4, name: "哔哩哔哩", url: "https://b23.tv/zpySzz9", icon: "🎮" },      // 替代：使用游戏图标
+      { id: 5, name: "抖音", url: "https://v.douyin.com/if78aSq9/", icon: "🎬" }          // 替代：使用电影图标
     ]
   },
   {
