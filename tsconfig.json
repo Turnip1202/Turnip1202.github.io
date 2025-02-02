@@ -19,5 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src"]
+  "include": ["src",
+  "src/emotion.d.ts"  // 确保包含这个文件
+]
 }

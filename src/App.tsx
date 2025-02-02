@@ -49,6 +49,7 @@ const App: React.FC = () => {
   // const [currentTheme, setCurrentTheme] = useState(themeConfig.default);
 
   return (
+    <ThemeProvider theme={currentTheme}>
     <Background theme={currentTheme}>
       <Header>
         <Title>Turnip起始页</Title>
@@ -59,6 +60,8 @@ const App: React.FC = () => {
       </MainContent>
       <ThemeSelector onSelect={setCurrentTheme} />
     </Background>
+    </ThemeProvider>
+
   );
 };
 

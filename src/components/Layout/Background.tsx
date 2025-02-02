@@ -1,6 +1,6 @@
 // src/components/Layout/Background.tsx
 import styled from '@emotion/styled';
-import type { ThemeConfig } from '../../config/theme';
+import type { ThemeConfig } from '../../types/theme';
 
 interface BackgroundProps {
   theme: ThemeConfig;

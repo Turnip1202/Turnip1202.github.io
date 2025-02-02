@@ -4,14 +4,23 @@ import { themeConfig, type Theme } from '../config/theme';
 
 const THEME_KEY = 'turnip-theme';
 
-export const useTheme = () => {
+export const useTheme = (): readonly [Theme, (theme: Theme) => void] => {
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem(THEME_KEY);
-    return saved ? JSON.parse(saved) : themeConfig.default;
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      return saved ? JSON.parse(saved) : themeConfig.default;
+    } catch (error) {
+      console.warn('Failed to parse saved theme:', error);
+      return themeConfig.default;
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem(THEME_KEY, JSON.stringify(currentTheme));
+    try {
+      localStorage.setItem(THEME_KEY, JSON.stringify(currentTheme));
+    } catch (error) {
+      console.warn('Failed to save theme:', error);
+    }
   }, [currentTheme]);
 
   return [currentTheme, setCurrentTheme] as const;

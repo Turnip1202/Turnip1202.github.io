@@ -1,11 +1,6 @@
 // src/config/theme.ts
-export interface ThemeConfig {
-    id: string;
-    name: string;
-    backgroundImage: string;
-    blur: string;
-    opacity: number;
-  }
+import type { ThemeConfig } from '../types/theme';
+
   
   export const themeConfig = {
     // 默认主题配置
