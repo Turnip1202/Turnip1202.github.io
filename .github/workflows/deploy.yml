@@ -1,17 +1,17 @@
 # .github/workflows/deploy.yml
-name: Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - master  # 或者是 master，取决于你的默认分支名称
+      - source  # 从 source 分支构建
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -24,31 +24,19 @@ jobs:
         with:
           version: 8.15.1
 
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install
 
       - name: Build
         run: pnpm build
 
-      - name: Deploy
+      - name: Deploy to master branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # 确保这是你的构建输出目录
-          publish_branch: gh-pages  # 对于用户页面，这应该是 gh-pages 分支
+          publish_dir: ./dist
+          publish_branch: master  # 部署到 master 分支
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
           enable_jekyll: false
-          cname: turnip1202.github.io  # 如果你有自定义域名，请相应修改
+          user_name: 'Turnip1202'
+          user_email: 'your-email@example.com'  # 替换为你的邮箱
