@@ -39,4 +39,4 @@ jobs:
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
           enable_jekyll: false
           user_name: 'Turnip1202'
-          user_email: 'your-email@example.com'  # 替换为你的邮箱
+          user_email: 'turnip1202@outlook.com'  # 替换为你的邮箱
