@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 const ClockContainer = styled.div`
   position: absolute;
-  top: 1rem;
+  top: 0.1rem;
   right: 1rem;
   font-size: 1.2rem;
   color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};

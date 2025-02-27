@@ -56,12 +56,12 @@ const SearchInput = styled.input`
 `;
 
 const EngineSelect = styled.select`
-  padding: 0 20px;
+  padding: 0 0.5rem;
   border: 2px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#4a4a4a' : '#e1e1e1'};
   border-radius: 25px;
   background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#2d3436' : 'white'};
   cursor: pointer;
-  font-size: 16px;
+  font-size: 0.8rem;
   transition: all 0.3s;
   -webkit-appearance: none;
   appearance: none;

@@ -68,9 +68,10 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={currentTheme}>
       <Background theme={currentTheme}>
+        <Clock />
+
         <Header>
           <Title>{siteConfig.title}</Title>
-          <Clock />
         </Header>
         <MainContent>
           <SearchBar />
