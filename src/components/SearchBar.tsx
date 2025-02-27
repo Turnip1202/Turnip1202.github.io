@@ -30,16 +30,22 @@ const SearchInput = styled.input`
   flex: 1;
   padding: 12px 20px;
   font-size: 16px;
-  border: 2px solid #e1e1e1;
+  border: 2px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#4a4a4a' : '#e1e1e1'};
   border-radius: 25px;
   outline: none;
   transition: all 0.3s;
-  -webkit-appearance: none; // 修复 iOS 默认样式
+  -webkit-appearance: none;
   appearance: none;
+  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#2d3436' : 'white'};
+  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
 
   &:focus {
     border-color: #4a90e2;
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  }
+
+  &::placeholder {
+    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#888888' : '#999999'};
   }
 
   @media (max-width: 768px) {
@@ -51,18 +57,19 @@ const SearchInput = styled.input`
 
 const EngineSelect = styled.select`
   padding: 0 20px;
-  border: 2px solid #e1e1e1;
+  border: 2px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#4a4a4a' : '#e1e1e1'};
   border-radius: 25px;
-  background: white;
+  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#2d3436' : 'white'};
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s;
-  -webkit-appearance: none; // 修复 iOS 默认样式
+  -webkit-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23444' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '%23ffffff' : '%23444444'}' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 30px;
+  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
 
   &:hover {
     border-color: #4a90e2;
@@ -80,14 +87,14 @@ const SearchButton = styled.button`
   padding: 0 24px;
   border: none;
   border-radius: 25px;
-  background: #4a90e2;
+  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#2c3e50' : '#3498db'};
   color: white;
   cursor: pointer;
   transition: all 0.3s;
   white-space: nowrap;
 
   &:hover {
-    background: #357abd;
+    background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#1a252f' : '#2980b9'};
   }
 
   @media (max-width: 768px) {
