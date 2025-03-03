@@ -5,6 +5,17 @@ export const linkCategories: LinkCategory[] = [
     id: 0,
     name: "Turnip",
     links: [
+      {id: 1, name: "", url: `https://www.iqiyi.com/`, icon: "爱奇艺"},
+      { id: 2, name: "", url: "https://www.youku.com/ku/webhome", icon: "优酷" },      // 替代：使用星星图标
+      { id: 3, name: "", url: "https://v.qq.com/", icon: "🐧视频" },         // 替代：使用工具图标
+      { id: 4, name: "", url: "https://www.bilibili.com/", icon: "B站" },      // 替代：使用游戏图标
+      { id: 5, name: "", url: "https://www.douyin.com/", icon: "抖音" }          // 替代：使用电影图标
+    ]
+  },
+  {
+    id: 1,
+    name: "Turnip",
+    links: [
       { id: 1, name: "Turnip博客", url: "https://turnip1202.github.io/my-blog-astro/", icon: "🥕" },
       { id: 2, name: "GitHub", url: "https://github.com/Turnip1202", icon: "⭐" },      // 替代：使用星星图标
       { id: 3, name: "稀土掘金", url: "https://juejin.cn/user/1684912023022440", icon: "🔨" },         // 替代：使用工具图标
@@ -13,7 +24,7 @@ export const linkCategories: LinkCategory[] = [
     ]
   },
   {
-    id: 1,
+    id: 2,
     name: "开发工具",
     links: [
       { id: 1, name: "GitHub", url: "https://github.com", icon: "🐙" },
@@ -22,7 +33,7 @@ export const linkCategories: LinkCategory[] = [
     ]
   },
   {
-    id: 2,
+    id: 3,
     name: "学习资源",
     links: [
       { id: 4, name: "TypeScript", url: "https://www.typescriptlang.org", icon: "📘" },
