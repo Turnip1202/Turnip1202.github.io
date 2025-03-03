@@ -33,7 +33,7 @@ export const linkCategories: LinkCategory[] = [
 ];
 
 export const searchEngines: SearchEngine[] = [
-  { id: 'google', name: 'Google', url: 'https://www.google.com/search?q=', icon: '🔍' },
   { id: 'bing', name: 'Bing', url: 'https://www.bing.com/search?q=', icon: '🔎' },
+  { id: 'google', name: 'Google', url: 'https://www.google.com/search?q=', icon: '🔍' },
   { id: 'baidu', name: '百度', url: 'https://www.baidu.com/s?wd=', icon: '🔍' },
 ];
