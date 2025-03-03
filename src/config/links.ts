@@ -3,7 +3,7 @@ import type { LinkCategory, SearchEngine } from '../types';
 export const linkCategories: LinkCategory[] = [
   {
     id: 0,
-    name: "Turnip",
+    name: "影音视频",
     links: [
       {id: 1, name: "", url: `https://www.iqiyi.com/`, icon: "爱奇艺"},
       { id: 2, name: "", url: "https://www.youku.com/ku/webhome", icon: "优酷" },      // 替代：使用星星图标
