@@ -45,7 +45,7 @@
   }
 `,p=o.Z.select`
   padding: 0 0.5rem;
-  border: 2px solid ${e=>"custom"===e.theme.id&&"暗黑主题"===e.theme.name?"#4a4a4a":"#e1e1e1"};
+  border: 1px solid ${e=>"custom"===e.theme.id&&"暗黑主题"===e.theme.name?"#4a4a4a":"#e1e1e1"};
   border-radius: 25px;
   background: ${e=>"custom"===e.theme.id&&"暗黑主题"===e.theme.name?"#2d3436":"white"};
   cursor: pointer;
