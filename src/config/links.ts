@@ -6,7 +6,7 @@ export const linkCategories: LinkCategory[] = [
     name: "影音视频",
     links: [
       {id: 1, name: "", url: `https://www.iqiyi.com/`, icon: "爱奇艺"},
-      { id: 2, name: "", url: "https://www.youku.com/ku/webhome", icon: "优酷" },      // 替代：使用星星图标
+      { id: 2, name: "", url: "https://www.youku.com/", icon: "优酷" },      // 替代：使用星星图标
       { id: 3, name: "", url: "https://v.qq.com/", icon: "🐧视频" },         // 替代：使用工具图标
       { id: 4, name: "", url: "https://www.bilibili.com/", icon: "B站" },      // 替代：使用游戏图标
       { id: 5, name: "", url: "https://www.douyin.com/", icon: "抖音" }          // 替代：使用电影图标
