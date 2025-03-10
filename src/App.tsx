@@ -1,16 +1,19 @@
 import type React from 'react';
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import SearchBar from './components/SearchBar';
 import LinkGrid from './components/LinkGrid';
 import { linkCategories } from './config/links';
 import { Background } from './components/Layout/Background';
 import { ThemeSelector } from './components/ThemeSelector';
-import { themeConfig } from './config/theme';
 import { useTheme } from './hooks/useTheme';
 import { ThemeProvider } from '@emotion/react';
 import Clock from './components/Clock';
 import { siteConfig } from './config/site';
+
+
+
+import { themeManager } from "./utils"
+
 
 const Header = styled.header`
   text-align: center;
@@ -62,14 +65,14 @@ const Footer = styled.footer`
 `;
 
 const App: React.FC = () => {
-  const [currentTheme, setCurrentTheme] = useTheme();
-  // const [currentTheme, setCurrentTheme] = useState(themeConfig.default);
+  const localThemeConfig = themeManager.getConfig();
+  console.log("default Config:", localThemeConfig)
+  const [currentTheme, setCurrentTheme] = useTheme(localThemeConfig);
 
   return (
     <ThemeProvider theme={currentTheme}>
       <Background theme={currentTheme}>
         <Clock />
-
         <Header>
           <Title>{siteConfig.title}</Title>
         </Header>

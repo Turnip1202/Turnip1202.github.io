@@ -5,3 +5,4 @@ export interface ThemeConfig {
   blur: string;
   opacity: number;
 }
+

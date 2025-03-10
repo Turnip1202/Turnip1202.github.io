@@ -1,6 +1,5 @@
 // src/config/theme.ts
-import type { ThemeConfig } from '../types/theme';
-
+import type {  ITheme } from '../types';
   
   export const themeConfig = {
     // 默认主题配置
@@ -10,7 +9,7 @@ import type { ThemeConfig } from '../types/theme';
       backgroundImage: 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)',
       blur: '10px',
       opacity: 0.95,
-    },
+    } ,
     // 预设主题列表
     presets: [
       {
@@ -34,6 +33,6 @@ import type { ThemeConfig } from '../types/theme';
         blur: '10px',
         opacity: 0.92,
       },
-    ] as ThemeConfig[],
+    ] as ITheme[],
   };
-  export type Theme = typeof themeConfig.default;
+ 

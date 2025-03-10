@@ -18,3 +18,4 @@ export interface Link {
     url: string;
     icon?: string;
   }
+  export type {ThemeConfig as ITheme} from "./theme"
