@@ -5,7 +5,6 @@ import {
   SearchBar,
   LinkGrid,
   ThemeSelector,
-  Clock,
 } from '@/components';
 
 //css
@@ -45,7 +44,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
   const siteInfo = localSiteConfig;
   return (
     <>
-      <Clock />
+
       <Header>
         <Title>{siteInfo.title}</Title>
       </Header>

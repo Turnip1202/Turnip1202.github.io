@@ -2,6 +2,21 @@ import styled from '@emotion/styled';
 
 
 
+export const ShowAdminButton = styled.button`
+  opacity: 0.5; /* 默认透明度 */
+  background-color: transparent; /* 默认背景颜色设置为透明 */
+  border: none; /* 去掉边框 */
+  color: white; /* 默认字体颜色为蓝色 */
+  transition: opacity 0.3s ease; /* 过渡效果 */
+  cursor: pointer; /* 显示鼠标小手 */
+
+  &:hover {
+    opacity: 1; /* 鼠标悬停时的透明度 */
+    background-color: transparent; /* 鼠标悬停时背景颜色仍为透明 */
+  }
+`;
+
+
 export const Header = styled.header`
   text-align: center;
   margin-bottom: 2rem;
@@ -50,3 +65,5 @@ export const Footer = styled.footer`
     font-size: 12px;
   }
 `;
+
+
