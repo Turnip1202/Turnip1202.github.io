@@ -1,30 +1,24 @@
 import React from 'react';
+import { EAdminPanelState } from '@/types';
 
 
-enum AdminPanelState {
-    THEME_ADMIN_PANEL,
-    SITE_ADMIN_PANEL,
-    LINKS_ADMIN_PANEL
+
+
+type AdminPanelProps = {
+    config: EAdminPanelState
 }
-
-interface AdminPanelProps {
-    theme: AdminPanelState.THEME_ADMIN_PANEL
-    site: AdminPanelState.SITE_ADMIN_PANEL
-    links: AdminPanelState.LINKS_ADMIN_PANEL
-}
-
-
-
-
-
-
-
 
 
 const ThemeAdminPanel: React.FC<AdminPanelProps> = (props) => {
+    switch (props.config) {
+        case EAdminPanelState.THEME_ADMIN_PANEL:
+            return (<div>主题管理面板</div>)
+        case EAdminPanelState.SITE_ADMIN_PANEL:
+            return (<div>网站管理面板</div>)
+        case EAdminPanelState.LINKS_ADMIN_PANEL:
+            return (<div>链接管理面板</div>)
+        default:
+            return (<div>未知面板</div>)
+    }
 
-
-
-
-    return (<>测试</>)
 }

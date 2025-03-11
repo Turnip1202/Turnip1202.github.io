@@ -1,4 +1,5 @@
 export * from "./theme"
+export * from "./admin"
 // 定义所有需要用到的类型
 export interface Link {
     id: number;

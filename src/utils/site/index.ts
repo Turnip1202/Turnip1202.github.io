@@ -1,5 +1,5 @@
 import { SiteManager } from "./SiteManager"
-import { siteConfig } from '../../config/site';
+import { siteConfig } from '@/config/site';
 
 
 export const siteManager = new SiteManager(siteConfig)

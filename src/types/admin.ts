@@ -1,0 +1,5 @@
+export enum EAdminPanelState {
+  THEME_ADMIN_PANEL,
+  SITE_ADMIN_PANEL,
+  LINKS_ADMIN_PANEL
+}

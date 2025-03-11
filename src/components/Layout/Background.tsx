@@ -1,9 +1,9 @@
 // src/components/Layout/Background.tsx
 import styled from '@emotion/styled';
-import type { ThemeConfig } from '../../types/theme';
+import type { ThemeConfigType } from '@/types';
 
 interface BackgroundProps {
-  theme: ThemeConfig;
+  theme: ThemeConfigType;
 }
 
 export const Background = styled.div<BackgroundProps>`

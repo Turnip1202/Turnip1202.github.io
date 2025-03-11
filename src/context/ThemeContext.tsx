@@ -1,11 +1,11 @@
 // src/context/ThemeContext.tsx
 import type React from 'react';
 import { createContext, useContext } from 'react';
-import type { ThemeConfig as Theme } from '../types/theme';
+import type { ThemeConfigType } from '../types';
 
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: ThemeConfigType;
+  setTheme: (theme: ThemeConfigType) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -20,8 +20,8 @@ export const useThemeContext = () => {
 
 interface ThemeProviderProps {
   children: React.ReactNode;
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: ThemeConfigType;
+  setTheme: (theme: ThemeConfigType) => void;
 }
 
 export const ThemeProvider = ({ children, theme, setTheme }: ThemeProviderProps) => (

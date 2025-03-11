@@ -1,25 +1,32 @@
 {
   "compilerOptions": {
-    "lib": ["DOM", "ES2020"],
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
     "jsx": "react-jsx",
     "target": "ES2020",
     "noEmit": true,
     "skipLibCheck": true,
     "useDefineForClassFields": true,
-
+    "paths": {
+      "@*": [
+        "./src/*"
+      ]
+    },
     /* modules */
     "module": "ESNext",
     "isolatedModules": true,
     "resolveJsonModule": true,
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
-
     /* type checking */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src",
-  "src/emotion.d.ts"  // 确保包含这个文件
-]
+  "include": [
+    "src",
+    "src/emotion.d.ts" // 确保包含这个文件
+  ]
 }
