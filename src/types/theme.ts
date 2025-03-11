@@ -1,4 +1,4 @@
-export interface ThemeConfig {
+export interface ThemeConfigType {
   id: string;
   name: string;
   backgroundImage: string;
@@ -6,3 +6,7 @@ export interface ThemeConfig {
   opacity: number;
 }
 
+export interface IThemeConfig {
+  default: ThemeConfigType;
+  presets: ThemeConfigType[];
+}

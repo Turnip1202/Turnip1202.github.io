@@ -1,88 +1,65 @@
+//react
 import type React from 'react';
-import styled from '@emotion/styled';
-import SearchBar from './components/SearchBar';
-import LinkGrid from './components/LinkGrid';
-import { linkCategories } from './config/links';
-import { Background } from './components/Layout/Background';
-import { ThemeSelector } from './components/ThemeSelector';
-import { useTheme } from './hooks/useTheme';
 import { ThemeProvider } from '@emotion/react';
-import Clock from './components/Clock';
-import { siteConfig } from './config/site';
+//组件
+import {
+  SearchBar,
+  LinkGrid,
+  Background,
+  ThemeSelector,
+  Clock
+} from './components';
+
+import { useTheme } from './hooks';
+
+//css
+import {
+  Header,
+  Title,
+  MainContent,
+  Footer
+} from "./App.css.ts"
 
 
 
-import { themeManager } from "./utils"
+
+//本地存储工具
+import {
+  themeManager,
+  linksManager,
+  siteManager
+} from "./utils"
 
 
-const Header = styled.header`
-  text-align: center;
-  margin-bottom: 2rem;
-  position: relative;
-`;
-
-const Title = styled.h1`
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
-`;
-
-const MainContent = styled.main`
-  max-width: 1200px;
-  margin: 0 auto;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)'};
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-
-  @media (max-width: 768px) {
-    padding: 15px;
-    border-radius: 12px;
-  }
-`;
-
-const Footer = styled.footer`
-  text-align: center;
-  padding: 20px;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
-  font-size: 14px;
-  opacity: 0.8;
-  margin-top: 2rem;
-
-  @media (max-width: 768px) {
-    padding: 15px;
-    font-size: 12px;
-  }
-`;
 
 const App: React.FC = () => {
+  //主题
   const localThemeConfig = themeManager.getConfig();
-  console.log("default Config:", localThemeConfig)
+  //链接
+  const localCategories = linksManager.getAllCategories();
+  const localSearchEngines = linksManager.getAllSearchEngines();
+  //网站配置
+  const localSiteConfig = siteManager.getConfig();
+  const siteInfo = localSiteConfig;
+
+
   const [currentTheme, setCurrentTheme] = useTheme(localThemeConfig);
+
 
   return (
     <ThemeProvider theme={currentTheme}>
       <Background theme={currentTheme}>
         <Clock />
         <Header>
-          <Title>{siteConfig.title}</Title>
+          <Title>{siteInfo.title}</Title>
         </Header>
         <MainContent>
-          <SearchBar />
-          <LinkGrid categories={linkCategories} />
+          <SearchBar searchEngines={localSearchEngines} />
+          <LinkGrid categories={localCategories} />
         </MainContent>
-        <ThemeSelector onSelect={setCurrentTheme} />
+        <ThemeSelector themeConfig={localThemeConfig} onSelect={setCurrentTheme} />
         <Footer>
-          {`${siteConfig.copyright.text}`}
+          {`${siteInfo.copyright.text}`}
         </Footer>
       </Background>
     </ThemeProvider>

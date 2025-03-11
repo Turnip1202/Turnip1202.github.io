@@ -1,11 +1,8 @@
-import type {  ITheme } from '../../types';
+import type {  IThemeConfig,ThemeConfigType } from '../../types';
 
 export class ThemeManager {
   private static readonly STORAGE_KEY = 'turnip-theme-config';
-  private config: {
-    default: ITheme;
-    presets: ITheme[];
-  };
+  private config: IThemeConfig;
 
   constructor(initialConfig?: typeof import('../../config/theme').themeConfig) {
     this.config = this.loadFromStorage() || initialConfig || {
@@ -27,23 +24,23 @@ export class ThemeManager {
   }
 
   // 获取默认主题
-  public getDefaultTheme(): ITheme {
+  public getDefaultTheme(): ThemeConfigType {
     return this.config.default;
   }
 
   // 获取预设主题列表
-  public getPresets(): ITheme[] {
+  public getPresets(): ThemeConfigType[] {
     return this.config.presets;
   }
 
   // 设置默认主题
-  public setDefaultTheme(theme: ITheme): void {
+  public setDefaultTheme(theme: ThemeConfigType): void {
     this.config.default = theme;
     this.saveToStorage();
   }
 
   // 添加预设主题
-  public addPreset(theme: ITheme): void {
+  public addPreset(theme: ThemeConfigType): void {
     if (this.config.presets.some(t => t.id === theme.id)) {
       throw new Error(`Theme with id ${theme.id} already exists`);
     }
@@ -52,7 +49,7 @@ export class ThemeManager {
   }
 
   // 更新预设主题
-  public updatePreset(theme: ITheme): void {
+  public updatePreset(theme: ThemeConfigType): void {
     const index = this.config.presets.findIndex(t => t.id === theme.id);
     if (index === -1) {
       throw new Error(`Theme with id ${theme.id} not found`);
@@ -72,7 +69,7 @@ export class ThemeManager {
   }
 
   // 根据ID查找主题（包括默认主题和预设主题）
-  public findThemeById(themeId: string): ITheme | undefined {
+  public findThemeById(themeId: string): ThemeConfigType | undefined {
     if (this.config.default.id === themeId) {
       return this.config.default;
     }

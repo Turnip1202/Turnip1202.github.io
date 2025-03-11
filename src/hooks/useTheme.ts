@@ -1,15 +1,15 @@
 // src/hooks/useTheme.ts
 import { useState, useEffect } from 'react';
-import type { ITheme } from '../types';
+import type { ThemeConfigType } from '../types';
 
 const THEME_KEY = 'turnip-theme-active';
 
 interface IThemeConfig {
-  default: ITheme;
+  default: ThemeConfigType;
 }
 
-export const useTheme = (config: IThemeConfig): readonly [ITheme, (theme: ITheme) => void] => {
-  const [currentTheme, setCurrentTheme] = useState<ITheme>(() => {
+export const useTheme = (config: IThemeConfig): readonly [ThemeConfigType, (theme: ITheme) => void] => {
+  const [currentTheme, setCurrentTheme] = useState<ThemeConfigType>(() => {
     try {
       const saved = localStorage.getItem(THEME_KEY);
       return saved ? JSON.parse(saved) : config.default;

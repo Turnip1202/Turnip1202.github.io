@@ -38,15 +38,15 @@ const LinkCard = styled.a`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' 
-      ? '0 4px 12px rgba(255, 255, 255, 0.1)' 
-      : '0 4px 12px rgba(0, 0, 0, 0.1)'};
-    background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' 
-      ? 'rgba(255, 255, 255, 0.1)' 
-      : 'white'};
-    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' 
-      ? '#ffffff' 
-      : '#000000'};
+    box-shadow: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+    ? '0 4px 12px rgba(255, 255, 255, 0.1)'
+    : '0 4px 12px rgba(0, 0, 0, 0.1)'};
+    background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+    ? 'rgba(255, 255, 255, 0.1)'
+    : 'white'};
+    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+    ? '#ffffff'
+    : '#000000'};
   }
 `;
 
@@ -64,7 +64,7 @@ interface LinkGridProps {
   categories: LinkCategory[];
 }
 
-const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
+export const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
   return (
     <>
       {categories.map(category => (
@@ -88,5 +88,3 @@ const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
     </>
   );
 };
-
-export default LinkGrid;

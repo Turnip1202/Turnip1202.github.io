@@ -22,7 +22,7 @@ const ClockContainer = styled.div`
   }
 `;
 
-const Clock: React.FC = () => {
+export const Clock: React.FC = () => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -39,5 +39,3 @@ const Clock: React.FC = () => {
     </ClockContainer>
   );
 };
-
-export default Clock;

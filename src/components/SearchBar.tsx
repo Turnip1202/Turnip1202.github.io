@@ -2,7 +2,6 @@ import type React from 'react';
 import { useState, type FormEvent } from 'react'
 import styled from '@emotion/styled';
 import type { SearchEngine } from '../types';
-import { searchEngines } from '../config/links';
 
 const SearchContainer = styled.div`
   margin: 2rem auto;
@@ -104,8 +103,12 @@ const SearchButton = styled.button`
   }
 `;
 
+interface SearchBarProps {
+  searchEngines: SearchEngine[];
+}
+
 // SearchBar 组件的其余部分保持不变
-const SearchBar: React.FC = () => {
+export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
   const [query, setQuery] = useState<string>('');
   const [engine, setEngine] = useState<string>(searchEngines[0].id);
 
@@ -143,5 +146,3 @@ const SearchBar: React.FC = () => {
     </SearchContainer>
   );
 };
-
-export default SearchBar;

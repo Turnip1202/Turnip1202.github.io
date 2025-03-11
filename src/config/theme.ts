@@ -1,5 +1,5 @@
 // src/config/theme.ts
-import type {  ITheme } from '../types';
+import type {  ThemeConfigType } from '../types';
   
   export const themeConfig = {
     // 默认主题配置
@@ -33,6 +33,6 @@ import type {  ITheme } from '../types';
         blur: '10px',
         opacity: 0.92,
       },
-    ] as ITheme[],
+    ] as ThemeConfigType[],
   };
  

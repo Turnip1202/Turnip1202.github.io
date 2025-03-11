@@ -1,7 +1,7 @@
 // src/components/ThemeSelector.tsx
 import { useState, useCallback, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { ITheme } from "../types"
+import type { IThemeConfig, ThemeConfigType } from "../types"
 import { themeManager } from "../utils"
 
 const SelectorContainer = styled.div`
@@ -81,12 +81,13 @@ const AutoToggleButton = styled(ToggleButton)`
 `;
 
 interface Props {
-  onSelect: (theme: ITheme) => void;
+  onSelect: (theme: ThemeConfigType) => void;
+  themeConfig: IThemeConfig
 }
 
-export const ThemeSelector: React.FC<Props> = ({ onSelect }) => {
-  const localThemeConfig = themeManager.getConfig();
-  console.log("localThemeConfig", localThemeConfig)
+export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
+  themeConfig = themeManager.getConfig();
+  // console.log("localThemeConfig", localThemeConfig)
 
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -147,8 +148,8 @@ export const ThemeSelector: React.FC<Props> = ({ onSelect }) => {
   }, [isAutoMode, isDarkMode]);
 
   const updateTheme = useCallback(() => {
-    const baseTheme = localThemeConfig.presets.find(theme => theme.id === selectedTheme) || localThemeConfig.presets[0];
-    const theme: ITheme = {
+    const baseTheme = themeConfig.presets.find(theme => theme.id === selectedTheme) || themeConfig.presets[0];
+    const theme: ThemeConfigType = {
       id: 'custom',
       name: isDarkMode ? '暗黑主题' : '明亮主题',
       backgroundImage: isDarkMode
@@ -168,7 +169,7 @@ export const ThemeSelector: React.FC<Props> = ({ onSelect }) => {
     <SelectorContainer>
       {!isDarkMode && (
         <ThemeButtonsContainer>
-          {localThemeConfig.presets.map(theme => (
+          {themeConfig.presets.map(theme => (
             <ThemeButton
               key={theme.id}
               isSelected={selectedTheme === theme.id}

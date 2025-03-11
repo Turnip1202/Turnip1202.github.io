@@ -1,3 +1,4 @@
+export * from "./theme"
 // 定义所有需要用到的类型
 export interface Link {
     id: number;
@@ -18,4 +19,13 @@ export interface Link {
     url: string;
     icon?: string;
   }
-  export type {ThemeConfig as ITheme} from "./theme"
+
+
+
+export interface ISiteConfig {
+  title: string;
+  copyright: {
+    text: string;
+  };
+  [key: string]: any; // 允许添加其他配置项
+}
