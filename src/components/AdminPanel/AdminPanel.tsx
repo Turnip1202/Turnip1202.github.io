@@ -9,7 +9,7 @@ type AdminPanelProps = {
 }
 
 
-const ThemeAdminPanel: React.FC<AdminPanelProps> = (props) => {
+export const AdminPanel: React.FC<AdminPanelProps> = (props) => {
     switch (props.config) {
         case EAdminPanelState.THEME_ADMIN_PANEL:
             return (<div>主题管理面板</div>)
