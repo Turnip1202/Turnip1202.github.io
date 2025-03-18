@@ -86,14 +86,16 @@ const Links = () => {
       const selectedCategoryIndex = categories.findIndex(cat => cat.id === selectedCategoryId);
       let updatedCategories = [...categories];
       if (editingLink) {
+        console.log("updating link")
         // Update existing link
-        updatedCategories[selectedCategoryIndex].links = updatedCategories[selectedCategoryIndex].links.map(link =>
-          link.id === editingLink.id ? { ...link, ...values } : link
-        );
+        const linkId = values.id
+        const updatedLinks = { icon: values.icon, name: values.name, url: values.url };
+        linksManager.updateLink(selectedCategoryIndex, linkId, updatedLinks);
         message.success('Link updated successfully!');
       } else {
+        console.log("adding link")
         // Add new link
-        updatedCategories[selectedCategoryIndex].links.push({ id: Date.now(), ...values });
+        linksManager.addLink(selectedCategoryIndex, values.name, values.url, values.icon);
         message.success('Link added successfully!');
       }
       setCategories(updatedCategories);
