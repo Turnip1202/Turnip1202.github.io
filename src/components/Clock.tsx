@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import type {BackgroundProps} from "@/types"
 
-const ClockContainer = styled.div`
+
+const ClockContainer = styled.div<BackgroundProps>`
   position: absolute;
   top: 0.1rem;
   right: 1rem;
@@ -34,7 +36,7 @@ export const Clock: React.FC = () => {
   }, []);
 
   return (
-    <ClockContainer>
+    <ClockContainer >
       {`${time.getFullYear()}-${String(time.getMonth() + 1).padStart(2, '0')}-${String(time.getDate()).padStart(2, '0')} ${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}:${String(time.getSeconds()).padStart(2, '0')}`}
     </ClockContainer>
   );

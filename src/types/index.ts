@@ -1,5 +1,6 @@
 export * from "./theme"
 export * from "./admin"
+import { ThemeConfigType } from "./theme";
 // 定义所有需要用到的类型
 export interface Link {
     id: number;
@@ -21,7 +22,9 @@ export interface Link {
     icon?: string;
   }
 
-
+ export interface BackgroundProps {
+    theme?: ThemeConfigType;
+  }
 
 export interface ISiteConfig {
   title: string;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { EAdminPanelState } from '@/types';
+import Links from './templates/Links';
 
 
 
@@ -16,7 +17,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = (props) => {
         case EAdminPanelState.SITE_ADMIN_PANEL:
             return (<div>网站管理面板</div>)
         case EAdminPanelState.LINKS_ADMIN_PANEL:
-            return (<div>链接管理面板</div>)
+            return (<Links></Links>)
         default:
             return (<div>未知面板</div>)
     }

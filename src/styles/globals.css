@@ -1,0 +1,12 @@
+/* 在全局样式文件（如 styles/globals.css）中 */
+:root {
+    /* 默认亮色模式的变量 */
+    --custom-bg-color: var(--ant-bg-body-color, #fff);
+    --custom-text-color: var(--ant-text-color-primary, #1677ff);
+  }
+  
+  /* 暗黑模式下，Ant Design 会自动添加 .dark 类到 body */
+  .dark {
+    --custom-bg-color: var(--ant-bg-body-color, #141414);
+    --custom-text-color: var(--ant-text-color-primary, #ffffff);
+  }

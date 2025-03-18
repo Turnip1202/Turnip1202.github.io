@@ -1,8 +1,8 @@
 import type React from 'react';
 import styled from '@emotion/styled';
-import type { LinkCategory } from '../types';
+import type { LinkCategory,BackgroundProps } from '../types';
 
-const CategorySection = styled.section`
+const CategorySection = styled.section<BackgroundProps>`
   margin: 2rem 0;
   padding: 1rem;
   background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.8)'};
@@ -10,7 +10,7 @@ const CategorySection = styled.section`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const CategoryTitle = styled.h2`
+const CategoryTitle = styled.h2<BackgroundProps>`
   color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -25,7 +25,7 @@ const LinksGrid = styled.div`
   margin-top: 1rem;
 `;
 
-const LinkCard = styled.a`
+const LinkCard = styled.a<BackgroundProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,7 +55,7 @@ const LinkIcon = styled.span`
   margin-bottom: 0.5rem;
 `;
 
-const LinkName = styled.span`
+const LinkName = styled.span<BackgroundProps>`
   font-size: 0.9rem;
   color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#cccccc' : '#666666'};
 `;

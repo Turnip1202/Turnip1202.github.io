@@ -1,4 +1,4 @@
-import { LinkCategory, SearchEngine } from '../../types';
+import { LinkCategory, SearchEngine } from '@/types';
 
 export class LinksManager {
   private categories: LinkCategory[];

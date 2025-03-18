@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-
+import {BackgroundProps} from "@/types"
 
 
 export const ShowAdminButton = styled.button`
@@ -9,6 +9,9 @@ export const ShowAdminButton = styled.button`
   color: white; /* 默认字体颜色为蓝色 */
   transition: opacity 0.3s ease; /* 过渡效果 */
   cursor: pointer; /* 显示鼠标小手 */
+  &:focus {
+    outline: none; /* 去掉焦点时的边框 */
+  }
 
   &:hover {
     opacity: 1; /* 鼠标悬停时的透明度 */
@@ -23,7 +26,7 @@ export const Header = styled.header`
   position: relative;
 `;
 
-export const Title = styled.h1`
+export const Title = styled.h1<BackgroundProps>`
   color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -35,7 +38,7 @@ export const Title = styled.h1`
   }
 `;
 
-export const MainContent = styled.main`
+export const MainContent = styled.main<BackgroundProps>`
   max-width: 1200px;
   margin: 0 auto;
   background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)'};
@@ -52,7 +55,7 @@ export const MainContent = styled.main`
   }
 `;
 
-export const Footer = styled.footer`
+export const Footer = styled.footer<BackgroundProps>`
   text-align: center;
   padding: 20px;
   color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};

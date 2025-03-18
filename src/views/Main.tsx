@@ -13,7 +13,7 @@ import {
   Title,
   MainContent,
   Footer
-} from "@/App.css.ts"
+} from "@/styles/App.css.ts"
 
 
 

@@ -1,10 +1,8 @@
 // src/components/Layout/Background.tsx
 import styled from '@emotion/styled';
-import type { ThemeConfigType } from '@/types';
+import type { BackgroundProps } from '@/types';
 
-interface BackgroundProps {
-  theme: ThemeConfigType;
-}
+
 
 export const Background = styled.div<BackgroundProps>`
   min-height: 100vh;

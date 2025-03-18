@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useState, type FormEvent } from 'react'
 import styled from '@emotion/styled';
-import type { SearchEngine } from '../types';
+import type { SearchEngine,BackgroundProps } from '../types';
 
 const SearchContainer = styled.div`
   margin: 2rem auto;
@@ -25,7 +25,7 @@ const SearchForm = styled.form`
   }
 `;
 
-const SearchInput = styled.input`
+const SearchInput = styled.input<BackgroundProps>`
   flex: 1;
   padding: 12px 20px;
   font-size: 16px;
@@ -54,7 +54,7 @@ const SearchInput = styled.input`
   }
 `;
 
-const EngineSelect = styled.select`
+const EngineSelect = styled.select<BackgroundProps>`
   padding: 0 0.5rem;
   border: 1px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#4a4a4a' : '#e1e1e1'};
   border-radius: 25px;
@@ -82,7 +82,7 @@ const EngineSelect = styled.select`
   }
 `;
 
-const SearchButton = styled.button`
+const SearchButton = styled.button<BackgroundProps>`
   padding: 0 24px;
   border: none;
   border-radius: 25px;
