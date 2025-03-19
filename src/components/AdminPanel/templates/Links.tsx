@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Space, message } from 'antd';
+import { Table, Button, Modal, Select, Form, Input, Space, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 
 import { linksManager } from "@/utils"
@@ -24,7 +24,7 @@ const Links = () => {
 
   const showCategoryModal = () => {
     categoryForm.resetFields();
-    setEditingCategory(null);
+    setEditingCategory(undefined);
     setIsCategoryModalVisible(true);
   };
 
@@ -74,8 +74,7 @@ const Links = () => {
     message.success('Category deleted successfully!');
   };
 
-  const handleOpenLinkModal = category => {
-    setSelectedCategoryId(category.id);
+  const handleOpenLinkModal = () => {
     setIsLinkModalVisible(true);
     linkForm.resetFields();
     setEditingLink(null);
@@ -95,11 +94,10 @@ const Links = () => {
       } else {
         console.log("adding link")
         // Add new link
-        linksManager.addLink(selectedCategoryIndex, values.name, values.url, values.icon);
+        linksManager.addLink(values.id, values.name, values.url, values.icon);
         message.success('Link added successfully!');
       }
       setCategories(updatedCategories);
-      localStorage.setItem('yourDataKey', JSON.stringify(updatedCategories));
       setIsLinkModalVisible(false);
     });
   };
@@ -108,11 +106,26 @@ const Links = () => {
     setIsLinkModalVisible(false);
   };
 
-  const handleEditLink = link => {
-    setEditingLink(link);
+  const handleEditLink = (link: LinkCategory) => {
+    console.log("Editing link: ", link)
     linkForm.setFieldsValue(link);
     setIsLinkModalVisible(true);
   };
+  const handleDeleteAllLink = (record: LinkCategory) => {
+    const allCategories = linksManager.getAllCategories();
+    //清空对应id的links
+    let updatedCategories = allCategories.map(category => {
+      if (category.id === record.id) {
+        category.links.forEach(item => {
+          linksManager.deleteLink(category.id, item.id)
+        })
+        category.links = [];
+      }
+      return category;
+    })
+    setCategories(updatedCategories);
+
+  }
 
   const handleDeleteLink = id => {
     const selectedCategoryIndex = categories.findIndex(cat => cat.id === selectedCategoryId);
@@ -148,15 +161,19 @@ const Links = () => {
       key: 'action',
       render: (text, record: LinkCategory) => (
         <Space size="middle">
-          <Button type="primary" icon={<LinkOutlined />} onClick={() => handleOpenLinkModal(record)}>
-            Manage Links
-          </Button>
+          {/* <Button type="primary" icon={<EditOutlined />} onClick={() => handleEditLink(record)}>
+            Edit Link(功能未完善)
+          </Button> */}
+
           <Button type="primary" icon={<EditOutlined />} onClick={() => handleEditCategory(record)}>
             Edit Category
           </Button>
           <Button type="dashed" icon={<DeleteOutlined />} onClick={() => handleDeleteCategory(record.id)}>
             Delete Category
           </Button>
+          {/* <Button type="dashed" icon={<DeleteOutlined />} onClick={() => handleDeleteAllLink(record)}>
+            Delete All Link
+          </Button> */}
         </Space>
       ),
     },
@@ -169,11 +186,15 @@ const Links = () => {
       <Button type="primary" icon={<PlusOutlined />} onClick={showCategoryModal} style={{ marginBottom: 16 }}>
         Add New Category
       </Button>
+      <Button type="primary" icon={<LinkOutlined />} onClick={() => handleOpenLinkModal()}>
+        Add Links
+      </Button>
       <Button type="dashed" icon={<PlusOutlined />} onClick={clearCatgorys} style={{ marginBottom: 16 }}>
         清空数据
       </Button>
       <Table dataSource={categories} columns={categoryColumns} rowKey="id" pagination={{ pageSize: 5 }} />
 
+      {/* 关于分类 */}
       <Modal
         title={`${editingCategory ? 'Edit' : 'Add'} Category`}
         open={isCategoryModalVisible}
@@ -190,15 +211,16 @@ const Links = () => {
         </Form>
       </Modal>
 
+      {/* 关于链接 */}
       <Modal
-        title={`${editingLink ? 'Edit' : 'Add'} Link`}
+        title={`${editingLink ?? 'Add'} Link`}
         open={isLinkModalVisible}
         onOk={handleLinkOk}
         onCancel={handleLinkCancel}
       >
         <Form form={linkForm} layout="vertical">
           <Form.Item name="id" label="ID" rules={[{ required: true, message: 'Please input ID!' }]}>
-            <Input disabled={!!editingLink} />
+            <Select disabled={!!editingLink} options={categories.map(cat => ({ value: cat.id, label: cat.name }))} />
           </Form.Item>
           <Form.Item name="name" label="Name" rules={[{ required: false, message: 'Please input Name!' }]}>
             <Input />

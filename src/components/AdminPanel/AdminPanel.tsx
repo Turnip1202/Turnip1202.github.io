@@ -13,9 +13,9 @@ type AdminPanelProps = {
 export const AdminPanel: React.FC<AdminPanelProps> = (props) => {
     switch (props.config) {
         case EAdminPanelState.THEME_ADMIN_PANEL:
-            return (<div>主题管理面板</div>)
+            return (<div>主题管理面板(未完成)</div>)
         case EAdminPanelState.SITE_ADMIN_PANEL:
-            return (<div>网站管理面板</div>)
+            return (<div>网站管理面板(未完成)</div>)
         case EAdminPanelState.LINKS_ADMIN_PANEL:
             return (<Links></Links>)
         default:
