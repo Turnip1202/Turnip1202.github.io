@@ -44,7 +44,6 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
   const siteInfo = localSiteConfig;
   return (
     <>
-
       <Header>
         <Title>{siteInfo.title}</Title>
       </Header>

@@ -3,7 +3,7 @@ import { Table, Button, Modal, Form, Input, Space, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 
 import { linksManager } from "@/utils"
-import { LinkCategory, SearchEngine, Link } from '@/types';
+import type { LinkCategory, SearchEngine, Link } from '@/types';
 
 
 const Links = () => {

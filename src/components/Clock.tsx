@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import type React from 'react';
 import styled from '@emotion/styled';
-import type {BackgroundProps} from "@/types"
+import type { BackgroundProps } from "@/types"
 
 
 const ClockContainer = styled.div<BackgroundProps>`

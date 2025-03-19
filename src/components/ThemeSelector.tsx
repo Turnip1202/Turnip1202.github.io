@@ -1,9 +1,9 @@
 // src/components/ThemeSelector.tsx
 import { useState, useCallback, useEffect } from 'react';
 import styled from '@emotion/styled';
-import type { IThemeConfig, ThemeConfigType,BackgroundProps } from "../types"
+import type { IThemeConfig, ThemeConfigType, BackgroundProps } from "../types"
 import { themeManager } from "../utils"
-
+import type React from 'react';
 const SelectorContainer = styled.div<BackgroundProps>`
   position: fixed;
   bottom: 20px;
@@ -34,7 +34,7 @@ const ThemeButtonsContainer = styled.div`
   width: 100%;
 `;
 
-interface ThemeButtonPropsType extends BackgroundProps{
+interface ThemeButtonPropsType extends BackgroundProps {
   isSelected: boolean
 }
 
@@ -56,7 +56,7 @@ const ThemeButton = styled.button<ThemeButtonPropsType>`
   }
 `;
 
-interface ToggleButtonPropsType extends BackgroundProps{
+interface ToggleButtonPropsType extends BackgroundProps {
   active: boolean
 }
 
