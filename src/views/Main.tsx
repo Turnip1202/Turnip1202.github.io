@@ -1,5 +1,6 @@
 //react
 import type React from 'react';
+import { useState, useEffect, useMemo } from "react"
 //组件
 import {
   SearchBar,
@@ -23,9 +24,10 @@ import {
 import {
   themeManager,
   linksManager,
-  siteManager
+  siteManager,
+  getLocalStorageByKey
 } from "@/utils"
-import type { ThemeConfigType } from "@/types";
+import type { ThemeConfigType, LinkCategory } from "@/types";
 
 
 interface IMainProps {
@@ -37,8 +39,14 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
   //主题
   const localThemeConfig = themeManager.getConfig();
   //链接
-  const localCategories = linksManager.getAllCategories();
+  const [localCategories, setLocalCategories] = useState(linksManager.getAllCategories());
   const localSearchEngines = linksManager.getAllSearchEngines();
+  useMemo(() => {
+    const links = getLocalStorageByKey<LinkCategory[]>("turnip_link_categories")
+    console.log("localCategories", links);
+    setLocalCategories(links)
+  }, [])
+
   //网站配置
   const localSiteConfig = siteManager.getConfig();
   const siteInfo = localSiteConfig;

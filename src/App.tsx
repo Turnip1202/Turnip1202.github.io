@@ -29,10 +29,12 @@ const App: React.FC = () => {
 
   const [currentTheme, setCurrentTheme] = useTheme(localThemeConfig);
 
+  //重新渲染
+
   return (
     <ThemeProvider theme={currentTheme}>
       <Background theme={currentTheme}>
-        <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+        <ConfigProvider theme={{ algorithm: theme.defaultAlgorithm }}>
           <Clock />
           <ShowAdminButton onClick={() => setIsShowAdmin(true)}>管理面板</ShowAdminButton>
           {
