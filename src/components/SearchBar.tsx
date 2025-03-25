@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useState, type FormEvent } from 'react'
 import styled from '@emotion/styled';
-import type { SearchEngine,BackgroundProps } from '../types';
+import type { SearchEngine, BackgroundProps } from '../types';
 
 const SearchContainer = styled.div`
   margin: 2rem auto;
@@ -53,8 +53,12 @@ const SearchInput = styled.input<BackgroundProps>`
     order: 1;
   }
 `;
-
+const SearchInputWrapper = styled.div`
+  position: relative;
+  flex: 1;
+`;
 const EngineSelect = styled.select<BackgroundProps>`
+  margin-left: 5px;
   padding: 0 0.5rem;
   border: 1px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#4a4a4a' : '#e1e1e1'};
   border-radius: 25px;
@@ -102,7 +106,56 @@ const SearchButton = styled.button<BackgroundProps>`
     flex: 0 0 auto;
   }
 `;
+const StyledSearchInput = styled.input<BackgroundProps>`
+  width: 100%;
+  padding: 12px 0 12px 10px; /* 右侧留出空间给清除按钮 */
+  font-size: 16px;
+  border: 2px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#4a4a4a' : '#e1e1e1'};
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s;
+  -webkit-appearance: none;
+  appearance: none;
+  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#2d3436' : 'white'};
+  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
 
+  &:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  }
+
+  &::placeholder {
+    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#888888' : '#999999'};
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 36px 10px 16px;
+    order: 1;
+  }
+`;
+
+const ClearButton = styled.button<BackgroundProps>`
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#666666'};
+  font-size: 20px;
+  padding: 0;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ff6666' : '#ff0000'};
+  }
+
+  @media (max-width: 768px) {
+    right: 12px;
+    font-size: 18px;
+  }
+`;
 interface SearchBarProps {
   searchEngines: SearchEngine[];
 }
@@ -125,12 +178,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
   return (
     <SearchContainer>
       <SearchForm onSubmit={handleSubmit}>
-        <SearchInput
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="输入搜索内容..."
-        />
+        <SearchInputWrapper>
+          <StyledSearchInput
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="输入搜索内容..."
+          />
+          {query && (
+            <ClearButton
+              type="button"
+              onClick={() => setQuery('')}
+              aria-label="清空输入"
+            >
+              ×
+            </ClearButton>
+          )}
+        </SearchInputWrapper>
         <EngineSelect
           value={engine}
           onChange={(e) => setEngine(e.target.value)}
