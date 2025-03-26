@@ -140,6 +140,7 @@ const Links = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      sorter: (a: LinkCategory, b: LinkCategory) => a.id - b.id,
     },
     {
       title: 'Name',
@@ -229,16 +230,16 @@ const Links = () => {
         onCancel={handleLinkCancel}
       >
         <Form form={linkForm} layout="vertical">
-          <Form.Item name="id" label="ID" rules={[{ required: true, message: 'Please input ID!' }]}>
+          <Form.Item name="id" label="分类" rules={[{ required: true, message: 'Please input ID!' }]}>
             <Select disabled={!!editingLink} options={categories.map(cat => ({ value: cat.id, label: cat.name }))} />
           </Form.Item>
-          <Form.Item name="name" label="Name" rules={[{ required: false, message: 'Please input Name!' }]}>
+          <Form.Item name="name" label="链接名" rules={[{ required: false, message: 'Please input Name!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="url" label="URL" rules={[{ required: true, message: 'Please input URL!' }]}>
+          <Form.Item name="url" label="链接" rules={[{ required: true, message: 'Please input URL!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="icon" label="Icon" rules={[{ required: true, message: 'Please input Icon!' }]}>
+          <Form.Item name="icon" label="图标" rules={[{ required: true, message: 'Please input Icon!' }]}>
             <Input />
           </Form.Item>
         </Form>
