@@ -32,7 +32,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={currentTheme}>
       <Background theme={currentTheme}>
-        <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+        <ConfigProvider theme={{ algorithm: theme.defaultAlgorithm }}>
           <Clock />
           <ShowAdminButton onClick={() => setIsShowAdmin(true)}>管理面板</ShowAdminButton>
           {
