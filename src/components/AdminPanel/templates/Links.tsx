@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, List, Modal, Select, Form, Input, Space, message } from 'antd';
+import { Table, Button, Modal, Select, Form, Input, Space, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 
 import { linksManager } from "@/utils"
@@ -153,17 +153,7 @@ const Links = () => {
       key: 'links',
       render: (links: Link[]) => (
         <Space size="middle">
-          <div style={{
-            height: 100,
-            overflow: 'auto',
-          }}>
-            <List bordered dataSource={links} renderItem={(link) => (
-              <List.Item>
-                {link.icon}: {link.name ? `${link.name}-> ` : ''}{link.url}
-              </List.Item>
-            )}
-            />
-          </div>
+          {links.map(link => `${link.icon}: ${link.name ? `${link.name}-> ` : ''}${link.url}`).join(', ')}
         </Space>
       ),
     },

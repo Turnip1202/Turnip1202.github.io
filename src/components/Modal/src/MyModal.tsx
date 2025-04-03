@@ -35,7 +35,7 @@ export const MyModal: React.FC<IProps> = ({ visibleAdmin, setIsShowAdmin, setVis
   return (<>
     <Modal
       title="请选择进入哪一个面板"
-      footer={[<Button key="back" style={{ display: !visibleAdmin ? 'none' : '' }} onClick={() => { setIsShowAdmin(false); setVisibleAdmin(false); }}>退出面板</Button>]}
+      footer={[<Button key="back" style={{ display: !visibleAdmin ? 'none' : '' }} onClick={() => { setIsShowAdmin(false); setVisibleAdmin(false) }}>退出面板</Button>]}
       open={isShowAdmin} onCancel={() => setIsShowAdmin(false)}>
       {
         adminPanelType.map((item, index) => <Button key={index} onClick={toAdmin(item)} type={item.type}>{item.name}</Button>)
