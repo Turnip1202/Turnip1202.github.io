@@ -126,7 +126,7 @@ const Links = () => {
 
   }
 
-  const handleDeleteLink = id => {
+  const handleDeleteLink = (id: number) => {
     const selectedCategoryIndex = categories.findIndex(cat => cat.id === selectedCategoryId);
     let updatedCategories = [...categories];
     updatedCategories[selectedCategoryIndex].links = updatedCategories[selectedCategoryIndex].links.filter(link => link.id !== id);
@@ -169,7 +169,7 @@ const Links = () => {
     {
       title: 'Action',
       key: 'action',
-      render: (text, record: LinkCategory) => (
+      render: (text: any, record: LinkCategory) => (
         <Space size="middle">
           {/* <Button type="primary" icon={<EditOutlined />} onClick={() => handleEditLink(record)}>
             Edit Link(功能未完善)
