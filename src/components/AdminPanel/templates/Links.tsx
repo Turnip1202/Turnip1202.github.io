@@ -163,7 +163,6 @@ const Links = () => {
             )}
             />
           </div>
-          {links.map(link => `${link.icon}: ${link.name ? `${link.name}-> ` : ''}${link.url}`).join(', ')}
         </Space>
       ),
     },
