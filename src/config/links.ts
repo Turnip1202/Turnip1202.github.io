@@ -13,7 +13,7 @@ export const linkCategories: LinkCategory[] = [
     ]
   },
   {
-    id: 1,
+    id: -1,
     name: "Turnip",
     links: [
       { id: 1, name: "Turnip博客", url: "https://turnip1202.github.io/my-blog-astro/", icon: "🥕" },

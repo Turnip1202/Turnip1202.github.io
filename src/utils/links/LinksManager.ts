@@ -12,6 +12,12 @@ export class LinksManager {
     const storedEngines = this.getFromStorage<SearchEngine[]>(this.ENGINES_KEY);
 
     this.categories = storedCategories || [...defaultCategories];
+    //对category进行排序
+    this.categories.sort((a, b) => a.id - b.id);
+    //对link进行排序
+    this.categories.forEach((category) => {
+      category.links.sort((a, b) => a.id - b.id);
+    })
     this.engines = storedEngines || [...defaultEngines];
 
     // 如果没有存储的数据，保存默认值
