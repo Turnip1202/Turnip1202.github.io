@@ -2,14 +2,14 @@
 import type {  ThemeConfigType } from '../types';
   
   export const themeConfig = {
-    // 默认主题配置
+    // 默认主题配置 - 设置为晨光蓝
     default: {
-      id: 'default',
-      name: '默认主题',
-      backgroundImage: 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)',
+      id: 'morning',
+      name: '晨光蓝',
+      backgroundImage: 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)',
       blur: '10px',
       opacity: 0.95,
-    } ,
+    },
     // 预设主题列表
     presets: [
       {

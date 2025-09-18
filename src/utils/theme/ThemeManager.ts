@@ -95,4 +95,15 @@ export class ThemeManager {
       console.error('Failed to save theme config to storage:', error);
     }
   }
+
+  // 清除存储
+  public clearStorage(): void {
+    localStorage.removeItem(ThemeManager.STORAGE_KEY);
+  }
+
+  // 重置为默认配置
+  public resetToDefault(defaultConfig: IThemeConfig): void {
+    this.config = { ...defaultConfig };
+    this.saveToStorage();
+  }
 }

@@ -13,6 +13,9 @@ export class SiteManager {
     if (!storedConfig) {
       this.saveToStorage();
     }
+    
+    // 应用配置到DOM
+    this.applyConfigToDOM();
   }
 
   // Storage 工具方法
@@ -23,6 +26,19 @@ export class SiteManager {
     } catch (error) {
       console.error(`读取本地存储出错: ${error}`);
       return null;
+    }
+  }
+
+  // 应用配置到DOM
+  private applyConfigToDOM(): void {
+    // 更新标题
+    if (this.config.title) {
+      document.title = this.config.title;
+    }
+    
+    // 更新favicon
+    if (this.config.favicon) {
+      this.updateFavicon(this.config.favicon as string);
     }
   }
 
@@ -43,6 +59,8 @@ export class SiteManager {
   updateTitle(title: string): void {
     this.config.title = title;
     this.saveToStorage();
+    // 同时更新浏览器标签页标题
+    document.title = title;
   }
 
   // 更新版权信息
@@ -55,6 +73,36 @@ export class SiteManager {
   addConfigItem<T>(key: string, value: T): void {
     (this.config as any)[key] = value;
     this.saveToStorage();
+    
+    // 特殊处理某些配置项的DOM更新
+    if (key === 'favicon' && value) {
+      this.updateFavicon(value as string);
+    }
+  }
+
+  // 更新网站图标
+  updateFavicon(faviconUrl: string): void {
+    if (!faviconUrl) return;
+    
+    // 移除现有的favicon链接
+    const existingFavicons = document.querySelectorAll('link[rel*="icon"]');
+    existingFavicons.forEach(link => link.remove());
+    
+    // 创建新的favicon链接
+    const link = document.createElement('link');
+    link.rel = 'shortcut icon';
+    link.type = 'image/x-icon';
+    link.href = faviconUrl;
+    
+    // 添加到head中
+    document.head.appendChild(link);
+    
+    // 同时添加其他格式的图标链接以提高兼容性
+    const iconLink = document.createElement('link');
+    iconLink.rel = 'icon';
+    iconLink.type = 'image/x-icon';
+    iconLink.href = faviconUrl;
+    document.head.appendChild(iconLink);
   }
 
   // 删除配置项

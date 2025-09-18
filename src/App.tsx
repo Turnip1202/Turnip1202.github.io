@@ -9,7 +9,7 @@ import {
   AdminPanel, Background, Clock, MyModal
 } from './components';
 import { useTheme } from './hooks';
-import { ConfigProvider, theme, } from 'antd';
+import { ConfigProvider, theme, App as AntdApp } from 'antd';
 
 
 //本地存储工具
@@ -29,21 +29,48 @@ const App: React.FC = () => {
 
   const [currentTheme, setCurrentTheme] = useTheme(localThemeConfig);
 
+  // 根据当前主题动态配置 Ant Design 主题
+  const antdTheme = {
+    algorithm: currentTheme.id === 'custom' && currentTheme.name === '暗黑主题' 
+      ? theme.darkAlgorithm 
+      : theme.defaultAlgorithm,
+    token: {
+      colorPrimary: '#4a90e2',
+      borderRadius: 8,
+      colorBgContainer: currentTheme.id === 'custom' && currentTheme.name === '暗黑主题' 
+        ? 'rgba(0, 0, 0, 0.6)' 
+        : 'rgba(255, 255, 255, 0.8)',
+    },
+    components: {
+      Modal: {
+        contentBg: currentTheme.id === 'custom' && currentTheme.name === '暗黑主题' 
+          ? 'rgba(0, 0, 0, 0.8)' 
+          : 'rgba(255, 255, 255, 0.95)',
+      },
+      Button: {
+        borderRadius: 6,
+      },
+      Input: {
+        borderRadius: 6,
+      },
+    },
+  };
+
   return (
-    <ThemeProvider theme={currentTheme}>
-      <Background theme={currentTheme}>
-        <ConfigProvider theme={{ algorithm: theme.defaultAlgorithm }}>
-          <Clock />
-          <ShowAdminButton onClick={() => setIsShowAdmin(true)}>管理面板</ShowAdminButton>
-          {
-            visibleAdmin ? <AdminPanel config={toConfig}></AdminPanel> : <Main cb={setCurrentTheme}></Main>
-          }
-          <MyModal setVisibleAdmin={setVisibleAdmin} visibleAdmin={visibleAdmin} setToConfig={setToConfig} setIsShowAdmin={setIsShowAdmin} isShowAdmin={isShowAdmin}></MyModal>
-        </ConfigProvider>
-
-      </Background>
-    </ThemeProvider>
-
+    <ConfigProvider theme={antdTheme}>
+      <AntdApp>
+        <ThemeProvider theme={currentTheme}>
+          <Background theme={currentTheme}>
+            <Clock />
+            <ShowAdminButton onClick={() => setIsShowAdmin(true)}>管理面板</ShowAdminButton>
+            {
+              visibleAdmin ? <AdminPanel config={toConfig}></AdminPanel> : <Main cb={setCurrentTheme}></Main>
+            }
+            <MyModal setVisibleAdmin={setVisibleAdmin} visibleAdmin={visibleAdmin} setToConfig={setToConfig} setIsShowAdmin={setIsShowAdmin} isShowAdmin={isShowAdmin}></MyModal>
+          </Background>
+        </ThemeProvider>
+      </AntdApp>
+    </ConfigProvider>
   );
 };
 

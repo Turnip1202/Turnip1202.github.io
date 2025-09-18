@@ -112,10 +112,11 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
   const [selectedTheme, setSelectedTheme] = useState(() => {
     try {
       const saved = localStorage.getItem('turnip-theme-preset');
-      return saved || 'morning';
+      // 如果没有保存的主题，使用默认主题ID
+      return saved || themeConfig.default.id;
     } catch (error) {
       console.warn('Failed to load theme preset:', error);
-      return 'morning';
+      return themeConfig.default.id;
     }
   });
   const [isAutoMode, setIsAutoMode] = useState(() => {
@@ -138,6 +139,18 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
     }
   }, [isDarkMode, isAutoMode, selectedTheme]);
 
+  // 检查当前选中的主题是否仍然存在，如果不存在则自动选择一个有效的主题
+  useEffect(() => {
+    const currentThemeExists = themeConfig.presets.some(theme => theme.id === selectedTheme) || 
+                              selectedTheme === themeConfig.default.id;
+    
+    if (!currentThemeExists) {
+      // 如果当前主题不存在，选择第一个可用的预设主题或默认主题
+      const fallbackTheme = themeConfig.presets[0]?.id || themeConfig.default.id;
+      setSelectedTheme(fallbackTheme);
+    }
+  }, [themeConfig, selectedTheme]);
+
   useEffect(() => {
     const checkTime = () => {
       if (!isAutoMode) return;
@@ -157,7 +170,11 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
   }, [isAutoMode, isDarkMode]);
 
   const updateTheme = useCallback(() => {
-    const baseTheme = themeConfig.presets.find(theme => theme.id === selectedTheme) || themeConfig.presets[0];
+    // 安全地获取基础主题，避免数组为空时的错误
+    const baseTheme = themeConfig.presets.find(theme => theme.id === selectedTheme) || 
+                      themeConfig.presets[0] || 
+                      themeConfig.default; // 如果预设为空，回退到默认主题
+    
     const theme: ThemeConfigType = {
       id: 'custom',
       name: isDarkMode ? '暗黑主题' : '明亮主题',
@@ -168,7 +185,7 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
       opacity: isDarkMode ? 0.85 : baseTheme.opacity,
     };
     onSelect(theme);
-  }, [isDarkMode, selectedTheme, onSelect]);
+  }, [isDarkMode, selectedTheme, onSelect, themeConfig]);
 
   useEffect(() => {
     updateTheme();
