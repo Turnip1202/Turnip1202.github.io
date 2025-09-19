@@ -382,7 +382,7 @@
   text-align: center;
   line-height: 1.4;
   transition: all 0.3s ease;
-`,b=e=>{let{categories:t}=e;return(0,i.jsx)(i.Fragment,{children:t.map(e=>(0,i.jsxs)(m,{children:[(0,i.jsx)(u,{children:e.name}),(0,i.jsx)(f,{children:e.links.map(e=>(0,i.jsxs)(j,{href:e.url,target:"_blank",rel:"noopener noreferrer",children:[(0,i.jsx)(y,{children:e.icon}),(0,i.jsx)(A,{children:e.name})]},e.id))})]},e.id))})},v=l.A.div`
+`,b=e=>{let{categories:t}=e;return(0,i.jsx)(i.Fragment,{children:t.sort((e,t)=>e.id-t.id).map(e=>(0,i.jsxs)(m,{children:[(0,i.jsx)(u,{children:e.name}),(0,i.jsx)(f,{children:e.links.map(e=>(0,i.jsxs)(j,{href:e.url,target:"_blank",rel:"noopener noreferrer",children:[(0,i.jsx)(y,{children:e.icon}),(0,i.jsx)(A,{children:e.name})]},e.id))})]},e.id))})},v=l.A.div`
   min-height: 100vh;
   position: relative;
   padding: 2rem;
