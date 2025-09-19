@@ -5,11 +5,36 @@ export const linkCategories: LinkCategory[] = [
     id: 0,
     name: "影音视频",
     links: [
-      {id: 1, name: "", url: `https://www.iqiyi.com/`, icon: "爱奇艺"},
-      { id: 2, name: "", url: "https://www.youku.com/", icon: "优酷" },      // 替代：使用星星图标
-      { id: 3, name: "", url: "https://v.qq.com/", icon: "🐧视频" },         // 替代：使用工具图标
-      { id: 4, name: "", url: "https://www.bilibili.com/", icon: "B站" },      // 替代：使用游戏图标
-      { id: 5, name: "", url: "https://www.douyin.com/", icon: "抖音" }          // 替代：使用电影图标
+                {
+                  "id": 1,
+                  "name": "爱奇艺",
+                  "url": "https://www.iqiyi.com/",
+                  "icon": "🎬"
+                },
+                {
+                  "id": 2,
+                  "name": "优酷",
+                  "url": "https://www.youku.com/",
+                  "icon": "🎬"
+                },
+                {
+                  "id": 3,
+                  "name": "腾讯视频",
+                  "url": "https://v.qq.com/",
+                  "icon": "🐧"
+                },
+                {
+                  "id": 4,
+                  "name": "哔哩哔哩",
+                  "url": "https://www.bilibili.com/",
+                  "icon": "bilibili"
+                },
+                {
+                  "id": 5,
+                  "name": "抖音",
+                  "url": "https://www.douyin.com/",
+                  "icon": "🎵"
+                }
     ]
   },
   {
