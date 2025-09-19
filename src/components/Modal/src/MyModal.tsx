@@ -4,7 +4,8 @@ import {
   LinkOutlined, 
   BgColorsOutlined, 
   SettingOutlined, 
-  RocketOutlined 
+  RocketOutlined,
+  BranchesOutlined
 } from '@ant-design/icons';
 import { adminPanelType } from "@/config"
 import { IAdminPanelType, EAdminPanelState } from "@/types"
@@ -19,6 +20,8 @@ import { IAdminPanelType, EAdminPanelState } from "@/types"
         return <SettingOutlined />;
       case EAdminPanelState.ANTD_SHOWCASE_PANEL:
         return <RocketOutlined />;
+      case EAdminPanelState.VERSION_ADMIN_PANEL:
+        return <BranchesOutlined />;
       default:
         return null;
     }
@@ -34,6 +37,8 @@ import { IAdminPanelType, EAdminPanelState } from "@/types"
         return '网站基本信息和SEO配置';
       case EAdminPanelState.ANTD_SHOWCASE_PANEL:
         return '查看Ant Design组件展示';
+      case EAdminPanelState.VERSION_ADMIN_PANEL:
+        return '管理配置版本，支持创建、恢复和比较';
       default:
         return '';
     }
@@ -63,6 +68,9 @@ export const MyModal: React.FC<IProps> = ({ visibleAdmin, setIsShowAdmin, setVis
         break;
       case EAdminPanelState.ANTD_SHOWCASE_PANEL:
         setToConfig(EAdminPanelState.ANTD_SHOWCASE_PANEL);
+        break;
+      case EAdminPanelState.VERSION_ADMIN_PANEL:
+        setToConfig(EAdminPanelState.VERSION_ADMIN_PANEL);
         break;
       default:
         setVisibleAdmin(true)

@@ -28,8 +28,11 @@ import {
   ExclamationCircleOutlined,
   DownloadOutlined,
   EyeOutlined,
+  HistoryOutlined,
+  ExportOutlined,
 } from '@ant-design/icons';
 import { siteManager, themeManager, linksManager } from '@/utils';
+import { configVersionManager, VersionUtils } from '@/utils/version';
 import { themeConfig } from '@/config/theme';
 import { siteConfig as defaultSiteConfig } from '@/config/site';
 import { linkCategories, searchEngines } from '@/config/links';
@@ -44,11 +47,8 @@ const SiteAdmin: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [resetModalVisible, setResetModalVisible] = useState(false);
-  const [importModalVisible, setImportModalVisible] = useState(false);
   const [previewModalVisible, setPreviewModalVisible] = useState(false);
   const [backupBeforeReset, setBackupBeforeReset] = useState(true);
-  const [importData, setImportData] = useState<string>('');
-  const [importType, setImportType] = useState<'config' | 'full'>('config');
 
   useEffect(() => {
     loadSiteConfig();
@@ -163,53 +163,22 @@ const SiteAdmin: React.FC = () => {
     }, 1000);
   };
 
-  const exportConfig = () => {
-    const config = siteManager.getConfig();
-    const dataStr = JSON.stringify(config, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'turnip-site-config.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    
-    message.success('配置已导出');
-  };
-
-  const exportFullBackup = () => {
-    const fullBackup = {
-      site: siteManager.getConfig(),
-      theme: themeManager.getConfig(),
-      links: {
-        categories: linksManager.getAllCategories(),
-        searchEngines: linksManager.getAllSearchEngines(),
-      },
-      timestamp: new Date().toISOString(),
-      version: '1.0.0',
-    };
-    
-    const dataStr = JSON.stringify(fullBackup, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `turnip-full-backup-${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    
-    message.success('完整备份已导出');
+  const getVersionInfo = () => {
+    return VersionUtils.getVersionStatusText();
   };
 
   const handleResetWebsite = async () => {
     try {
       setLoading(true);
       
-      // 如果需要备份，先导出完整备份
+      // 如果需要备份，先保存当前版本
       if (backupBeforeReset) {
-        exportFullBackup();
+        configVersionManager.createVersion({
+          name: `重置前备份_${new Date().toLocaleString('zh-CN')}`,
+          description: '系统重置前的自动备份',
+          tags: ['系统重置', '自动备份']
+        });
+        message.success('当前配置已保存为版本');
         // 等待一下让用户看到备份成功的消息
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
@@ -234,93 +203,7 @@ const SiteAdmin: React.FC = () => {
     }
   };
 
-  const handleImportData = async () => {
-    if (!importData.trim()) {
-      message.error('请先输入要导入的数据');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const parsedData = JSON.parse(importData);
-      
-      if (importType === 'config') {
-        // 导入网站配置
-        if (!parsedData.title || !parsedData.copyright) {
-          message.error('无效的网站配置格式');
-          return;
-        }
-        
-        siteManager.resetToDefault(parsedData);
-        message.success('网站配置导入成功！');
-        
-      } else if (importType === 'full') {
-        // 导入完整备份
-        if (!parsedData.site || !parsedData.theme || !parsedData.links) {
-          message.error('无效的完整备份格式');
-          return;
-        }
-        
-        // 逐个恢复各模块数据
-        siteManager.resetToDefault(parsedData.site);
-        themeManager.resetToDefault(parsedData.theme);
-        linksManager.resetToDefault(
-          parsedData.links.categories || [],
-          parsedData.links.searchEngines || []
-        );
-        
-        message.success('完整备份导入成功！');
-      }
-      
-      // 重新加载配置
-      loadSiteConfig();
-      setImportModalVisible(false);
-      setImportData('');
-      
-      // 延迟刷新页面以确保所有数据同步
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-      
-    } catch (error) {
-      console.error('导入失败:', error);
-      message.error('数据格式错误，请检查导入的JSON格式是否正确');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    
-    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-      message.error('请选择JSON格式的文件');
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      setImportData(content);
-      
-      // 自动识别导入类型
-      try {
-        const parsed = JSON.parse(content);
-        if (parsed.site && parsed.theme && parsed.links) {
-          setImportType('full');
-          message.info('检测到完整备份文件');
-        } else if (parsed.title && parsed.copyright) {
-          setImportType('config');
-          message.info('检测到网站配置文件');
-        }
-      } catch {
-        // 忽略解析错误，用户可以手动选择类型
-      }
-    };
-    
-    reader.readAsText(file);
-  };
+  // 导入功能已移至版本管理系统
 
   const generateFullPreview = () => {
     const fullConfig = {
@@ -350,8 +233,7 @@ const SiteAdmin: React.FC = () => {
       // 系统信息
       system: {
         storageSize: getStorageSize(),
-        lastModified: new Date().toISOString(),
-        version: '1.0.0',
+        ...VersionUtils.getSystemSummary()
       }
     };
     
@@ -405,8 +287,8 @@ const SiteAdmin: React.FC = () => {
           <Col span={6}>
             <Statistic
               title="配置版本"
-              value="1.0.0"
-              valueStyle={{ color: '#eb2f96' }}
+              value={getVersionInfo()}
+              valueStyle={{ color: '#eb2f96', fontSize: '14px' }}
             />
           </Col>
         </Row>
@@ -611,31 +493,54 @@ const SiteAdmin: React.FC = () => {
             showIcon
           />
           
-          {/* 备份与导入导出 */}
+          {/* 版本管理与数据管理 */}
           <div>
-            <Title level={5} style={{ marginBottom: 8 }}>💾 数据管理</Title>
+            <Title level={5} style={{ marginBottom: 8 }}>📋 版本管理与数据备份</Title>
             <Space wrap>
               <Button
-                icon={<DownloadOutlined />}
-                onClick={exportConfig}
+                type="primary"
+                icon={<SaveOutlined />}
+                onClick={() => {
+                  const options = {
+                    name: `网站配置快照_${new Date().toLocaleDateString('zh-CN')}`,
+                    description: '从网站配置面板创建的配置快照',
+                    tags: ['手动保存', '网站配置']
+                  };
+                  configVersionManager.createVersion(options);
+                  message.success('配置版本已保存！');
+                }}
               >
-                导出网站配置
+                保存当前版本
               </Button>
               
               <Button
-                type="primary"
-                icon={<DownloadOutlined />}
-                onClick={exportFullBackup}
+                icon={<HistoryOutlined />}
+                onClick={() => {
+                  // 跳转到版本管理面板的逻辑
+                  message.info('请通过管理面板中的"配置版本管理"查看所有版本');
+                }}
               >
-                导出完整备份
+                查看版本历史
               </Button>
               
               <Button
                 type="dashed"
-                icon={<UploadOutlined />}
-                onClick={() => setImportModalVisible(true)}
+                icon={<ExportOutlined />}
+                onClick={() => {
+                  const data = configVersionManager.exportVersions();
+                  const blob = new Blob([data], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `turnip_versions_${new Date().toISOString().split('T')[0]}.json`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                  message.success('版本数据导出成功');
+                }}
               >
-                导入数据
+                导出版本数据
               </Button>
               
               <Button
@@ -750,123 +655,6 @@ const SiteAdmin: React.FC = () => {
               </label>
             </Space>
           </div>
-        </div>
-      </Modal>
-
-      {/* 导入数据模态框 */}
-      <Modal
-        title={
-          <Space>
-            <UploadOutlined style={{ color: '#1890ff' }} />
-            <span>导入数据</span>
-          </Space>
-        }
-        open={importModalVisible}
-        onOk={handleImportData}
-        onCancel={() => {
-          setImportModalVisible(false);
-          setImportData('');
-        }}
-        okText="开始导入"
-        cancelText="取消"
-        okButtonProps={{ loading }}
-        width={700}
-        centered
-      >
-        <div style={{ padding: '20px 0' }}>
-          <Alert
-            message="数据导入说明"
-            description="支持导入之前导出的网站配置或完整备份文件，导入后将覆盖对应的配置项"
-            type="info"
-            showIcon
-            style={{ marginBottom: 20 }}
-          />
-          
-          {/* 导入类型选择 */}
-          <div style={{ marginBottom: 16 }}>
-            <Text strong>导入类型：</Text>
-            <div style={{ marginTop: 8 }}>
-              <Space>
-                <Button
-                  type={importType === 'config' ? 'primary' : 'default'}
-                  onClick={() => setImportType('config')}
-                  size="small"
-                >
-                  🌐 网站配置
-                </Button>
-                <Button
-                  type={importType === 'full' ? 'primary' : 'default'}
-                  onClick={() => setImportType('full')}
-                  size="small"
-                >
-                  📋 完整备份
-                </Button>
-              </Space>
-            </div>
-          </div>
-          
-          {/* 文件上传 */}
-          <div style={{ marginBottom: 16 }}>
-            <Text strong>选择文件：</Text>
-            <div style={{ marginTop: 8 }}>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                style={{
-                  padding: '8px',
-                  border: '1px solid #d9d9d9',
-                  borderRadius: '6px',
-                  width: '100%'
-                }}
-              />
-            </div>
-          </div>
-          
-          {/* 手动输入 */}
-          <div style={{ marginBottom: 16 }}>
-            <Text strong>或手动粘贴JSON数据：</Text>
-            <div style={{ marginTop: 8 }}>
-              <Input.TextArea
-                value={importData}
-                onChange={(e) => setImportData(e.target.value)}
-                placeholder={
-                  importType === 'config' 
-                    ? '粘贴网站配置的JSON数据...'
-                    : '粘贴完整备份的JSON数据...'
-                }
-                rows={8}
-                style={{ fontFamily: 'monospace', fontSize: '12px' }}
-              />
-            </div>
-          </div>
-          
-          {/* 导入预览 */}
-          {importData && (
-            <div>
-              <Text strong>数据预览：</Text>
-              <div style={{ 
-                marginTop: 8,
-                background: '#f5f5f5', 
-                padding: '12px',
-                borderRadius: '6px',
-                maxHeight: '150px',
-                overflow: 'auto'
-              }}>
-                <pre style={{ margin: 0, fontSize: '11px', color: '#666' }}>
-                  {(() => {
-                    try {
-                      const parsed = JSON.parse(importData);
-                      return JSON.stringify(parsed, null, 2).substring(0, 500) + 
-                        (JSON.stringify(parsed).length > 500 ? '...' : '');
-                    } catch {
-                      return '无效的JSON格式';
-                    }
-                  })()}
-                </pre>
-              </div>
-            </div>
-          )}
         </div>
       </Modal>
 
@@ -1087,9 +875,9 @@ const SiteAdmin: React.FC = () => {
                     </div>
                   </Col>
                   <Col span={8}>
-                    <Text strong>版本信息：</Text>
+                    <Text strong>项目版本：</Text>
                     <div style={{ marginTop: 4 }}>
-                      <Text>{fullConfig.system.version}</Text>
+                      <Text>{fullConfig.system.projectVersion}</Text>
                     </div>
                   </Col>
                   <Col span={8}>
@@ -1098,6 +886,18 @@ const SiteAdmin: React.FC = () => {
                       <Text style={{ fontSize: '12px' }}>
                         {new Date(fullConfig.system.lastModified).toLocaleString('zh-CN')}
                       </Text>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <Text strong>配置版本数：</Text>
+                    <div style={{ marginTop: 4 }}>
+                      <Text>{fullConfig.system.configVersions} 个</Text>
+                    </div>
+                  </Col>
+                  <Col span={16}>
+                    <Text strong>当前配置版本：</Text>
+                    <div style={{ marginTop: 4 }}>
+                      <Text style={{ color: '#1890ff' }}>{fullConfig.system.currentConfigVersion}</Text>
                     </div>
                   </Col>
                 </Row>

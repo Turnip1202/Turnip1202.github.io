@@ -3,6 +3,7 @@ import { EAdminPanelState } from '@/types';
 import Links from './templates/Links';
 import ThemeAdmin from './templates/ThemeAdmin';
 import SiteAdmin from './templates/SiteAdmin';
+import VersionAdmin from './templates/VersionAdmin';
 import AntdShowcase from './templates/AntdShowcase';
 
 
@@ -22,6 +23,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = (props) => {
             return (<SiteAdmin />)
         case EAdminPanelState.LINKS_ADMIN_PANEL:
             return (<Links />)
+        case EAdminPanelState.VERSION_ADMIN_PANEL:
+            return (<VersionAdmin />)
         case EAdminPanelState.ANTD_SHOWCASE_PANEL:
             return (<AntdShowcase />)
         default:

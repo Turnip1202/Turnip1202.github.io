@@ -1,5 +1,6 @@
 export * from "./theme"
 export * from "./admin"
+export * from "./version"
 import { ThemeConfigType } from "./theme";
 // 定义所有需要用到的类型
 export interface Link {
