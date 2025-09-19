@@ -71,6 +71,12 @@ const SiteAdmin: React.FC = () => {
     console.log('loadSiteConfig - 设置表单值:', formValues); // 调试信息
     form.setFieldsValue(formValues);
     
+    // 验证表单值是否正确设置
+    setTimeout(() => {
+      const actualFavicon = form.getFieldValue('favicon');
+      console.log('loadSiteConfig - 设置后实际的favicon值:', actualFavicon);
+    }, 50);
+    
     // 初始化favicon预览
     setTimeout(() => {
       const favicon = config.favicon as string;
@@ -96,6 +102,13 @@ const SiteAdmin: React.FC = () => {
     try {
       setLoading(true);
       const values = await form.validateFields();
+      console.log('handleSave - 获取到的表单值:', values);
+      
+      // 额外检查单个favicon字段值
+      const faviconValue = form.getFieldValue('favicon');
+      console.log('handleSave - 单独获取favicon字段:', faviconValue);
+      console.log('handleSave - favicon类型:', typeof faviconValue);
+      console.log('handleSave - favicon长度:', faviconValue ? faviconValue.length : 'undefined');
       
       // 更新标题
       siteManager.updateTitle(values.title);
@@ -454,77 +467,108 @@ const SiteAdmin: React.FC = () => {
             <Input placeholder="例如: © 2024 Turnip1202. All rights reserved." />
           </Form.Item>
 
-          <Form.Item
-            name="favicon"
-            label="网站图标URL"
-          >
-            <Space.Compact style={{ width: '100%' }}>
-              <Input 
-                placeholder="例如: /favicon.ico" 
-                style={{ flex: 1 }}
-                onChange={(e) => {
-                  handleFormChange();
-                  // 实时预览favicon
-                  const value = e.target.value;
-                  if (value && value.trim()) {
-                    // 延迟一点更新以免频繁请求
-                    setTimeout(() => {
-                      const img = document.createElement('img');
-                      img.onload = () => {
-                        // 图片加载成功，可以预览
-                        const previewEl = document.getElementById('favicon-preview');
-                        if (previewEl) {
-                          previewEl.style.backgroundImage = `url(${value})`;
-                          previewEl.style.backgroundColor = 'transparent';
-                        }
-                      };
-                      img.onerror = () => {
-                        // 图片加载失败，显示错误状态
-                        const previewEl = document.getElementById('favicon-preview');
-                        if (previewEl) {
-                          previewEl.style.backgroundImage = 'none';
-                          previewEl.style.backgroundColor = '#ff4d4f';
-                        }
-                      };
-                      img.src = value;
-                    }, 500);
-                  } else {
-                    // 清空预览
-                    const previewEl = document.getElementById('favicon-preview');
-                    if (previewEl) {
-                      previewEl.style.backgroundImage = 'none';
-                      previewEl.style.backgroundColor = '#f0f0f0';
-                    }
-                  }
-                }}
-              />
-              <div 
-                id="favicon-preview"
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  border: '1px solid #d9d9d9',
-                  borderLeft: 'none',
-                  borderRadius: '0 6px 6px 0',
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
-                  backgroundColor: '#f0f0f0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  color: '#666'
-                }}
-                title="图标预览"
-              >
-                🌐
-              </div>
-            </Space.Compact>
-            <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-              支持.ico、.png、.svg等格式，建议16x16或32x32像素
-            </div>
-          </Form.Item>
+<Space.Compact
+  block // 使 Compact 占满父容器宽度
+  style={{
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'column',
+  }}
+>
+  <div
+    style={{
+      display: 'flex',
+      width: '100%',
+      alignItems: 'center',
+    }}
+  >
+    <Form.Item
+      name="favicon"
+      label="网站图标URL"
+      style={{
+        flex: 1,
+        marginBottom: 0, // 避免 Form.Item 默认 margin 影响垂直对齐
+      }}
+    >
+      <Input
+        placeholder="例如: /favicon.ico"
+        onChange={(e) => {
+          const value = e.target.value;
+          handleFormChange(); // 标记表单变化
+
+          // 可选：setFieldValue 不是必须的，Form 会自动管理
+          // form.setFieldValue('favicon', value); // Ant Design v5+ 自动同步
+
+          // 实时预览逻辑
+          if (value && value.trim()) {
+            setTimeout(() => {
+                const img = document.createElement('img');
+              img.onload = () => {
+                const previewEl = document.getElementById('favicon-preview');
+                if (previewEl) {
+                  previewEl.style.backgroundImage = `url(${value})`;
+                  previewEl.style.backgroundColor = 'transparent';
+                }
+              };
+              img.onerror = () => {
+                const previewEl = document.getElementById('favicon-preview');
+                if (previewEl) {
+                  previewEl.style.backgroundImage = 'none';
+                  previewEl.style.backgroundColor = '#ff4d4f';
+                }
+              };
+              img.src = value;
+            }, 500);
+          } else {
+            const previewEl = document.getElementById('favicon-preview');
+            if (previewEl) {
+              previewEl.style.backgroundImage = 'none';
+              previewEl.style.backgroundColor = '#f0f0f0';
+            }
+          }
+        }}
+      />
+    </Form.Item>
+
+    {/* 预览图标 */}
+    <div
+      id="favicon-preview"
+      style={{
+        width: '32px',
+        height: '32px',
+        border: '1px solid #d9d9d9',
+        borderLeft: 'none',
+        borderRadius: '0 6px 6px 0',
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundColor: '#f0f0f0',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '12px',
+        marginTop: '30px',
+        color: '#666',
+        marginLeft: '-1px', // 与 input 边框衔接
+      }}
+      title="图标预览"
+    >
+      🌐
+    </div>
+  </div>
+
+  {/* 提示文字 */}
+  <div
+    style={{
+      fontSize: '12px',
+      color: '#666',
+      marginTop: '4px',
+      paddingLeft: '12px', // 与 label 对齐
+    }}
+  >
+    支持 .ico、.png、.svg 等格式，建议尺寸 16×16 或 32×32 像素
+  </div>
+</Space.Compact>
         </Form>
 
         {hasChanges && (
