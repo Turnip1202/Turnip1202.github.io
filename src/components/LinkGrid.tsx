@@ -182,7 +182,7 @@ interface LinkGridProps {
 export const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
   return (
     <>
-      {categories.map(category => (
+      {categories.sort((a, b) => a.id - b.id).map(category => (
         <CategorySection key={category.id}>
           <CategoryTitle>{category.name}</CategoryTitle>
           <LinksGrid>
