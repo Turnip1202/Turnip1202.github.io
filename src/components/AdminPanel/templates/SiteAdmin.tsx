@@ -533,15 +533,15 @@ const SiteAdmin: React.FC = () => {
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `turnip_versions_${new Date().toISOString().split('T')[0]}.json`;
+                  a.download = `turnip-version-history-${new Date().toISOString().split('T')[0]}.json`;
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
                   URL.revokeObjectURL(url);
-                  message.success('版本数据导出成功');
+                  message.success('版本历史数据已导出');
                 }}
               >
-                导出版本数据
+                导出版本历史
               </Button>
               
               <Button
@@ -586,15 +586,46 @@ const SiteAdmin: React.FC = () => {
       </Card>
 
       {/* 当前配置预览 */}
-      {siteConfig && (
-        <Card title="当前配置预览">
-          <div style={{ background: '#f5f5f5', padding: 16, borderRadius: 6 }}>
-            <pre style={{ margin: 0, fontSize: 12 }}>
-              {JSON.stringify(siteConfig, null, 2)}
-            </pre>
-          </div>
-        </Card>
-      )}
+      <Card 
+        title="当前配置预览"
+        extra={
+          <Space>
+            <Button
+              size="small"
+              icon={<DownloadOutlined />}
+              onClick={() => {
+                const config = generateFullPreview();
+                const dataStr = JSON.stringify(config, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `turnip-full-config-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                message.success('完整配置已导出');
+              }}
+            >
+              导出完整配置
+            </Button>
+            <Button
+              size="small"
+              icon={<EyeOutlined />}
+              onClick={() => setPreviewModalVisible(true)}
+            >
+              详细预览
+            </Button>
+          </Space>
+        }
+      >
+        <div style={{ background: '#f5f5f5', padding: 16, borderRadius: 6 }}>
+          <pre style={{ margin: 0, fontSize: 12, maxHeight: 400, overflow: 'auto' }}>
+            {JSON.stringify(generateFullPreview(), null, 2)}
+          </pre>
+        </div>
+      </Card>
 
       {/* 重置网站确认模态框 */}
       <Modal
@@ -676,17 +707,21 @@ const SiteAdmin: React.FC = () => {
         open={previewModalVisible}
         onCancel={() => setPreviewModalVisible(false)}
         footer={[
-          <Button key="export" onClick={() => {
+          <Button key="export" icon={<DownloadOutlined />} onClick={() => {
             const config = generateFullPreview();
             const dataStr = JSON.stringify(config, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', `turnip-config-preview-${new Date().toISOString().split('T')[0]}.json`);
-            linkElement.click();
-            message.success('配置预览已导出');
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `turnip-full-config-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            message.success('完整配置已导出');
           }}>
-            导出预览
+            导出完整配置
           </Button>,
           <Button key="close" type="primary" onClick={() => setPreviewModalVisible(false)}>
             关闭

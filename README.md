@@ -15,9 +15,9 @@
 
 ---
 
-<img src="https://via.placeholder.com/1200x600/1a1a2e/667eea?text=Turnip+Nav+Preview" alt="Turnip Nav Preview" width="100%">
+<img src="https://turnip1202.github.io/favicon.ico" alt="Turnip Nav Preview" width="10%">
 
-*让你的浏览器主页独一无二*
+*Turnip Nav Preview让你的浏览器主页独一无二*
 
 </div>
 
