@@ -264,7 +264,7 @@ const Links: React.FC = () => {
 
   const handleClearAll = async () => {
     try {
-      linksManager.clearStorage();
+      await linksManager.clearStorage();
       await loadCategories();
       message.success('所有数据清空成功！');
     } catch (error) {
@@ -614,7 +614,7 @@ const Links: React.FC = () => {
               </Space>
             }
             style={{ marginBottom: 20 }}
-            headStyle={{ background: '#fafafa' }}
+            styles={{ header: { background: '#fafafa' } }}
           >
             <Form.Item 
               name="categoryId" 
@@ -652,7 +652,7 @@ const Links: React.FC = () => {
               </Space>
             }
             style={{ marginBottom: 20 }}
-            headStyle={{ background: '#fafafa' }}
+            styles={{ header: { background: '#fafafa' } }}
           >
             <Row gutter={16}>
               <Col span={16}>
@@ -733,7 +733,7 @@ const Links: React.FC = () => {
               </Space>
             }
             style={{ background: '#fafafa' }}
-            headStyle={{ background: '#f0f0f0' }}
+            styles={{ header: { background: '#f0f0f0' } }}
           >
             <div style={{ 
               padding: '20px', 

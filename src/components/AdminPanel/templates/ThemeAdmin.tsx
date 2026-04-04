@@ -1,21 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Card,
-  Form,
-  Input,
   Button,
   Space,
   Table,
   Modal,
-  ColorPicker,
-  Slider,
   message,
-  Divider,
   Typography,
   Row,
   Col,
-  Switch,
   Popconfirm,
+  Alert,
 } from 'antd';
 import {
   PlusOutlined,
@@ -26,176 +21,189 @@ import {
 } from '@ant-design/icons';
 import { themeManager } from '@/utils';
 import type { ThemeConfigType } from '@/types';
+import { ThemeEditor } from '@/components/theme';
+import { getThemeManager, type EnhancedThemeConfig, type ThemePreset } from '@/core/theme/ThemeManagerV2';
 
 const { Title, Paragraph } = Typography;
 
 const ThemeAdmin: React.FC = () => {
-  const [form] = Form.useForm();
-  const [presets, setPresets] = useState<ThemeConfigType[]>([]);
+  const [presets, setPresets] = useState<ThemePreset[]>([]);
   const [defaultTheme, setDefaultTheme] = useState<ThemeConfigType | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingTheme, setEditingTheme] = useState<ThemeConfigType | null>(null);
-  const [previewTheme, setPreviewTheme] = useState<ThemeConfigType | null>(null);
+  const [editorVisible, setEditorVisible] = useState(false);
+  const [editingEnhancedTheme, setEditingEnhancedTheme] = useState<EnhancedThemeConfig | undefined>();
+  const [editorMode, setEditorMode] = useState<'create' | 'edit'>('create');
+  
+  const themeManagerV2 = useMemo(() => getThemeManager(), []);
 
   useEffect(() => {
     loadThemes();
   }, []);
 
-  const loadThemes = () => {
+  const loadThemes = useCallback(() => {
+    const allPresets = themeManagerV2.getAllPresets();
+    setPresets(allPresets);
+    
     const config = themeManager.getConfig();
-    setPresets(config.presets);
     setDefaultTheme(config.default);
-  };
+  }, [themeManagerV2]);
 
-  const showModal = (theme?: ThemeConfigType) => {
-    setEditingTheme(theme || null);
-    if (theme) {
-      form.setFieldsValue({
-        id: theme.id,
-        name: theme.name,
-        backgroundImage: theme.backgroundImage,
-        blur: parseInt(theme.blur),
-        opacity: Math.round(theme.opacity * 100),
-      });
-    } else {
-      form.resetFields();
-    }
-    setIsModalVisible(true);
-  };
+  const showEnhancedEditor = useCallback((theme?: EnhancedThemeConfig) => {
+    setEditingEnhancedTheme(theme);
+    setEditorMode(theme ? 'edit' : 'create');
+    setEditorVisible(true);
+  }, []);
 
-  const handleSubmit = async () => {
+  const handlePreviewEnhanced = useCallback((theme: EnhancedThemeConfig) => {
+    themeManagerV2.setPreviewTheme(theme);
+    message.info('主题预览已应用，刷新页面可恢复');
+  }, [themeManagerV2]);
+
+  const handleSaveEnhanced = useCallback(async (theme: EnhancedThemeConfig) => {
     try {
-      const values = await form.validateFields();
-      const themeData: ThemeConfigType = {
-        id: values.id,
-        name: values.name,
-        backgroundImage: values.backgroundImage,
-        blur: `${values.blur}px`,
-        opacity: values.opacity / 100,
-      };
-
-      if (editingTheme) {
-        themeManager.updatePreset(themeData);
+      if (editorMode === 'edit') {
+        await themeManagerV2.updateCustomPreset({
+          id: theme.id,
+          name: theme.name,
+          description: `自定义主题 - ${theme.name}`,
+          config: theme,
+        });
         message.success('主题更新成功！');
       } else {
-        themeManager.addPreset(themeData);
-        message.success('主题添加成功！');
+        await themeManagerV2.addCustomPreset({
+          id: theme.id,
+          name: theme.name,
+          description: `自定义主题 - ${theme.name}`,
+          config: theme,
+        });
+        message.success('主题创建成功！');
       }
-      
       loadThemes();
-      setIsModalVisible(false);
-      form.resetFields();
+      setEditorVisible(false);
     } catch (error) {
-      message.error('操作失败，请检查输入');
+      message.error('保存主题失败');
     }
-  };
+  }, [themeManagerV2, editorMode, loadThemes]);
 
-  const handleDelete = (themeId: string) => {
-    // 安全检查：防止删除最后一个主题
-    if (presets.length <= 1) {
-      message.warning('不能删除最后一个主题，请先添加其他主题');
-      return;
-    }
-    
+  const handleDelete = useCallback(async (presetId: string) => {
     try {
-      themeManager.deletePreset(themeId);
+      await themeManagerV2.deleteCustomPreset(presetId);
       message.success('主题删除成功！');
       loadThemes();
     } catch (error) {
-      message.error('删除失败');
+      if (error instanceof Error) {
+        message.error(error.message);
+      } else {
+        message.error('删除失败');
+      }
     }
-  };
+  }, [themeManagerV2, loadThemes]);
 
-  const handleSetDefault = (theme: ThemeConfigType) => {
-    themeManager.setDefaultTheme(theme);
+  const handleSetDefault = useCallback((theme: ThemeConfigType) => {
+    themeManager.setDefaultThemeSync(theme);
     message.success('默认主题设置成功！');
     loadThemes();
-  };
+  }, [loadThemes]);
 
-  const handlePreview = (theme: ThemeConfigType) => {
-    setPreviewTheme(theme);
-    // 这里可以触发全局主题预览
-    message.info('主题预览功能开发中...');
-  };
-
-  const generateGradient = () => {
-    const gradients = [
-      'linear-gradient(120deg, #a8edea 0%, #fed6e3 100%)',
-      'linear-gradient(120deg, #d299c2 0%, #fef9d7 100%)',
-      'linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%)',
-      'linear-gradient(120deg, #fdbb2d 0%, #22c1c3 100%)',
-      'linear-gradient(120deg, #ff9a9e 0%, #fecfef 100%)',
-      'linear-gradient(120deg, #667eea 0%, #764ba2 100%)',
-      'linear-gradient(120deg, #f093fb 0%, #f5576c 100%)',
-      'linear-gradient(120deg, #4facfe 0%, #00f2fe 100%)',
-    ];
-    const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
-    form.setFieldValue('backgroundImage', randomGradient);
-  };
-
-  const restoreDefaultThemes = () => {
-    // 恢复默认主题集
-    const defaultThemes = [
+  const restoreDefaultThemes = useCallback(async () => {
+    const defaultThemes: Omit<ThemePreset, 'isBuiltIn'>[] = [
       {
         id: 'purple',
         name: '渐变紫',
-        backgroundImage: 'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)',
-        blur: '10px',
-        opacity: 0.95,
+        description: '优雅的紫色渐变主题',
+        config: {
+          id: 'purple',
+          name: '渐变紫',
+          backgroundImage: 'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)',
+          blur: '10px',
+          opacity: 0.95,
+          isDark: false,
+        },
       },
       {
         id: 'morning',
         name: '晨光蓝',
-        backgroundImage: 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)',
-        blur: '10px',
-        opacity: 0.95,
+        description: '清新的晨光蓝色主题',
+        config: {
+          id: 'morning',
+          name: '晨光蓝',
+          backgroundImage: 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)',
+          blur: '10px',
+          opacity: 0.95,
+          isDark: false,
+        },
       },
       {
         id: 'night',
         name: '夜空',
-        backgroundImage: 'linear-gradient(to right, #243949 0%, #517fa4 100%)',
-        blur: '10px',
-        opacity: 0.92,
+        description: '深邃的夜空主题',
+        config: {
+          id: 'night',
+          name: '夜空',
+          backgroundImage: 'linear-gradient(to right, #243949 0%, #517fa4 100%)',
+          blur: '10px',
+          opacity: 0.92,
+          isDark: true,
+        },
       },
     ];
     
     try {
-      defaultThemes.forEach(theme => {
-        // 检查主题是否已存在，避免重复添加
-        if (!themeManager.findThemeById(theme.id)) {
-          themeManager.addPreset(theme);
+      for (const theme of defaultThemes) {
+        const existing = themeManagerV2.getAllPresets().find(p => p.id === theme.id);
+        if (!existing) {
+          await themeManagerV2.addCustomPreset(theme);
         }
-      });
+      }
       loadThemes();
       message.success('默认主题恢复成功！');
     } catch (error) {
       message.error('默认主题恢复失败');
     }
+  }, [themeManagerV2, loadThemes]);
+
+  const convertToEnhancedTheme = (preset: ThemePreset): EnhancedThemeConfig => {
+    const theme = preset.config;
+    return {
+      ...theme,
+      colors: theme.colors || {
+        primary: { r: 74, g: 144, b: 226, a: 1 },
+        background: { r: 255, g: 255, b: 255, a: 0.9 },
+        text: { r: 44, g: 62, b: 80, a: 1 },
+        textSecondary: { r: 102, g: 102, b: 102, a: 1 },
+        border: { r: 0, g: 0, b: 0, a: 0.1 },
+        accent: { r: 74, g: 144, b: 226, a: 0.2 },
+      },
+      isDark: theme.isDark ?? (theme.id === 'night' || theme.name?.includes('暗黑')),
+    };
   };
 
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'id',
+      dataIndex: ['config', 'id'],
       key: 'id',
       width: 100,
     },
     {
       title: '主题名称',
-      dataIndex: 'name',
       key: 'name',
+      render: (_: any, record: ThemePreset) => (
+        <Space>
+          <span>{record.name}</span>
+          {record.isBuiltIn && <span style={{ color: '#999', fontSize: 12 }}>(内置)</span>}
+        </Space>
+      ),
     },
     {
       title: '背景预览',
-      dataIndex: 'backgroundImage',
       key: 'backgroundImage',
       width: 120,
-      render: (backgroundImage: string) => (
+      render: (_: any, record: ThemePreset) => (
         <div
           style={{
             width: 60,
             height: 30,
-            background: backgroundImage,
+            background: record.config.backgroundImage,
             borderRadius: 4,
             border: '1px solid #d9d9d9',
           }}
@@ -204,55 +212,56 @@ const ThemeAdmin: React.FC = () => {
     },
     {
       title: '模糊度',
-      dataIndex: 'blur',
       key: 'blur',
       width: 80,
+      render: (_: any, record: ThemePreset) => record.config.blur,
     },
     {
       title: '透明度',
-      dataIndex: 'opacity',
       key: 'opacity',
       width: 80,
-      render: (opacity: number) => `${Math.round(opacity * 100)}%`,
+      render: (_: any, record: ThemePreset) => `${Math.round(record.config.opacity * 100)}%`,
     },
     {
       title: '操作',
       key: 'action',
       width: 200,
-      render: (_: any, record: ThemeConfigType) => (
+      render: (_: any, record: ThemePreset) => (
         <Space size="small">
           <Button
             type="text"
             icon={<EyeOutlined />}
-            onClick={() => handlePreview(record)}
+            onClick={() => handlePreviewEnhanced(record.config)}
             title="预览"
           />
           <Button
             type="text"
             icon={<EditOutlined />}
-            onClick={() => showModal(record)}
+            onClick={() => showEnhancedEditor(convertToEnhancedTheme(record))}
             title="编辑"
           />
           <Button
             type="text"
-            onClick={() => handleSetDefault(record)}
+            onClick={() => handleSetDefault(record.config)}
             title="设为默认"
           >
             默认
           </Button>
-          <Popconfirm
-            title="确定删除这个主题吗？"
-            onConfirm={() => handleDelete(record.id)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button
-              type="text"
-              danger
-              icon={<DeleteOutlined />}
-              title="删除"
-            />
-          </Popconfirm>
+          {!record.isBuiltIn && (
+            <Popconfirm
+              title="确定删除这个主题吗？"
+              onConfirm={() => handleDelete(record.id)}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                title="删除"
+              />
+            </Popconfirm>
+          )}
         </Space>
       ),
     },
@@ -267,7 +276,6 @@ const ThemeAdmin: React.FC = () => {
         管理应用的主题配置，包括背景渐变、模糊效果和透明度设置。
       </Paragraph>
 
-      {/* 当前默认主题 */}
       {defaultTheme && (
         <Card title="当前默认主题" style={{ marginBottom: 16 }}>
           <Row gutter={16} align="middle">
@@ -294,15 +302,14 @@ const ThemeAdmin: React.FC = () => {
         </Card>
       )}
 
-      {/* 操作按钮 */}
       <div style={{ marginBottom: 16 }}>
         <Space>
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => showModal()}
+            onClick={() => showEnhancedEditor()}
           >
-            添加新主题
+            创建主题
           </Button>
           {presets.length === 0 && (
             <Button
@@ -315,7 +322,6 @@ const ThemeAdmin: React.FC = () => {
         </Space>
       </div>
 
-      {/* 主题列表 */}
       {presets.length === 0 ? (
         <Card style={{ textAlign: 'center', padding: '40px 20px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎨</div>
@@ -324,7 +330,7 @@ const ThemeAdmin: React.FC = () => {
             您还没有创建任何自定义主题，可以点击上方按钮添加新主题或恢复默认主题。
           </Paragraph>
           <Space>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => showEnhancedEditor()}>
               创建第一个主题
             </Button>
             <Button onClick={restoreDefaultThemes}>
@@ -342,72 +348,28 @@ const ThemeAdmin: React.FC = () => {
         />
       )}
 
-      {/* 添加/编辑主题模态框 */}
       <Modal
-        title={editingTheme ? '编辑主题' : '添加新主题'}
-        open={isModalVisible}
-        onOk={handleSubmit}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-        }}
-        width={600}
-        okText="保存"
-        cancelText="取消"
+        title={editorMode === 'edit' ? '编辑主题' : '创建主题'}
+        open={editorVisible}
+        onCancel={() => setEditorVisible(false)}
+        footer={null}
+        width={900}
+        destroyOnHidden
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="id"
-            label="主题ID"
-            rules={[
-              { required: true, message: '请输入主题ID' },
-              { pattern: /^[a-zA-Z0-9_-]+$/, message: 'ID只能包含字母、数字、下划线和连字符' }
-            ]}
-          >
-            <Input placeholder="例如: my-theme" disabled={!!editingTheme} />
-          </Form.Item>
-
-          <Form.Item
-            name="name"
-            label="主题名称"
-            rules={[{ required: true, message: '请输入主题名称' }]}
-          >
-            <Input placeholder="例如: 我的主题" />
-          </Form.Item>
-
-          <Form.Item
-            name="backgroundImage"
-            label="背景渐变"
-            rules={[{ required: true, message: '请输入背景渐变CSS' }]}
-          >
-            <Input.TextArea
-              placeholder="例如: linear-gradient(120deg, #f6d365 0%, #fda085 100%)"
-              rows={3}
-            />
-          </Form.Item>
-
-          <div style={{ marginBottom: 16 }}>
-            <Button onClick={generateGradient} type="dashed" block>
-              🎨 随机生成渐变
-            </Button>
-          </div>
-
-          <Form.Item
-            name="blur"
-            label="模糊度 (px)"
-            rules={[{ required: true, message: '请设置模糊度' }]}
-          >
-            <Slider min={0} max={20} marks={{ 0: '0px', 10: '10px', 20: '20px' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="opacity"
-            label="透明度 (%)"
-            rules={[{ required: true, message: '请设置透明度' }]}
-          >
-            <Slider min={10} max={100} marks={{ 10: '10%', 50: '50%', 100: '100%' }} />
-          </Form.Item>
-        </Form>
+        <Alert
+          message="主题编辑器"
+          description="使用编辑器可以设置主题属性，包括背景渐变、RGBA 颜色、暗黑模式等。编辑完成后点击保存即可。"
+          type="info"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+        <ThemeEditor
+          theme={editingEnhancedTheme}
+          mode={editorMode}
+          onSave={handleSaveEnhanced}
+          onPreview={handlePreviewEnhanced}
+          onCancel={() => setEditorVisible(false)}
+        />
       </Modal>
     </div>
   );

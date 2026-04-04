@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import {BackgroundProps} from "@/types"
 
 
 export const ShowAdminButton = styled.button`
@@ -41,21 +40,18 @@ export const Header = styled.header`
   }
 `;
 
-export const Title = styled.h1<BackgroundProps>`
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
+export const Title = styled.h1`
+  color: var(--text-color, #2c3e50);
   font-size: 2.8rem;
   margin-bottom: 0.5rem;
   font-weight: 800;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
   letter-spacing: -0.02em;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' 
-    ? 'linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)'
-    : 'linear-gradient(135deg, #2c3e50 0%, #4a90e2 50%, #2c3e50 100%)'};
+  background: linear-gradient(135deg, var(--text-color, #2c3e50) 0%, var(--primary-color, #4a90e2) 50%, var(--text-color, #2c3e50) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   
-  /* 加入一些活力 */
   transition: all 0.3s ease;
   
   &:hover {
@@ -73,11 +69,11 @@ export const Title = styled.h1<BackgroundProps>`
   }
 `;
 
-export const MainContent = styled.main<BackgroundProps>`
+export const MainContent = styled.main`
   max-width: 1200px;
   margin: 0 auto;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.65)'};
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
+  background: var(--bg-color, rgba(255, 255, 255, 0.65));
+  color: var(--text-color, #2c3e50);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 20px;
@@ -88,7 +84,6 @@ export const MainContent = styled.main<BackgroundProps>`
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   
-  /* 动画效果 */
   animation: fadeInUp 0.8s ease-out 0.2s both;
   
   @keyframes fadeInUp {
@@ -102,7 +97,6 @@ export const MainContent = styled.main<BackgroundProps>`
     }
   }
   
-  /* 响应式设计 */
   @media (max-width: 768px) {
     margin: 0 1rem;
     padding: 20px;
@@ -116,15 +110,14 @@ export const MainContent = styled.main<BackgroundProps>`
   }
 `;
 
-export const Footer = styled.footer<BackgroundProps>`
+export const Footer = styled.footer`
   text-align: center;
   padding: 24px 20px;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
+  color: var(--text-color, #2c3e50);
   font-size: 14px;
   opacity: 0.8;
   margin-top: 2.5rem;
   
-  /* 动画效果 */
   animation: fadeIn 1s ease-out 0.4s both;
   
   @keyframes fadeIn {

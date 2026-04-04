@@ -1,0 +1,180 @@
+import React, { useMemo } from 'react';
+import { Card, Row, Col, Typography, Empty } from 'antd';
+import { FolderOutlined } from '@ant-design/icons';
+import type { LinkCategory, Link } from '@/types';
+import { useThemeContext } from '@/contexts';
+import { designTokens } from '@/styles/design-tokens';
+
+const { Title, Text } = Typography;
+
+interface LinkCardProps {
+  link: Link;
+  isDark: boolean;
+}
+
+const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark }) => {
+  const cardStyle: React.CSSProperties = {
+    textAlign: 'center',
+    height: '100%',
+    minHeight: '120px',
+    borderRadius: designTokens.borderRadius.lg,
+    background: isDark 
+      ? 'rgba(255, 255, 255, 0.08)' 
+      : 'rgba(255, 255, 255, 0.8)',
+    border: `1px solid ${isDark 
+      ? 'rgba(255, 255, 255, 0.1)' 
+      : 'rgba(255, 255, 255, 0.3)'}`,
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    transition: 'all 0.3s ease',
+    cursor: 'pointer',
+  };
+
+  const iconStyle: React.CSSProperties = {
+    fontSize: '2.5rem',
+    marginBottom: '0.75rem',
+    display: 'block',
+    filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
+  };
+
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ textDecoration: 'none' }}
+    >
+      <Card
+        hoverable
+        style={cardStyle}
+        styles={{
+          body: { padding: '1.5rem 1rem' },
+        }}
+        onMouseEnter={(e) => {
+          const target = e.currentTarget as HTMLElement;
+          target.style.transform = 'translateY(-4px) scale(1.02)';
+          target.style.boxShadow = isDark
+            ? '0 12px 32px rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.1)'
+            : '0 12px 32px rgba(74, 144, 226, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)';
+          target.style.background = isDark
+            ? 'rgba(255, 255, 255, 0.12)'
+            : 'rgba(255, 255, 255, 0.95)';
+        }}
+        onMouseLeave={(e) => {
+          const target = e.currentTarget as HTMLElement;
+          target.style.transform = 'translateY(0) scale(1)';
+          target.style.boxShadow = 'none';
+          target.style.background = isDark
+            ? 'rgba(255, 255, 255, 0.08)'
+            : 'rgba(255, 255, 255, 0.8)';
+        }}
+      >
+        <span style={iconStyle}>{link.icon}</span>
+        <Text
+          style={{
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#555555',
+            fontWeight: 500,
+          }}
+        >
+          {link.name}
+        </Text>
+      </Card>
+    </a>
+  );
+});
+
+LinkCard.displayName = 'LinkCard';
+
+interface CategorySectionProps {
+  category: LinkCategory;
+  isDark: boolean;
+  animationDelay: string;
+}
+
+const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, animationDelay }) => {
+  const sectionStyle: React.CSSProperties = {
+    margin: '2.5rem 0',
+    animation: `categoryFadeIn 0.8s ease-out ${animationDelay} both`,
+  };
+
+  const titleStyle: React.CSSProperties = {
+    color: isDark ? '#ffffff' : '#2c3e50',
+    fontSize: '1.4rem',
+    fontWeight: 700,
+    marginBottom: '1.5rem',
+    padding: '0.75rem 1rem',
+    background: isDark 
+      ? 'rgba(255, 255, 255, 0.08)' 
+      : 'rgba(255, 255, 255, 0.6)',
+    borderRadius: designTokens.borderRadius.md,
+    borderLeft: `4px solid ${designTokens.colors.primary}`,
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+  };
+
+  return (
+    <section style={sectionStyle}>
+      <style>
+        {`
+          @keyframes categoryFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
+      <div style={titleStyle}>
+        <FolderOutlined style={{ marginRight: '8px' }} />
+        {category.name}
+      </div>
+      <Row gutter={[16, 16]}>
+        {category.links.map((link) => (
+          <Col key={link.id} xs={12} sm={8} md={6} lg={4} xl={3}>
+            <LinkCard link={link} isDark={isDark} />
+          </Col>
+        ))}
+      </Row>
+    </section>
+  );
+};
+
+interface LinkGridProps {
+  categories: LinkCategory[];
+}
+
+export const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
+  const { isDark } = useThemeContext();
+
+  const sortedCategories = useMemo(() => {
+    return [...categories].sort((a, b) => a.id - b.id);
+  }, [categories]);
+
+  if (sortedCategories.length === 0) {
+    return (
+      <Empty
+        description="暂无链接分类"
+        style={{ margin: '40px 0' }}
+      />
+    );
+  }
+
+  return (
+    <>
+      {sortedCategories.map((category, index) => (
+        <CategorySection
+          key={category.id}
+          category={category}
+          isDark={isDark}
+          animationDelay={`${0.5 + index * 0.1}s`}
+        />
+      ))}
+    </>
+  );
+};
+
+export default LinkGrid;

@@ -37,6 +37,7 @@ import { themeConfig } from '@/config/theme';
 import { siteConfig as defaultSiteConfig } from '@/config/site';
 import { linkCategories, searchEngines } from '@/config/links';
 import type { ISiteConfig } from '@/types';
+import { StorageSelector } from '@/components/theme';
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -155,8 +156,8 @@ const SiteAdmin: React.FC = () => {
     setHasChanges(true);
   };
 
-  const clearLocalStorage = () => {
-    siteManager.clearStorage();
+  const clearLocalStorage = async () => {
+    await siteManager.clearStorage();
     message.success('本地存储已清除');
     setTimeout(() => {
       window.location.reload();
@@ -185,7 +186,7 @@ const SiteAdmin: React.FC = () => {
       
       // 重置所有数据
       siteManager.resetToDefault(defaultSiteConfig);
-      themeManager.resetToDefault(themeConfig);
+      themeManager.resetToDefaultSync(themeConfig);
       linksManager.resetToDefault(linkCategories, searchEngines);
       
       message.success('网站重置成功！页面将2秒后刷新');
@@ -551,6 +552,12 @@ const SiteAdmin: React.FC = () => {
                 配置预览
               </Button>
             </Space>
+          </div>
+          
+          {/* 数据存储设置 */}
+          <div>
+            <Title level={5} style={{ marginBottom: 8 }}>💾 数据存储设置</Title>
+            <StorageSelector showStats={true} />
           </div>
           
           {/* 数据清理 */}

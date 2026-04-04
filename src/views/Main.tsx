@@ -1,33 +1,27 @@
-//react
 import type React from 'react';
-import { useState, useEffect, useMemo } from "react"
-//组件
+import { useState, useEffect, useMemo } from "react";
 import {
-  SearchBar,
-  LinkGrid,
-  ThemeSelector,
-  Clock,
-  LoadingSpinner
+  SearchBarNew as SearchBar,
+  LinkGridNew as LinkGrid,
+  LoadingSpinnerNew as LoadingSpinner
 } from '@/components';
+import { ThemeSelectorEnhanced } from '@/components/theme';
 
-//css
 import {
   Header,
   Title,
   MainContent,
   Footer
-} from "@/styles/App.css.ts"
+} from "@/styles/App.css.ts";
 
-//本地存储工具
 import {
   themeManager,
   linksManager,
   siteManager,
   getLocalStorageByKey
-} from "@/utils"
+} from "@/utils";
 import type { ThemeConfigType, LinkCategory } from "@/types";
 
-//antd
 import { Avatar, Space, Typography } from 'antd';
 const { Text } = Typography;
 
@@ -38,12 +32,9 @@ interface IMainProps {
 
 
 const Main: React.FC<IMainProps> = ({ cb }) => {
-  //主题
   const localThemeConfig = themeManager.getConfig();
-  //链接
   const [localCategories, setLocalCategories] = useState(linksManager.getAllCategories());
   const localSearchEngines = linksManager.getAllSearchEngines();
-  //当前时间问候语
   const [greeting, setGreeting] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -51,11 +42,9 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
     const links = getLocalStorageByKey<LinkCategory[]>("turnip_link_categories")
     console.log("localCategories", links);
     setLocalCategories(links)
-    // 模拟加载完成
     setTimeout(() => setIsLoading(false), 100);
   }, [])
 
-  // 获取问候语
   useEffect(() => {
     const updateGreeting = () => {
       const hour = new Date().getHours();
@@ -75,20 +64,17 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
     };
     
     updateGreeting();
-    const timer = setInterval(updateGreeting, 60000); // 每分钟更新一次
+    const timer = setInterval(updateGreeting, 60000);
     return () => clearInterval(timer);
   }, []);
 
-  //网站配置
   const localSiteConfig = siteManager.getConfig();
   const siteInfo = localSiteConfig;
   
-  // 统计信息
   const totalLinks = localCategories.reduce((total, cat) => total + (cat.links?.length || 0), 0);
   
-  // 如果正在加载，显示加载动画
   if (isLoading) {
-    return <LoadingSpinner theme={localThemeConfig.default} text="正在初始化精彩内容..." />;
+    return <LoadingSpinner text="正在初始化精彩内容..." />;
   }
   
   return (
@@ -102,9 +88,8 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
             gap: '0.5rem'
           }}>
             <Title>{siteInfo.title}</Title>
-            {/* 问候语和统计信息 */}
             <Space 
-              direction="vertical" 
+              orientation="vertical" 
               align="center" 
               style={{ 
                 marginTop: '0.5rem',
@@ -115,7 +100,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
                 style={{ 
                   fontSize: '1rem',
                   opacity: 0.9,
-                  color: localThemeConfig.default.id === 'custom' && localThemeConfig.default.name === '暗黑主题' ? '#ffffff' : '#2c3e50'
+                  color: 'var(--text-color, #2c3e50)'
                 }}
               >
                 {greeting}
@@ -126,7 +111,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
                     style={{ 
                       fontSize: '0.875rem',
                       opacity: 0.7,
-                      color: localThemeConfig.default.id === 'custom' && localThemeConfig.default.name === '暗黑主题' ? '#ffffff' : '#666'
+                      color: 'var(--text-color, #2c3e50)'
                     }}
                   >
                     📁 {localCategories.length} 个分类
@@ -137,7 +122,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
                     style={{ 
                       fontSize: '0.875rem',
                       opacity: 0.7,
-                      color: localThemeConfig.default.id === 'custom' && localThemeConfig.default.name === '暗黑主题' ? '#ffffff' : '#666'
+                      color: 'var(--text-color, #2c3e50)'
                     }}
                   >
                     🔗 {totalLinks} 个链接
@@ -152,11 +137,11 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
         <SearchBar searchEngines={localSearchEngines} />
         <LinkGrid categories={localCategories} />
       </MainContent>
-      <ThemeSelector themeConfig={localThemeConfig} onSelect={cb} />
+      <ThemeSelectorEnhanced themeConfig={localThemeConfig} onSelect={cb} />
       <Footer>
-        <Space direction="vertical" align="center" style={{ width: '100%' }}>
+        <Space orientation="vertical" align="center" style={{ width: '100%' }}>
           <Text style={{ 
-            color: localThemeConfig.default.id === 'custom' && localThemeConfig.default.name === '暗黑主题' ? '#ffffff' : '#2c3e50',
+            color: 'var(--text-color, #2c3e50)',
             opacity: 0.8
           }}>
             {siteInfo.copyright.text}
@@ -164,7 +149,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
           {siteInfo.author && (
             <Text style={{ 
               fontSize: '12px',
-              color: localThemeConfig.default.id === 'custom' && localThemeConfig.default.name === '暗黑主题' ? '#ffffff' : '#666',
+              color: 'var(--text-color, #2c3e50)',
               opacity: 0.6
             }}>
               Made with ❤️ by {siteInfo.author}

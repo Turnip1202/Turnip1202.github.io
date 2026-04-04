@@ -103,7 +103,7 @@ export const MyModal: React.FC<IProps> = ({ visibleAdmin, setIsShowAdmin, setVis
               onClick={toAdmin(item)}
               style={{ height: '120px', cursor: 'pointer' }}
             >
-              <Space direction="vertical" align="center" style={{ width: '100%' }}>
+              <Space orientation="vertical" align="center" style={{ width: '100%' }}>
                 <div style={{ fontSize: '24px', color: '#1890ff' }}>
                   {getIcon(item.value)}
                 </div>

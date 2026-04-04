@@ -48,11 +48,8 @@ import {
   ThunderboltOutlined,
 } from '@ant-design/icons';
 
-const { Title, Paragraph, Text, Link } = Typography;
+const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
-const { Step } = Steps;
-const { TabPane } = Tabs;
-const { Panel } = Collapse;
 
 const AntdShowcase: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -64,7 +61,6 @@ const AntdShowcase: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [form] = Form.useForm();
 
-  // 示例数据
   const tableData = [
     { key: '1', name: '张三', age: 32, address: '北京市朝阳区', status: 'active' },
     { key: '2', name: '李四', age: 28, address: '上海市浦东区', status: 'inactive' },
@@ -144,20 +140,57 @@ const AntdShowcase: React.FC = () => {
     </div>
   );
 
-  return (
-    <div style={{ padding: 24 }}>
-      <Title level={2}>
-        <RocketOutlined /> Ant Design 组件展示面板
-      </Title>
-      <Paragraph>
-        这个面板展示了 Ant Design 在本项目中的集成效果，包含了常用组件的使用示例。
-        所有组件都支持主题切换，并与项目的整体设计保持一致。
-      </Paragraph>
+  const stepsItems = [
+    { title: '已完成', description: '第一步完成' },
+    { title: '进行中', description: '当前步骤' },
+    { title: '等待中', description: '待执行' },
+  ];
 
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="基础组件" key="1">
-          {/* 按钮组件 */}
-          <Divider orientation="left">
+  const breadcrumbItems = [
+    { href: '', icon: <HomeOutlined /> },
+    { href: '', icon: <UserOutlined />, title: '用户管理' },
+    { title: '用户列表' },
+    { title: '用户详情' },
+  ];
+
+  const collapseItems = [
+    {
+      key: '1',
+      label: '面板1 - 基础信息',
+      children: (
+        <div>
+          <p>这是第一个面板的内容。可以包含任意的React组件。</p>
+          <Button type="primary" size="small">操作按钮</Button>
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      label: '面板2 - 高级设置',
+      children: (
+        <div>
+          <p>这是第二个面板的内容。支持嵌套组件和交互功能。</p>
+          <Space>
+            <Button size="small">确定</Button>
+            <Button size="small">取消</Button>
+          </Space>
+        </div>
+      ),
+    },
+    {
+      key: '3',
+      label: '面板3 - 帮助信息',
+      children: <p>这是第三个面板的内容。可以用来展示帮助文档或说明。</p>,
+    },
+  ];
+
+  const tabItems = [
+    {
+      key: '1',
+      label: '基础组件',
+      children: (
+        <>
+          <Divider titlePlacement="start">
             <ThunderboltOutlined /> 按钮组件
           </Divider>
           <Space wrap style={{ marginBottom: 16 }}>
@@ -166,21 +199,14 @@ const AntdShowcase: React.FC = () => {
             <Button type="dashed">虚线按钮</Button>
             <Button type="text">文本按钮</Button>
             <Button type="link">链接按钮</Button>
-            <Button type="primary" danger>
-              危险按钮
-            </Button>
-            <Button
-              type="primary"
-              loading={loading}
-              onClick={() => setLoading(!loading)}
-            >
+            <Button type="primary" danger>危险按钮</Button>
+            <Button type="primary" loading={loading} onClick={() => setLoading(!loading)}>
               {loading ? '加载中' : '切换加载'}
             </Button>
             <Button icon={<StarOutlined />}>图标按钮</Button>
           </Space>
 
-          {/* 反馈组件 */}
-          <Divider orientation="left">反馈组件</Divider>
+          <Divider titlePlacement="start">反馈组件</Divider>
           <Space direction="vertical" style={{ width: '100%', marginBottom: 16 }}>
             <Alert message="信息提示" type="info" showIcon />
             <Alert message="成功提示" type="success" showIcon closable />
@@ -197,8 +223,7 @@ const AntdShowcase: React.FC = () => {
             </Space>
           </Space>
 
-          {/* 数据展示 */}
-          <Divider orientation="left">数据展示</Divider>
+          <Divider titlePlacement="start">数据展示</Divider>
           <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
             <Col span={12}>
               <Card title="进度和评分" size="small">
@@ -244,131 +269,107 @@ const AntdShowcase: React.FC = () => {
             </Col>
             <Col span={12}>
               <Card title="步骤条" size="small">
-                <Steps current={currentStep} size="small" style={{ marginBottom: 16 }}>
-                  <Step title="已完成" description="第一步完成" />
-                  <Step title="进行中" description="当前步骤" />
-                  <Step title="等待中" description="待执行" />
-                </Steps>
+                <Steps current={currentStep} size="small" style={{ marginBottom: 16 }} items={stepsItems} />
                 <Space>
-                  <Button
-                    size="small"
-                    onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-                  >
+                  <Button size="small" onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}>
                     上一步
                   </Button>
-                  <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => setCurrentStep(Math.min(2, currentStep + 1))}
-                  >
+                  <Button type="primary" size="small" onClick={() => setCurrentStep(Math.min(2, currentStep + 1))}>
                     下一步
                   </Button>
                 </Space>
               </Card>
             </Col>
           </Row>
-        </TabPane>
+        </>
+      ),
+    },
+    {
+      key: '2',
+      label: '表单组件',
+      children: (
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Card title="表单控件" size="small">
+              <Form form={form} onFinish={handleSubmit} layout="vertical">
+                <Form.Item name="username" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
+                  <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
+                </Form.Item>
+                
+                <Form.Item name="email" label="邮箱">
+                  <Input type="email" placeholder="请输入邮箱" />
+                </Form.Item>
 
-        <TabPane tab="表单组件" key="2">
-          <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <Card title="表单控件" size="small">
-                <Form form={form} onFinish={handleSubmit} layout="vertical">
-                  <Form.Item
-                    name="username"
-                    label="用户名"
-                    rules={[{ required: true, message: '请输入用户名' }]}
-                  >
-                    <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
-                  </Form.Item>
-                  
-                  <Form.Item name="email" label="邮箱">
-                    <Input type="email" placeholder="请输入邮箱" />
-                  </Form.Item>
+                <Form.Item name="city" label="城市">
+                  <Select placeholder="请选择城市">
+                    <Option value="beijing">北京</Option>
+                    <Option value="shanghai">上海</Option>
+                    <Option value="guangzhou">广州</Option>
+                    <Option value="shenzhen">深圳</Option>
+                  </Select>
+                </Form.Item>
 
-                  <Form.Item name="city" label="城市">
-                    <Select placeholder="请选择城市">
-                      <Option value="beijing">北京</Option>
-                      <Option value="shanghai">上海</Option>
-                      <Option value="guangzhou">广州</Option>
-                      <Option value="shenzhen">深圳</Option>
-                    </Select>
-                  </Form.Item>
+                <Form.Item name="date" label="日期">
+                  <DatePicker style={{ width: '100%' }} />
+                </Form.Item>
 
-                  <Form.Item name="date" label="日期">
-                    <DatePicker style={{ width: '100%' }} />
-                  </Form.Item>
+                <Form.Item name="time" label="时间">
+                  <TimePicker style={{ width: '100%' }} />
+                </Form.Item>
 
-                  <Form.Item name="time" label="时间">
-                    <TimePicker style={{ width: '100%' }} />
-                  </Form.Item>
+                <Form.Item>
+                  <Button type="primary" htmlType="submit">提交表单</Button>
+                </Form.Item>
+              </Form>
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card title="其他控件" size="small">
+              <Space direction="vertical" style={{ width: '100%' }}>
+                <div>
+                  <Text>开关:</Text>
+                  <Switch checked={switchValue} onChange={setSwitchValue} style={{ marginLeft: 8 }} />
+                  <Text style={{ marginLeft: 8 }}>{switchValue ? '开启' : '关闭'}</Text>
+                </div>
 
-                  <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                      提交表单
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card title="其他控件" size="small">
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <div>
-                    <Text>开关:</Text>
-                    <Switch
-                      checked={switchValue}
-                      onChange={setSwitchValue}
-                      style={{ marginLeft: 8 }}
-                    />
-                    <Text style={{ marginLeft: 8 }}>
-                      {switchValue ? '开启' : '关闭'}
-                    </Text>
-                  </div>
+                <div>
+                  <Text>滑动条:</Text>
+                  <Slider value={sliderValue} onChange={setSliderValue} style={{ margin: '0 8px' }} />
+                  <Text>值: {sliderValue}</Text>
+                </div>
 
-                  <div>
-                    <Text>滑动条:</Text>
-                    <Slider
-                      value={sliderValue}
-                      onChange={setSliderValue}
-                      style={{ margin: '0 8px' }}
-                    />
-                    <Text>值: {sliderValue}</Text>
-                  </div>
+                <div>
+                  <Text>复选框:</Text>
+                  <Checkbox.Group style={{ marginLeft: 8 }}>
+                    <Checkbox value="option1">选项1</Checkbox>
+                    <Checkbox value="option2">选项2</Checkbox>
+                    <Checkbox value="option3">选项3</Checkbox>
+                  </Checkbox.Group>
+                </div>
 
-                  <div>
-                    <Text>复选框:</Text>
-                    <Checkbox.Group style={{ marginLeft: 8 }}>
-                      <Checkbox value="option1">选项1</Checkbox>
-                      <Checkbox value="option2">选项2</Checkbox>
-                      <Checkbox value="option3">选项3</Checkbox>
-                    </Checkbox.Group>
-                  </div>
-
-                  <div>
-                    <Text>单选框:</Text>
-                    <Radio.Group style={{ marginLeft: 8 }}>
-                      <Radio value="a">选项A</Radio>
-                      <Radio value="b">选项B</Radio>
-                      <Radio value="c">选项C</Radio>
-                    </Radio.Group>
-                  </div>
-                </Space>
-              </Card>
-            </Col>
-          </Row>
-        </TabPane>
-
-        <TabPane tab="数据展示" key="3">
+                <div>
+                  <Text>单选框:</Text>
+                  <Radio.Group style={{ marginLeft: 8 }}>
+                    <Radio value="a">选项A</Radio>
+                    <Radio value="b">选项B</Radio>
+                    <Radio value="c">选项C</Radio>
+                  </Radio.Group>
+                </div>
+              </Space>
+            </Card>
+          </Col>
+        </Row>
+      ),
+    },
+    {
+      key: '3',
+      label: '数据展示',
+      children: (
+        <>
           <Row gutter={[16, 16]}>
             <Col span={12}>
               <Card title="表格组件" size="small">
-                <Table
-                  dataSource={tableData}
-                  columns={tableColumns}
-                  pagination={{ pageSize: 5 }}
-                  size="small"
-                />
+                <Table dataSource={tableData} columns={tableColumns} pagination={{ pageSize: 5 }} size="small" />
               </Card>
             </Col>
             <Col span={12}>
@@ -380,20 +381,12 @@ const AntdShowcase: React.FC = () => {
                   renderItem={(item) => (
                     <List.Item
                       actions={[
-                        <Button type="link" key="edit">
-                          编辑
-                        </Button>,
-                        <Button type="link" key="more">
-                          更多
-                        </Button>,
+                        <Button type="link" key="edit">编辑</Button>,
+                        <Button type="link" key="more">更多</Button>,
                       ]}
                     >
                       <List.Item.Meta
-                        avatar={
-                          <Avatar style={{ backgroundColor: '#1890ff' }}>
-                            {item.avatar}
-                          </Avatar>
-                        }
+                        avatar={<Avatar style={{ backgroundColor: '#1890ff' }}>{item.avatar}</Avatar>}
                         title={item.title}
                         description={item.description}
                       />
@@ -407,40 +400,18 @@ const AntdShowcase: React.FC = () => {
           <Divider />
 
           <Card title="折叠面板" size="small">
-            <Collapse>
-              <Panel header="面板1 - 基础信息" key="1">
-                <p>这是第一个面板的内容。可以包含任意的React组件。</p>
-                <Button type="primary" size="small">
-                  操作按钮
-                </Button>
-              </Panel>
-              <Panel header="面板2 - 高级设置" key="2">
-                <p>这是第二个面板的内容。支持嵌套组件和交互功能。</p>
-                <Space>
-                  <Button size="small">确定</Button>
-                  <Button size="small">取消</Button>
-                </Space>
-              </Panel>
-              <Panel header="面板3 - 帮助信息" key="3">
-                <p>这是第三个面板的内容。可以用来展示帮助文档或说明。</p>
-              </Panel>
-            </Collapse>
+            <Collapse items={collapseItems} />
           </Card>
-        </TabPane>
-
-        <TabPane tab="导航组件" key="4">
+        </>
+      ),
+    },
+    {
+      key: '4',
+      label: '导航组件',
+      children: (
+        <>
           <Card title="面包屑导航" size="small" style={{ marginBottom: 16 }}>
-            <Breadcrumb>
-              <Breadcrumb.Item href="">
-                <HomeOutlined />
-              </Breadcrumb.Item>
-              <Breadcrumb.Item href="">
-                <UserOutlined />
-                <span>用户管理</span>
-              </Breadcrumb.Item>
-              <Breadcrumb.Item>用户列表</Breadcrumb.Item>
-              <Breadcrumb.Item>用户详情</Breadcrumb.Item>
-            </Breadcrumb>
+            <Breadcrumb items={breadcrumbItems} />
           </Card>
 
           <Card title="交互组件" size="small">
@@ -453,19 +424,28 @@ const AntdShowcase: React.FC = () => {
                 <Button>点击弹出</Button>
               </Popover>
 
-              <Button icon={<LikeOutlined />}>
-                点赞
-              </Button>
+              <Button icon={<LikeOutlined />}>点赞</Button>
 
-              <Button icon={<HeartOutlined />} type="primary" danger>
-                收藏
-              </Button>
+              <Button icon={<HeartOutlined />} type="primary" danger>收藏</Button>
             </Space>
           </Card>
-        </TabPane>
-      </Tabs>
+        </>
+      ),
+    },
+  ];
 
-      {/* 模态框 */}
+  return (
+    <div style={{ padding: 24 }}>
+      <Title level={2}>
+        <RocketOutlined /> Ant Design 组件展示面板
+      </Title>
+      <Paragraph>
+        这个面板展示了 Ant Design 在本项目中的集成效果，包含了常用组件的使用示例。
+        所有组件都支持主题切换，并与项目的整体设计保持一致。
+      </Paragraph>
+
+      <Tabs defaultActiveKey="1" items={tabItems} />
+
       <Modal
         title="模态框示例"
         open={modalVisible}
@@ -481,15 +461,9 @@ const AntdShowcase: React.FC = () => {
           <li>遮罩层点击关闭</li>
           <li>键盘ESC关闭</li>
         </ul>
-        <Alert
-          message="提示"
-          description="模态框内可以嵌套任意组件"
-          type="info"
-          showIcon
-        />
+        <Alert message="提示" description="模态框内可以嵌套任意组件" type="info" showIcon />
       </Modal>
 
-      {/* 抽屉 */}
       <Drawer
         title="抽屉组件示例"
         placement="right"
@@ -506,23 +480,14 @@ const AntdShowcase: React.FC = () => {
           <Divider />
           
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Button type="primary" block>
-              主要操作
-            </Button>
+            <Button type="primary" block>主要操作</Button>
             <Button block>次要操作</Button>
-            <Button danger block onClick={() => setDrawerVisible(false)}>
-              关闭抽屉
-            </Button>
+            <Button danger block onClick={() => setDrawerVisible(false)}>关闭抽屉</Button>
           </Space>
 
           <Divider />
 
-          <Alert
-            message="功能说明"
-            description="抽屉组件适用于需要临时显示大量信息的场景"
-            type="success"
-            showIcon
-          />
+          <Alert message="功能说明" description="抽屉组件适用于需要临时显示大量信息的场景" type="success" showIcon />
         </div>
       </Drawer>
     </div>
