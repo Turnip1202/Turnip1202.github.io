@@ -38,6 +38,7 @@ import { siteConfig as defaultSiteConfig } from '@/config/site';
 import { linkCategories, searchEngines } from '@/config/links';
 import type { ISiteConfig } from '@/types';
 import { StorageSelector } from '@/components/theme';
+import { getThemeManager } from '@/core/theme/ThemeManagerV2';
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -207,6 +208,9 @@ const SiteAdmin: React.FC = () => {
   // 导入功能已移至版本管理系统
 
   const generateFullPreview = () => {
+    const themeManagerV2 = getThemeManager();
+    const allPresets = themeManagerV2.getAllPresets();
+    
     const fullConfig = {
       // 网站基本信息
       site: {
@@ -221,7 +225,15 @@ const SiteAdmin: React.FC = () => {
       theme: {
         default: themeManager.getDefaultTheme(),
         presets: themeManager.getPresets(),
-        totalThemes: themeManager.getPresets().length + 1, // +1 for default
+        allPresets: allPresets.map(p => ({
+          id: p.id,
+          name: p.name,
+          isBuiltIn: p.isBuiltIn,
+          backgroundImage: p.config.backgroundImage
+        })),
+        totalPresets: allPresets.length,
+        builtInPresets: allPresets.filter(p => p.isBuiltIn).length,
+        customPresets: allPresets.filter(p => !p.isBuiltIn).length,
       },
       // 链接数据
       links: {
@@ -237,7 +249,6 @@ const SiteAdmin: React.FC = () => {
         ...VersionUtils.getSystemSummary()
       }
     };
-    
     return fullConfig;
   };
 
