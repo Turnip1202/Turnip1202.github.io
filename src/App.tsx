@@ -11,7 +11,6 @@ import { ThemeProvider, useThemeContext } from './contexts';
 import { ConfigProvider, App as AntdApp } from 'antd';
 import { EAdminPanelState } from '@types';
 import { keyboardManager } from './utils/keyboard/keyboardManager';
-import { updateLogManager } from './utils/version/updateLogManager';
 
 const AppContent: React.FC = () => {
   const [visibleAdmin, setVisibleAdmin] = useState(false);
@@ -49,25 +48,7 @@ const AppContent: React.FC = () => {
     };
   }, [toggleDarkMode]);
 
-  // 初始化更新日志
-  useEffect(() => {
-    // 检查是否已有更新日志
-    const existingLogs = updateLogManager.getAllLogs();
-    if (existingLogs.length === 0) {
-      // 添加第一阶段功能的更新记录
-      updateLogManager.addLog({
-        version: '1.0.0',
-        date: new Date().toISOString().split('T')[0],
-        description: '第一阶段功能更新',
-        changes: [
-          '添加搜索历史功能，记录并管理用户的搜索记录',
-          '实现快捷键支持，包括Ctrl+K打开管理面板和Ctrl+T切换主题',
-          '新增链接收藏功能，用户可以收藏常用链接',
-          '添加系统更新日志，记录应用的更新内容'
-        ]
-      });
-    }
-  }, []);
+
 
   return (
     <ConfigProvider theme={antdTheme}>

@@ -11,8 +11,14 @@ const UpdateLog: React.FC = () => {
   const [hasUnread, setHasUnread] = useState(updateLogManager.hasUnreadLogs());
 
   useEffect(() => {
-    setLogs(updateLogManager.getAllLogs());
-    setHasUnread(updateLogManager.hasUnreadLogs());
+    // 加载更新日志
+    const loadLogs = async () => {
+      await updateLogManager.fetchUpdateLogs();
+      setLogs(updateLogManager.getAllLogs());
+      setHasUnread(updateLogManager.hasUnreadLogs());
+    };
+    
+    loadLogs();
   }, []);
 
   const handleOpen = () => {
