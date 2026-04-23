@@ -1,0 +1,1 @@
+:root{--custom-bg-color:var(--ant-bg-body-color,#fff);--custom-text-color:var(--ant-text-color-primary,#1677ff);font-size:16px}@media (max-width:768px){:root{font-size:14px}}@media (max-width:480px){:root{font-size:12px}}.dark{--custom-bg-color:var(--ant-bg-body-color,#141414);--custom-text-color:var(--ant-text-color-primary,#fff)}
