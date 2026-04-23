@@ -139,7 +139,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
         />
         <Popover
           content={
-            <div className="search-history-popover" style={{ width: '300px', maxHeight: '300px', overflow: 'auto' }}>
+            <div className="search-history-popover" style={{ width: '100%', maxHeight: '300px', overflow: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <ClockCircleOutlined style={{ marginRight: '8px', color: '#1890ff' }} />
@@ -197,7 +197,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
           trigger="click"
           open={historyVisible}
           onOpenChange={setHistoryVisible}
-          placement="bottom"
+          placement="bottomLeft"
+          style={{ width: '100%' }}
         >
           <Input
             placeholder="输入搜索内容..."
