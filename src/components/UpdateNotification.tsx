@@ -60,6 +60,20 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
           transform: scale(1);
         }
       }
+      @media (max-width: 768px) {
+        .update-notification-btn {
+          top: 90px !important;
+          right: 15px !important;
+          font-size: 18px !important;
+        }
+      }
+      @media (max-width: 480px) {
+        .update-notification-btn {
+          top: 80px !important;
+          right: 10px !important;
+          font-size: 16px !important;
+        }
+      }
     `;
     document.head.appendChild(style);
 
@@ -86,6 +100,7 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
       trigger="click"
     >
       <SyncOutlined 
+          className="update-notification-btn"
           style={{ 
             fontSize: '20px', 
             color: '#1890ff',

@@ -29,6 +29,32 @@ const UpdateLog: React.FC = () => {
     setVisible(false);
   };
 
+  // 注入响应式样式
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @media (max-width: 768px) {
+        .update-log-btn {
+          top: 90px !important;
+          right: 50px !important;
+          font-size: 16px !important;
+        }
+      }
+      @media (max-width: 480px) {
+        .update-log-btn {
+          top: 80px !important;
+          right: 40px !important;
+          font-size: 14px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
     <>
       <Popover
@@ -49,6 +75,7 @@ const UpdateLog: React.FC = () => {
       >
         <Badge dot={hasUnread} offset={[0, -5]}>
           <BellOutlined 
+            className="update-log-btn"
             style={{ 
               fontSize: '18px', 
               color: '#1890ff',
