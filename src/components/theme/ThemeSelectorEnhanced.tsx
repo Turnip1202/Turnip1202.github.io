@@ -33,32 +33,16 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
   themeConfig,
   onSelect,
 }) => {
-  const { isDark, toggleDarkMode, setDarkMode, appTheme } = useThemeContext();
+  const { isDark, toggleDarkMode, setDarkMode, appTheme, themeMode, setThemeMode } = useThemeContext();
   const themeManager = useMemo(() => getThemeManager(), []);
 
   const [isVisible, setIsVisible] = useState(true);
-  const [isAutoMode, setIsAutoMode] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<string>(appTheme.id);
   const [customColors, setCustomColors] = useState({
     primary: { r: 74, g: 144, b: 226, a: 1 },
     background: { r: 255, g: 255, b: 255, a: 0.9 },
     text: { r: 44, g: 62, b: 80, a: 1 },
   });
-
-  useEffect(() => {
-    const checkTime = () => {
-      if (!isAutoMode) return;
-      const currentHour = new Date().getHours();
-      const shouldBeDark = currentHour >= 18 || currentHour < 6;
-      if (shouldBeDark !== isDark) {
-        setDarkMode(shouldBeDark);
-      }
-    };
-
-    checkTime();
-    const interval = setInterval(checkTime, 60000);
-    return () => clearInterval(interval);
-  }, [isAutoMode, isDark, setDarkMode]);
 
   const handleThemeSelect = useCallback(async (themeId: string) => {
     const allPresets = [...themeManager.getBuiltInPresets(), ...themeManager.getCustomPresets()];
@@ -76,17 +60,12 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
   }, [themeConfig, onSelect, themeManager]);
 
   const handleDarkModeToggle = useCallback(() => {
-    setIsAutoMode(false);
-    toggleDarkMode();
-  }, [toggleDarkMode]);
+    setThemeMode(prev => prev === 'dark' ? 'light' : 'dark');
+  }, [setThemeMode]);
 
-  const handleAutoModeToggle = useCallback((checked: boolean) => {
-    setIsAutoMode(checked);
-    if (checked) {
-      const currentHour = new Date().getHours();
-      setDarkMode(currentHour >= 18 || currentHour < 6);
-    }
-  }, [setDarkMode]);
+  const handleSystemModeToggle = useCallback(() => {
+    setThemeMode('system');
+  }, [setThemeMode]);
 
   const presetItems = useMemo(() => {
     const builtInPresets = themeManager.getBuiltInPresets();
@@ -151,6 +130,11 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
   }, [themeManager, selectedPreset, handleThemeSelect]);
 
   const handleApplyColors = useCallback(() => {
+    if (isDark) {
+      message.warning('请先切换到白天模式再应用自定义颜色');
+      return;
+    }
+    
     const root = document.documentElement;
     
     root.style.setProperty('--primary-color', rgbaToString(customColors.primary));
@@ -173,7 +157,7 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
     
     onSelect(customTheme);
     message.success('自定义颜色已应用');
-  }, [customColors, appTheme, onSelect]);
+  }, [customColors, appTheme, onSelect, isDark]);
 
   const colorPickerContent = (
     <div style={{ width: 320, padding: 8 }}>
@@ -273,10 +257,10 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
 
         <FloatButton
           icon={<ClockCircleOutlined />}
-          tooltip={isAutoMode ? '关闭自动切换' : '开启自动切换'}
-          onClick={() => handleAutoModeToggle(!isAutoMode)}
+          tooltip={themeMode === 'system' ? '关闭跟随系统' : '跟随系统'}
+          onClick={handleSystemModeToggle}
           style={{
-            background: isAutoMode 
+            background: themeMode === 'system' 
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}

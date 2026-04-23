@@ -4,19 +4,24 @@ import { themeManager } from '@/utils';
 import type { ThemeConfigType, IThemeConfig } from '@/types';
 import { getAntdThemeConfig } from '@/styles/antd-theme';
 
+type ThemeMode = 'light' | 'dark' | 'system';
+
 interface ThemeContextValue {
   appTheme: ThemeConfigType;
   antdTheme: ThemeConfig;
   themeConfig: IThemeConfig;
   isDark: boolean;
+  themeMode: ThemeMode;
   setAppTheme: (theme: ThemeConfigType) => void;
   toggleDarkMode: () => void;
   setDarkMode: (isDark: boolean) => void;
+  setThemeMode: (mode: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const THEME_MODE_KEY = 'turnip-theme-mode';
+const THEME_MODE_TYPE_KEY = 'turnip-theme-mode-type';
 const SAVED_LIGHT_THEME_KEY = 'turnip-saved-light-theme';
 
 const DEFAULT_LIGHT_CSS_VARS = {
@@ -73,10 +78,23 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [themeConfig] = useState<IThemeConfig>(() => themeManager.getConfig());
   
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem(THEME_MODE_TYPE_KEY);
+      return (saved as ThemeMode) || 'system';
+    } catch {
+      return 'system';
+    }
+  });
+
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(THEME_MODE_KEY);
-      return saved ? saved === 'dark' : false;
+      if (saved) {
+        return saved === 'dark';
+      }
+      // 检测系统主题
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     } catch {
       return false;
     }
@@ -111,6 +129,34 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return themeConfig.default;
   });
 
+  // 监听系统主题变化
+  useEffect(() => {
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      if (themeMode === 'system') {
+        setIsDark(e.matches);
+      }
+    };
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
+  }, [themeMode]);
+
+  // 根据themeMode更新isDark
+  useEffect(() => {
+    if (themeMode === 'system') {
+      const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDark(isSystemDark);
+    } else if (themeMode === 'dark') {
+      setIsDark(true);
+    } else {
+      setIsDark(false);
+    }
+  }, [themeMode]);
+
   useEffect(() => {
     if (isDark) {
       applyCssVariables(true);
@@ -122,7 +168,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       setAppThemeState(themeToRestore);
       themeManager.setDefaultThemeSync(themeToRestore);
     }
-  }, [isDark]);
+  }, [isDark, savedLightTheme, themeConfig.default]);
 
   useEffect(() => {
     try {
@@ -131,6 +177,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       console.warn('Failed to save theme mode:', error);
     }
   }, [isDark]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(THEME_MODE_TYPE_KEY, themeMode);
+    } catch (error) {
+      console.warn('Failed to save theme mode type:', error);
+    }
+  }, [themeMode]);
 
   useEffect(() => {
     try {
@@ -164,11 +218,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [isDark]);
 
   const toggleDarkMode = useCallback(() => {
-    setIsDark(prev => !prev);
+    setThemeMode(prev => prev === 'dark' ? 'light' : 'dark');
   }, []);
 
   const setDarkMode = useCallback((dark: boolean) => {
-    setIsDark(dark);
+    setThemeMode(dark ? 'dark' : 'light');
   }, []);
 
   const contextValue = useMemo<ThemeContextValue>(() => ({
@@ -176,10 +230,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     antdTheme,
     themeConfig,
     isDark,
+    themeMode,
     setAppTheme,
     toggleDarkMode,
     setDarkMode,
-  }), [appTheme, antdTheme, themeConfig, isDark, setAppTheme, toggleDarkMode, setDarkMode]);
+    setThemeMode,
+  }), [appTheme, antdTheme, themeConfig, isDark, themeMode, setAppTheme, toggleDarkMode, setDarkMode, setThemeMode]);
 
   return (
     <ThemeContext.Provider value={contextValue}>

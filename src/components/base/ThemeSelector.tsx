@@ -24,7 +24,7 @@ interface ThemeSelectorProps {
 }
 
 export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSelect }) => {
-  const { isDark, toggleDarkMode, setDarkMode, appTheme } = useThemeContext();
+  const { isDark, toggleDarkMode, appTheme, themeMode, setThemeMode } = useThemeContext();
   
   const [isVisible, setIsVisible] = useState(() => {
     try {
@@ -32,15 +32,6 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
       return saved ? saved === 'true' : true;
     } catch {
       return true;
-    }
-  });
-
-  const [isAutoMode, setIsAutoMode] = useState(() => {
-    try {
-      const saved = localStorage.getItem('turnip-theme-auto');
-      return saved ? saved === 'true' : false;
-    } catch {
-      return false;
     }
   });
 
@@ -55,30 +46,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
   useEffect(() => {
     try {
       localStorage.setItem('turnip-theme-selector-visible', String(isVisible));
-      localStorage.setItem('turnip-theme-auto', String(isAutoMode));
       localStorage.setItem('turnip-theme-preset', selectedPreset);
     } catch (error) {
       console.warn('Failed to save theme settings:', error);
     }
-  }, [isVisible, isAutoMode, selectedPreset]);
-
-  useEffect(() => {
-    const checkTime = () => {
-      if (!isAutoMode) return;
-
-      const currentHour = new Date().getHours();
-      const shouldBeDark = currentHour >= 18 || currentHour < 6;
-
-      if (shouldBeDark !== isDark) {
-        setDarkMode(shouldBeDark);
-      }
-    };
-
-    checkTime();
-    const interval = setInterval(checkTime, 60000);
-
-    return () => clearInterval(interval);
-  }, [isAutoMode, isDark, setDarkMode]);
+  }, [isVisible, selectedPreset]);
 
   const handleThemeSelect = useCallback((themeId: string) => {
     const theme = themeConfig.presets.find(t => t.id === themeId) || themeConfig.default;
@@ -87,17 +59,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
   }, [themeConfig, onSelect]);
 
   const handleDarkModeToggle = useCallback(() => {
-    setIsAutoMode(false);
-    toggleDarkMode();
-  }, [toggleDarkMode]);
+    setThemeMode(prev => prev === 'dark' ? 'light' : 'dark');
+  }, [setThemeMode]);
 
-  const handleAutoModeToggle = useCallback((checked: boolean) => {
-    setIsAutoMode(checked);
-    if (checked) {
-      const currentHour = new Date().getHours();
-      setDarkMode(currentHour >= 18 || currentHour < 6);
-    }
-  }, [setDarkMode]);
+  const handleSystemModeToggle = useCallback(() => {
+    setThemeMode('system');
+  }, [setThemeMode]);
 
   const themeMenuItems: MenuProps['items'] = useMemo(() => {
     return themeConfig.presets.map((theme) => ({
@@ -182,10 +149,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
 
         <FloatButton
           icon={<ClockCircleOutlined />}
-          tooltip={isAutoMode ? '关闭自动切换' : '开启自动切换'}
-          onClick={() => handleAutoModeToggle(!isAutoMode)}
+          tooltip={themeMode === 'system' ? '关闭跟随系统' : '跟随系统'}
+          onClick={handleSystemModeToggle}
           style={{
-            background: isAutoMode 
+            background: themeMode === 'system' 
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}
