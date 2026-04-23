@@ -29,9 +29,12 @@ export const getCurrentVersion = async (): Promise<VersionInfo | null> => {
 // 检查是否有更新
 export const checkForUpdates = async (): Promise<boolean> => {
   try {
+    console.log('\n📦 ====== 应用更新检查 ======');
+    
     const currentVersion = await getCurrentVersion();
     if (!currentVersion) {
-      console.log('更新检查：无法获取版本信息');
+      console.info('❌ 无法获取版本信息');
+      console.log('==========================\n');
       return false;
     }
 
@@ -39,23 +42,34 @@ export const checkForUpdates = async (): Promise<boolean> => {
     const storedVersion = localStorage.getItem('app_version');
     const storedHash = localStorage.getItem('app_hash');
 
-    console.log('更新检查：当前版本:', currentVersion);
-    console.log('更新检查：存储版本:', storedVersion);
-    console.log('更新检查：存储哈希:', storedHash);
+    console.info('📋 当前版本信息:');
+    console.info(`   版本号: ${currentVersion.version}`);
+    console.info(`   构建时间: ${new Date(currentVersion.buildTime).toLocaleString('zh-CN')}`);
+    console.info(`   版本哈希: ${currentVersion.hash}`);
+    
+    console.info('📁 存储的版本信息:');
+    console.info(`   版本号: ${storedVersion || '未设置'}`);
+    console.info(`   版本哈希: ${storedHash || '未设置'}`);
 
     // 如果没有存储的版本信息，或者版本哈希不同，则认为有更新
     if (!storedVersion || storedHash !== currentVersion.hash) {
-      console.log('更新检查：检测到新版本！');
+      console.log('\n🎉 检测到新版本！');
+      console.log('🔄 正在更新版本信息...');
       // 更新存储的版本信息
       localStorage.setItem('app_version', currentVersion.version);
       localStorage.setItem('app_hash', currentVersion.hash);
+      console.log('✅ 版本信息更新完成');
+      console.log('==========================\n');
       return true;
     }
 
-    console.log('更新检查：当前已是最新版本');
+    console.log('\n✅ 当前已是最新版本');
+    console.log('==========================\n');
     return false;
   } catch (error) {
-    console.warn('更新检查失败:', error);
+    console.log('\n❌ 更新检查失败:');
+    console.warn(error);
+    console.log('==========================\n');
     return false;
   }
 };
