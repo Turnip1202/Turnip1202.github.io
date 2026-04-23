@@ -115,6 +115,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
               flex-direction: column;
               gap: 12px;
             }
+            .search-history-popover {
+              width: 90vw !important;
+              max-width: 300px !important;
+            }
+          }
+          @media (max-width: 480px) {
+            .search-history-popover {
+              width: 95vw !important;
+              max-width: 280px !important;
+            }
           }
         `}
       </style>
@@ -129,7 +139,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
         />
         <Popover
           content={
-            <div style={{ width: '300px', maxHeight: '300px', overflow: 'auto' }}>
+            <div className="search-history-popover" style={{ width: '300px', maxHeight: '300px', overflow: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <ClockCircleOutlined style={{ marginRight: '8px', color: '#1890ff' }} />
