@@ -335,15 +335,15 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
           <AutoToggleButton
             theme={currentTheme}
             active={themeMode === 'system'}
-            onClick={() => setThemeMode('system')}
+            onClick={() => setThemeMode(prev => prev === 'system' ? 'light' : 'system')}
             title={themeMode === 'system' ? '关闭跟随系统' : '跟随系统'}
           >
-            🕒
+            ⚙️
           </AutoToggleButton>
           <AutoToggleButton
             theme={currentTheme}
             active={themeMode === 'auto'}
-            onClick={() => setThemeMode('auto')}
+            onClick={() => setThemeMode(prev => prev === 'auto' ? 'light' : 'auto')}
             title={themeMode === 'auto' ? '关闭日升日落' : '日升日落'}
           >
             🌅

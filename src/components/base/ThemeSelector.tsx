@@ -8,6 +8,7 @@ import {
   EyeOutlined,
   EyeInvisibleOutlined,
   BgColorsOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { useThemeContext } from '@/contexts';
 import type { ThemeConfigType } from '@/types';
@@ -63,11 +64,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
   }, [setThemeMode]);
 
   const handleSystemModeToggle = useCallback(() => {
-    setThemeMode('system');
+    setThemeMode(prev => prev === 'system' ? 'light' : 'system');
   }, [setThemeMode]);
 
   const handleAutoModeToggle = useCallback(() => {
-    setThemeMode('auto');
+    setThemeMode(prev => prev === 'auto' ? 'light' : 'auto');
   }, [setThemeMode]);
 
   const themeMenuItems: MenuProps['items'] = useMemo(() => {
@@ -152,7 +153,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
         />
 
         <FloatButton
-          icon={<ClockCircleOutlined />}
+          icon={<SettingOutlined />}
           tooltip={themeMode === 'system' ? '关闭跟随系统' : '跟随系统'}
           onClick={handleSystemModeToggle}
           style={{
