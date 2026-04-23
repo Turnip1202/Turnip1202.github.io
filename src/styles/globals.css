@@ -3,6 +3,22 @@
     /* 默认亮色模式的变量 */
     --custom-bg-color: var(--ant-bg-body-color, #fff);
     --custom-text-color: var(--ant-text-color-primary, #1677ff);
+    
+    /* 根字体大小 */
+    font-size: 16px;
+  }
+  
+  /* 响应式字体大小 */
+  @media (max-width: 768px) {
+    :root {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    :root {
+      font-size: 12px;
+    }
   }
   
   /* 暗黑模式下，Ant Design 会自动添加 .dark 类到 body */

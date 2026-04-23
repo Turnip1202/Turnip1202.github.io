@@ -60,7 +60,7 @@ export const Clock: React.FC = () => {
           @keyframes clockFadeIn {
             from {
               opacity: 0;
-              transform: translateY(-10px) translateX(10px);
+              transform: translateY(-0.625rem) translateX(0.625rem);
             }
             to {
               opacity: 1;

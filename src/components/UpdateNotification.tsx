@@ -62,16 +62,16 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
       }
       @media (max-width: 768px) {
         .update-notification-btn {
-          top: 90px !important;
-          right: 15px !important;
-          font-size: 18px !important;
+          top: 5.625rem !important;
+          right: 0.9375rem !important;
+          font-size: 1.125rem !important;
         }
       }
       @media (max-width: 480px) {
         .update-notification-btn {
-          top: 80px !important;
-          right: 10px !important;
-          font-size: 16px !important;
+          top: 5rem !important;
+          right: 0.625rem !important;
+          font-size: 1rem !important;
         }
       }
     `;
@@ -102,12 +102,12 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
       <SyncOutlined 
           className="update-notification-btn"
           style={{ 
-            fontSize: '20px', 
+            fontSize: '1.25rem', 
             color: '#1890ff',
             cursor: 'pointer',
             position: 'fixed',
-            top: '100px',
-            right: '20px',
+            top: '6.25rem',
+            right: '1.25rem',
             zIndex: 1000,
             animation: 'pulse 2s infinite'
           }} 

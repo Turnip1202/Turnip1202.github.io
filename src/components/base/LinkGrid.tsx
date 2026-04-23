@@ -17,7 +17,7 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
   const cardStyle: React.CSSProperties = {
     textAlign: 'center',
     height: '100%',
-    minHeight: '120px',
+    minHeight: '7.5rem',
     borderRadius: designTokens.borderRadius.lg,
     background: isDark 
       ? 'rgba(255, 255, 255, 0.08)' 
@@ -35,7 +35,7 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
     fontSize: '2.5rem',
     marginBottom: '0.75rem',
     display: 'block',
-    filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
+    filter: 'drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.1))',
   };
 
   return (
@@ -53,10 +53,10 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
         }}
         onMouseEnter={(e) => {
           const target = e.currentTarget as HTMLElement;
-          target.style.transform = 'translateY(-4px) scale(1.02)';
+          target.style.transform = 'translateY(-0.25rem) scale(1.02)';
           target.style.boxShadow = isDark
-            ? '0 12px 32px rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.1)'
-            : '0 12px 32px rgba(74, 144, 226, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)';
+            ? '0 0.75rem 2rem rgba(255, 255, 255, 0.1), 0 0.25rem 1rem rgba(0, 0, 0, 0.1)'
+            : '0 0.75rem 2rem rgba(74, 144, 226, 0.15), 0 0.25rem 1rem rgba(0, 0, 0, 0.1)';
           target.style.background = isDark
             ? 'rgba(255, 255, 255, 0.12)'
             : 'rgba(255, 255, 255, 0.95)';
@@ -138,7 +138,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
       ? 'rgba(255, 255, 255, 0.08)' 
       : 'rgba(255, 255, 255, 0.6)',
     borderRadius: designTokens.borderRadius.md,
-    borderLeft: `4px solid ${designTokens.colors.primary}`,
+    borderLeft: `0.25rem solid ${designTokens.colors.primary}`,
     backdropFilter: 'blur(8px)',
     WebkitBackdropFilter: 'blur(8px)',
   };

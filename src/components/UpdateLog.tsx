@@ -41,16 +41,16 @@ const UpdateLog: React.FC = () => {
     style.textContent = `
       @media (max-width: 768px) {
         .update-log-btn {
-          top: 90px !important;
-          right: 50px !important;
-          font-size: 16px !important;
+          top: 5.625rem !important;
+          right: 3.125rem !important;
+          font-size: 1rem !important;
         }
       }
       @media (max-width: 480px) {
         .update-log-btn {
-          top: 80px !important;
-          right: 40px !important;
-          font-size: 14px !important;
+          top: 5rem !important;
+          right: 2.5rem !important;
+          font-size: 0.875rem !important;
         }
       }
     `;
@@ -83,12 +83,12 @@ const UpdateLog: React.FC = () => {
           <BellOutlined 
             className="update-log-btn"
             style={{ 
-              fontSize: '18px', 
+              fontSize: '1.125rem', 
               color: '#1890ff',
               cursor: 'pointer',
               position: 'fixed',
-              top: '100px',
-              right: '60px',
+              top: '6.25rem',
+              right: '3.75rem',
               zIndex: 1000
             }} 
             onClick={handleOpen}

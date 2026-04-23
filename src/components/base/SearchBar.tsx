@@ -79,18 +79,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
   const containerStyle: React.CSSProperties = {
     margin: '2rem auto 3rem',
     maxWidth: '700px',
-    width: '100%',
+    width: '90vw',
     animation: 'searchFadeIn 0.8s ease-out 0.3s both',
   };
 
   const searchContainerStyle: React.CSSProperties = {
     display: 'flex',
-    gap: '12px',
+    gap: '0.75rem',
     width: '100%',
     alignItems: 'center',
     background: isDark ? designTokens.dark.background : designTokens.light.background,
     borderRadius: designTokens.borderRadius.xl,
-    padding: '8px 12px',
+    padding: '0.5rem 0.75rem',
     boxShadow: designTokens.shadows.md,
     backdropFilter: 'blur(10px)',
     WebkitBackdropFilter: 'blur(10px)',
@@ -216,7 +216,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
           onClick={handleSearch}
           style={{
             borderRadius: designTokens.borderRadius.lg,
-            minWidth: '100px',
+            minWidth: '6.25rem',
           }}
         >
           搜索
