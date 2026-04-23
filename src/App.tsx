@@ -4,7 +4,7 @@ import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 import Main from '@views/Main.tsx';
 import { ShowAdminButton } from '@/styles/App.css';
 import {
-  AdminPanel, Background, MyModal
+  AdminPanel, Background, MyModal, UpdateNotification
 } from './components';
 import { ClockNew as Clock } from './components';
 import { ThemeProvider, useThemeContext } from './contexts';
@@ -30,6 +30,7 @@ const AppContent: React.FC = () => {
             }
             <MyModal setVisibleAdmin={setVisibleAdmin} visibleAdmin={visibleAdmin} setToConfig={setToConfig} setIsShowAdmin={setIsShowAdmin} isShowAdmin={isShowAdmin}></MyModal>
           </Background>
+          <UpdateNotification />
         </EmotionThemeProvider>
       </AntdApp>
     </ConfigProvider>
