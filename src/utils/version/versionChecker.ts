@@ -31,6 +31,7 @@ export const checkForUpdates = async (): Promise<boolean> => {
   try {
     const currentVersion = await getCurrentVersion();
     if (!currentVersion) {
+      console.log('更新检查：无法获取版本信息');
       return false;
     }
 
@@ -38,17 +39,23 @@ export const checkForUpdates = async (): Promise<boolean> => {
     const storedVersion = localStorage.getItem('app_version');
     const storedHash = localStorage.getItem('app_hash');
 
+    console.log('更新检查：当前版本:', currentVersion);
+    console.log('更新检查：存储版本:', storedVersion);
+    console.log('更新检查：存储哈希:', storedHash);
+
     // 如果没有存储的版本信息，或者版本哈希不同，则认为有更新
     if (!storedVersion || storedHash !== currentVersion.hash) {
+      console.log('更新检查：检测到新版本！');
       // 更新存储的版本信息
       localStorage.setItem('app_version', currentVersion.version);
       localStorage.setItem('app_hash', currentVersion.hash);
       return true;
     }
 
+    console.log('更新检查：当前已是最新版本');
     return false;
   } catch (error) {
-    console.warn('Failed to check for updates:', error);
+    console.warn('更新检查失败:', error);
     return false;
   }
 };
