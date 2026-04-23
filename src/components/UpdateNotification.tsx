@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, message, Popover } from 'antd';
-import { ReloadOutlined, BellOutlined } from '@ant-design/icons';
+import { ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import { checkForUpdates, refreshApp } from '@/utils/version/versionChecker';
 
 interface UpdateNotificationProps {
@@ -85,18 +85,18 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
       title="应用更新"
       trigger="click"
     >
-      <BellOutlined 
-        style={{ 
-          fontSize: '20px', 
-          color: '#1890ff',
-          cursor: 'pointer',
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          animation: 'pulse 2s infinite'
-        }} 
-      />
+      <SyncOutlined 
+          style={{ 
+            fontSize: '20px', 
+            color: '#1890ff',
+            cursor: 'pointer',
+            position: 'fixed',
+            top: '70px',
+            right: '20px',
+            zIndex: 1000,
+            animation: 'pulse 2s infinite'
+          }} 
+        />
     </Popover>
   );
 };

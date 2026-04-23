@@ -54,7 +54,7 @@ const UpdateLog: React.FC = () => {
               color: '#1890ff',
               cursor: 'pointer',
               position: 'fixed',
-              top: '20px',
+              top: '70px',
               right: '60px',
               zIndex: 1000
             }} 
