@@ -10,10 +10,11 @@ const { Title, Text } = Typography;
 interface LinkCardProps {
   link: Link;
   isDark: boolean;
-  onToggleFavorite: (linkId: number) => void;
+  onToggleFavorite: (categoryId: number, linkId: number) => void;
+  originalCategoryId: number;
 }
 
-const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFavorite }) => {
+const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFavorite, originalCategoryId }) => {
   const cardStyle: React.CSSProperties = {
     textAlign: 'center',
     height: '100%',
@@ -43,6 +44,11 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleConfirm = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite(originalCategoryId, link.id);
   };
 
   return (
@@ -75,10 +81,7 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
         <Popconfirm
           key="favorite"
           title={link.favorite ? "取消收藏此链接？" : "收藏此链接？"}
-          onConfirm={(e) => {
-            if (e) e.stopPropagation();
-            onToggleFavorite(link.id);
-          }}
+          onConfirm={handleConfirm}
           okText="确定"
           cancelText="取消"
         >
@@ -125,10 +128,11 @@ interface CategorySectionProps {
   category: LinkCategory;
   isDark: boolean;
   animationDelay: string;
-  onToggleFavorite: (categoryId: number, linkId: number) => void;
+  onToggleFavorite: (linkId: number, originalCategoryId: number) => void;
+  originalCategoryId: number;
 }
 
-const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, animationDelay, onToggleFavorite }) => {
+const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, animationDelay, onToggleFavorite, originalCategoryId }) => {
   const sectionStyle: React.CSSProperties = {
     margin: '2.5rem 0',
     animation: `categoryFadeIn 0.8s ease-out ${animationDelay} both`,
@@ -152,7 +156,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
   return (
     <section style={sectionStyle}>
       <style>
-        {`
+        {
+          `
           @keyframes categoryFadeIn {
             from {
               opacity: 0;
@@ -163,7 +168,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
               transform: translateY(0);
             }
           }
-        `}
+          `
+        }
       </style>
       <div style={titleStyle}>
         <FolderOutlined style={{ marginRight: '8px' }} />
@@ -175,7 +181,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
             <LinkCard 
               link={link} 
               isDark={isDark} 
-              onToggleFavorite={(linkId) => onToggleFavorite(category.id, linkId)} 
+              onToggleFavorite={onToggleFavorite} 
+              originalCategoryId={originalCategoryId}
             />
           </Col>
         ))}
@@ -192,58 +199,20 @@ interface LinkGridProps {
 export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite }) => {
   const { isDark } = useThemeContext();
 
-  const { sortedCategories, favoriteCategory } = useMemo(() => {
-    // 收集所有收藏的链接
-    const favoriteLinks: Link[] = [];
-    const categoryIdMap = new Map<number, number>();
-    
-    categories.forEach(category => {
-      category.links.forEach(link => {
-        if (link.favorite) {
-          favoriteLinks.push(link);
-          // 记录链接所属的原始分类ID
-          categoryIdMap.set(link.id, category.id);
-        }
-      });
-    });
-
-    // 创建收藏分类（如果有收藏链接）
-    let favoriteCategory: LinkCategory | null = null;
-    if (favoriteLinks.length > 0) {
-      favoriteCategory = {
-        id: -1, // 使用负数ID避免与真实分类冲突
-        name: '⭐ 收藏',
-        links: favoriteLinks
-      };
-    }
-
-    // 排序真实分类
-    const sortedCategories = [...categories].sort((a, b) => a.id - b.id);
-
-    return { sortedCategories, favoriteCategory };
+  // 排序真实分类
+  const sortedCategories = useMemo(() => {
+    return [...categories].sort((a, b) => a.id - b.id);
   }, [categories]);
 
-  // 处理收藏链接的切换（需要找到原始分类）
+  // 处理收藏链接的切换
   const handleFavoriteToggle = (categoryId: number, linkId: number) => {
-    if (!onToggleFavorite) return;
-    
-    if (categoryId === -1) {
-      // 收藏分类中的链接，需要找到原始分类
-      const originalCategoryId = categories.find(cat => 
-        cat.links.some(link => link.id === linkId)
-      )?.id;
-      
-      if (originalCategoryId) {
-        onToggleFavorite(originalCategoryId, linkId);
-      }
-    } else {
-      // 普通分类中的链接
+    if (onToggleFavorite) {
       onToggleFavorite(categoryId, linkId);
     }
   };
 
-  // 检查是否有内容（收藏分类或普通分类）
-  const hasContent = favoriteCategory || sortedCategories.length > 0;
+  // 检查是否有内容
+  const hasContent = categories.length > 0;
 
   if (!hasContent) {
     return (
@@ -254,24 +223,90 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
     );
   }
 
+  // 收集所有收藏的链接
+  const favoriteLinks = useMemo(() => {
+    const result: Link[] = [];
+    
+    categories.forEach(category => {
+      category.links.forEach(link => {
+        if (link.favorite) {
+          result.push(link);
+        }
+      });
+    });
+    
+    return result;
+  }, [categories]);
+
   return (
     <>
-      {favoriteCategory && (
-        <CategorySection
-          key={favoriteCategory.id}
-          category={favoriteCategory}
-          isDark={isDark}
-          animationDelay="0.5s"
-          onToggleFavorite={handleFavoriteToggle}
-        />
+      {/* 收藏分类（如果有收藏链接） */}
+      {favoriteLinks.length > 0 && (
+        <section style={{ margin: '2.5rem 0', animation: 'categoryFadeIn 0.8s ease-out 0.5s both' }}>
+          <style>
+            {
+              `
+              @keyframes categoryFadeIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(30px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+              `
+            }
+          </style>
+          <div style={{
+            color: isDark ? '#ffffff' : '#2c3e50',
+            fontSize: '1.4rem',
+            fontWeight: 700,
+            marginBottom: '1.5rem',
+            padding: '0.75rem 1rem',
+            background: isDark 
+              ? 'rgba(255, 255, 255, 0.08)' 
+              : 'rgba(255, 255, 255, 0.6)',
+            borderRadius: designTokens.borderRadius.md,
+            borderLeft: `0.25rem solid ${designTokens.colors.primary}`,
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+          }}>
+            <StarOutlined style={{ marginRight: '8px' }} />
+            ⭐ 收藏
+          </div>
+          <Row gutter={[16, 16]}>
+            {favoriteLinks.map((link) => {
+              // 找到链接的原始分类
+              const originalCategory = categories.find(cat => 
+                cat.links.some(l => l.id === link.id)
+              );
+              
+              return (
+                <Col key={link.id} xs={12} sm={8} md={6} lg={4} xl={3}>
+                  <LinkCard 
+                    link={link} 
+                    isDark={isDark} 
+                    onToggleFavorite={handleFavoriteToggle} 
+                    originalCategoryId={originalCategory?.id || -1}
+                  />
+                </Col>
+              );
+            })}
+          </Row>
+        </section>
       )}
+      
+      {/* 普通分类 */}
       {sortedCategories.map((category, index) => (
         <CategorySection
           key={category.id}
           category={category}
           isDark={isDark}
           animationDelay={`${0.6 + index * 0.1}s`}
-          onToggleFavorite={onToggleFavorite || (() => {})}
+          onToggleFavorite={handleFavoriteToggle}
+          originalCategoryId={category.id}
         />
       ))}
     </>
