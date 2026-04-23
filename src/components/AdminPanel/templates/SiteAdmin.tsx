@@ -39,6 +39,7 @@ import { linkCategories, searchEngines } from '@/config/links';
 import type { ISiteConfig } from '@/types';
 import { StorageSelector } from '@/components/theme';
 import { getThemeManager } from '@/core/theme/ThemeManagerV2';
+import { useThemeContext } from '@/contexts/ThemeContext';
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -51,6 +52,7 @@ const SiteAdmin: React.FC = () => {
   const [resetModalVisible, setResetModalVisible] = useState(false);
   const [previewModalVisible, setPreviewModalVisible] = useState(false);
   const [backupBeforeReset, setBackupBeforeReset] = useState(true);
+  const { isDark, appTheme } = useThemeContext();
 
   useEffect(() => {
     loadSiteConfig();
@@ -631,8 +633,19 @@ const SiteAdmin: React.FC = () => {
           </Space>
         }
       >
-        <div style={{ background: '#f5f5f5', padding: 16, borderRadius: 6 }}>
-          <pre style={{ margin: 0, fontSize: 12, maxHeight: 400, overflow: 'auto' }}>
+        <div style={{ 
+          background: isDark ? '#1a1a1a' : '#f5f5f5', 
+          color: isDark ? '#e0e0e0' : '#333',
+          padding: 16, 
+          borderRadius: 6 
+        }}>
+          <pre style={{ 
+            margin: 0, 
+            fontSize: 12, 
+            maxHeight: 400, 
+            overflow: 'auto',
+            color: 'inherit'
+          }}>
             {JSON.stringify(generateFullPreview(), null, 2)}
           </pre>
         </div>
@@ -741,6 +754,7 @@ const SiteAdmin: React.FC = () => {
         width={900}
         centered
         style={{ top: 20 }}
+        className={isDark ? 'dark-modal' : ''}
       >
         {(() => {
           const fullConfig = generateFullPreview();
@@ -751,37 +765,73 @@ const SiteAdmin: React.FC = () => {
                 <Row gutter={[16, 8]}>
                   <Col span={12}>
                     <Text strong>网站标题：</Text>
-                    <div style={{ marginTop: 4, padding: '4px 8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                    <div style={{ 
+                      marginTop: 4, 
+                      padding: '4px 8px', 
+                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
+                      borderRadius: '4px',
+                      color: isDark ? '#e0e0e0' : '#333'
+                    }}>
                       {fullConfig.site.title}
                     </div>
                   </Col>
                   <Col span={12}>
                     <Text strong>作者：</Text>
-                    <div style={{ marginTop: 4, padding: '4px 8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                    <div style={{ 
+                      marginTop: 4, 
+                      padding: '4px 8px', 
+                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
+                      borderRadius: '4px',
+                      color: isDark ? '#e0e0e0' : '#333'
+                    }}>
                       {fullConfig.site.author}
                     </div>
                   </Col>
                   <Col span={24}>
                     <Text strong>版权信息：</Text>
-                    <div style={{ marginTop: 4, padding: '4px 8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                    <div style={{ 
+                      marginTop: 4, 
+                      padding: '4px 8px', 
+                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
+                      borderRadius: '4px',
+                      color: isDark ? '#e0e0e0' : '#333'
+                    }}>
                       {fullConfig.site.copyright}
                     </div>
                   </Col>
                   <Col span={24}>
                     <Text strong>网站描述：</Text>
-                    <div style={{ marginTop: 4, padding: '4px 8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                    <div style={{ 
+                      marginTop: 4, 
+                      padding: '4px 8px', 
+                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
+                      borderRadius: '4px',
+                      color: isDark ? '#e0e0e0' : '#333'
+                    }}>
                       {fullConfig.site.description}
                     </div>
                   </Col>
                   <Col span={12}>
                     <Text strong>关键词：</Text>
-                    <div style={{ marginTop: 4, padding: '4px 8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                    <div style={{ 
+                      marginTop: 4, 
+                      padding: '4px 8px', 
+                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
+                      borderRadius: '4px',
+                      color: isDark ? '#e0e0e0' : '#333'
+                    }}>
                       {fullConfig.site.keywords}
                     </div>
                   </Col>
                   <Col span={12}>
                     <Text strong>网站图标：</Text>
-                    <div style={{ marginTop: 4, padding: '4px 8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                    <div style={{ 
+                      marginTop: 4, 
+                      padding: '4px 8px', 
+                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
+                      borderRadius: '4px',
+                      color: isDark ? '#e0e0e0' : '#333'
+                    }}>
                       {fullConfig.site.favicon}
                     </div>
                   </Col>
@@ -797,9 +847,10 @@ const SiteAdmin: React.FC = () => {
                       <div style={{ 
                         marginTop: 8,
                         padding: '12px',
-                        border: '1px solid #d9d9d9',
+                        border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
                         borderRadius: '8px',
-                        background: '#fafafa'
+                        background: isDark ? '#2a2a2a' : '#fafafa',
+                        color: isDark ? '#e0e0e0' : '#333'
                       }}>
                         <Row align="middle" gutter={16}>
                           <Col span={4}>
@@ -808,7 +859,7 @@ const SiteAdmin: React.FC = () => {
                               height: 30,
                               background: fullConfig.theme.default.backgroundImage,
                               borderRadius: '4px',
-                              border: '1px solid #d9d9d9'
+                              border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`
                             }} />
                           </Col>
                           <Col span={20}>
@@ -833,9 +884,10 @@ const SiteAdmin: React.FC = () => {
                             <Col key={theme.id} span={8}>
                               <div style={{
                                 padding: '8px',
-                                border: '1px solid #d9d9d9',
+                                border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
                                 borderRadius: '6px',
-                                background: '#fafafa'
+                                background: isDark ? '#2a2a2a' : '#fafafa',
+                                color: isDark ? '#e0e0e0' : '#333'
                               }}>
                                 <div style={{
                                   width: '100%',
@@ -850,7 +902,13 @@ const SiteAdmin: React.FC = () => {
                           ))}
                         </Row>
                       ) : (
-                        <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                        <div style={{ 
+                          padding: '20px', 
+                          textAlign: 'center', 
+                          color: isDark ? '#999' : '#999',
+                          background: isDark ? '#2a2a2a' : 'transparent',
+                          borderRadius: '4px'
+                        }}>
                           暂无预设主题
                         </div>
                       )}
@@ -893,9 +951,10 @@ const SiteAdmin: React.FC = () => {
                         <div key={category.id} style={{
                           marginBottom: '8px',
                           padding: '8px',
-                          border: '1px solid #f0f0f0',
+                          border: `1px solid ${isDark ? '#3a3a3a' : '#f0f0f0'}`,
                           borderRadius: '4px',
-                          background: '#fafafa'
+                          background: isDark ? '#2a2a2a' : '#fafafa',
+                          color: isDark ? '#e0e0e0' : '#333'
                         }}>
                           <Row justify="space-between" align="middle">
                             <Col>
@@ -906,7 +965,7 @@ const SiteAdmin: React.FC = () => {
                             </Col>
                           </Row>
                           {category.links && category.links.length > 0 && (
-                            <div style={{ marginTop: 4, fontSize: '12px', color: '#666' }}>
+                            <div style={{ marginTop: 4, fontSize: '12px', color: isDark ? '#aaa' : '#666' }}>
                               {category.links.slice(0, 3).map(link => link.icon + ' ' + (link.name || '未命名')).join(', ')}
                               {category.links.length > 3 && '...'}
                             </div>
