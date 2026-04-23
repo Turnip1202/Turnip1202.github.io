@@ -37,6 +37,7 @@ import {
 } from '@ant-design/icons';
 import type { ConfigVersion, VersionCreateOptions } from '@/types/version';
 import { configVersionManager } from '@/utils/version';
+import { useThemeContext } from '@/contexts/ThemeContext';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -59,6 +60,9 @@ const VersionAdmin: React.FC = () => {
   // 表单
   const [createForm] = Form.useForm();
   const [importData, setImportData] = useState('');
+  
+  // 主题状态
+  const { isDark } = useThemeContext();
 
   // 加载版本列表
   const loadVersions = () => {
@@ -477,7 +481,8 @@ const VersionAdmin: React.FC = () => {
             
             <Divider>配置数据预览</Divider>
             <pre style={{ 
-              background: '#f5f5f5', 
+              background: isDark ? '#1a1a1a' : '#f5f5f5', 
+              color: isDark ? '#e0e0e0' : '#333',
               padding: '12px', 
               borderRadius: '4px',
               fontSize: '12px',
@@ -514,10 +519,10 @@ const VersionAdmin: React.FC = () => {
           <div style={{ 
             marginTop: 8,
             padding: '16px',
-            border: '2px dashed #d9d9d9',
+            border: `2px dashed ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
             borderRadius: '6px',
             textAlign: 'center',
-            background: '#fafafa'
+            background: isDark ? '#2a2a2a' : '#fafafa'
           }}>
             <input
               type="file"
@@ -529,8 +534,8 @@ const VersionAdmin: React.FC = () => {
             <label htmlFor="version-file-input" style={{ cursor: 'pointer' }}>
               <div>
                 <UploadOutlined style={{ fontSize: '24px', color: '#1890ff', marginBottom: '8px' }} />
-                <div style={{ color: '#666' }}>点击选择 JSON 文件</div>
-                <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                <div style={{ color: isDark ? '#e0e0e0' : '#666' }}>点击选择 JSON 文件</div>
+                <div style={{ fontSize: '12px', color: isDark ? '#aaa' : '#999', marginTop: '4px' }}>
                   支持从版本管理导出的 .json 文件
                 </div>
               </div>
@@ -558,13 +563,13 @@ const VersionAdmin: React.FC = () => {
             <Text strong>数据预览：</Text>
             <div style={{ 
               marginTop: 8,
-              background: '#f5f5f5', 
+              background: isDark ? '#1a1a1a' : '#f5f5f5', 
               padding: '12px',
               borderRadius: '6px',
               maxHeight: '150px',
               overflow: 'auto'
             }}>
-              <pre style={{ margin: 0, fontSize: '11px', color: '#666' }}>
+              <pre style={{ margin: 0, fontSize: '11px', color: isDark ? '#aaa' : '#666' }}>
                 {(() => {
                   try {
                     const parsed = JSON.parse(importData);
