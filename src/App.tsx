@@ -81,7 +81,7 @@ const AppContent: React.FC = () => {
             }
             <MyModal setVisibleAdmin={setVisibleAdmin} visibleAdmin={visibleAdmin} setToConfig={setToConfig} setIsShowAdmin={setIsShowAdmin} isShowAdmin={isShowAdmin}></MyModal>
           </Background>
-          <UpdateNotification />
+          <UpdateNotification checkInterval={180000} />
           <UpdateLog />
         </EmotionThemeProvider>
       </AntdApp>
