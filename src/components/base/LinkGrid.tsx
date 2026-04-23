@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Card, Row, Col, Typography, Empty } from 'antd';
-import { FolderOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Typography, Empty, Popconfirm } from 'antd';
+import { FolderOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
 import type { LinkCategory, Link } from '@/types';
 import { useThemeContext } from '@/contexts';
 import { designTokens } from '@/styles/design-tokens';
@@ -10,9 +10,10 @@ const { Title, Text } = Typography;
 interface LinkCardProps {
   link: Link;
   isDark: boolean;
+  onToggleFavorite: (linkId: number) => void;
 }
 
-const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark }) => {
+const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFavorite }) => {
   const cardStyle: React.CSSProperties = {
     textAlign: 'center',
     height: '100%',
@@ -68,6 +69,35 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark }) => {
             ? 'rgba(255, 255, 255, 0.08)'
             : 'rgba(255, 255, 255, 0.8)';
         }}
+        actions={[
+          <Popconfirm
+            key="favorite"
+            title={link.favorite ? "取消收藏此链接？" : "收藏此链接？"}
+            onConfirm={() => onToggleFavorite(link.id)}
+            okText="确定"
+            cancelText="取消"
+          >
+            {
+              link.favorite ? (
+                <HeartFilled 
+                  style={{ 
+                    color: '#ff4d4f',
+                    fontSize: '16px',
+                    cursor: 'pointer'
+                  }} 
+                />
+              ) : (
+                <HeartOutlined 
+                  style={{ 
+                    color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#999',
+                    fontSize: '16px',
+                    cursor: 'pointer'
+                  }} 
+                />
+              )
+            }
+          </Popconfirm>
+        ]}
       >
         <span style={iconStyle}>{link.icon}</span>
         <Text
@@ -89,9 +119,10 @@ interface CategorySectionProps {
   category: LinkCategory;
   isDark: boolean;
   animationDelay: string;
+  onToggleFavorite: (categoryId: number, linkId: number) => void;
 }
 
-const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, animationDelay }) => {
+const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, animationDelay, onToggleFavorite }) => {
   const sectionStyle: React.CSSProperties = {
     margin: '2.5rem 0',
     animation: `categoryFadeIn 0.8s ease-out ${animationDelay} both`,
@@ -135,7 +166,11 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
       <Row gutter={[16, 16]}>
         {category.links.map((link) => (
           <Col key={link.id} xs={12} sm={8} md={6} lg={4} xl={3}>
-            <LinkCard link={link} isDark={isDark} />
+            <LinkCard 
+              link={link} 
+              isDark={isDark} 
+              onToggleFavorite={(linkId) => onToggleFavorite(category.id, linkId)} 
+            />
           </Col>
         ))}
       </Row>
@@ -145,9 +180,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
 
 interface LinkGridProps {
   categories: LinkCategory[];
+  onToggleFavorite?: (categoryId: number, linkId: number) => void;
 }
 
-export const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
+export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite }) => {
   const { isDark } = useThemeContext();
 
   const sortedCategories = useMemo(() => {
@@ -171,6 +207,7 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
           category={category}
           isDark={isDark}
           animationDelay={`${0.5 + index * 0.1}s`}
+          onToggleFavorite={onToggleFavorite || (() => {})}
         />
       ))}
     </>
