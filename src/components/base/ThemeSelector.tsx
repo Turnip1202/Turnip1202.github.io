@@ -66,6 +66,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
     setThemeMode('system');
   }, [setThemeMode]);
 
+  const handleAutoModeToggle = useCallback(() => {
+    setThemeMode('auto');
+  }, [setThemeMode]);
+
   const themeMenuItems: MenuProps['items'] = useMemo(() => {
     return themeConfig.presets.map((theme) => ({
       key: theme.id,
@@ -153,6 +157,17 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
           onClick={handleSystemModeToggle}
           style={{
             background: themeMode === 'system' 
+              ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
+              : undefined,
+          }}
+        />
+
+        <FloatButton
+          icon={<ClockCircleOutlined />}
+          tooltip={themeMode === 'auto' ? '关闭日升日落' : '日升日落'}
+          onClick={handleAutoModeToggle}
+          style={{
+            background: themeMode === 'auto' 
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}

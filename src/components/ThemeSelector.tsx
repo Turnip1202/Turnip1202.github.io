@@ -340,6 +340,14 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
           >
             🕒
           </AutoToggleButton>
+          <AutoToggleButton
+            theme={currentTheme}
+            active={themeMode === 'auto'}
+            onClick={() => setThemeMode('auto')}
+            title={themeMode === 'auto' ? '关闭日升日落' : '日升日落'}
+          >
+            🌅
+          </AutoToggleButton>
         </ToggleContainer>
       </SelectorContainer>
     </>

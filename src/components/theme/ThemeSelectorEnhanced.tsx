@@ -67,6 +67,10 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
     setThemeMode('system');
   }, [setThemeMode]);
 
+  const handleAutoModeToggle = useCallback(() => {
+    setThemeMode('auto');
+  }, [setThemeMode]);
+
   const presetItems = useMemo(() => {
     const builtInPresets = themeManager.getBuiltInPresets();
     const customPresets = themeManager.getCustomPresets();
@@ -261,6 +265,17 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
           onClick={handleSystemModeToggle}
           style={{
             background: themeMode === 'system' 
+              ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
+              : undefined,
+          }}
+        />
+
+        <FloatButton
+          icon={<ClockCircleOutlined />}
+          tooltip={themeMode === 'auto' ? '关闭日升日落' : '日升日落'}
+          onClick={handleAutoModeToggle}
+          style={{
+            background: themeMode === 'auto' 
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}

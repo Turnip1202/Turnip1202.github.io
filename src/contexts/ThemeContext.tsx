@@ -4,7 +4,7 @@ import { themeManager } from '@/utils';
 import type { ThemeConfigType, IThemeConfig } from '@/types';
 import { getAntdThemeConfig } from '@/styles/antd-theme';
 
-type ThemeMode = 'light' | 'dark' | 'system';
+type ThemeMode = 'light' | 'dark' | 'system' | 'auto'; // auto 表示日升日落模式
 
 interface ThemeContextValue {
   appTheme: ThemeConfigType;
@@ -145,6 +145,24 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     };
   }, [themeMode]);
 
+  // 日升日落模式的时间检查
+  useEffect(() => {
+    if (themeMode !== 'auto') return;
+
+    const checkTime = () => {
+      const currentHour = new Date().getHours();
+      const shouldBeDark = currentHour >= 18 || currentHour < 6;
+      setIsDark(shouldBeDark);
+    };
+
+    // 立即检查一次
+    checkTime();
+    // 每分钟检查一次
+    const interval = setInterval(checkTime, 60000);
+
+    return () => clearInterval(interval);
+  }, [themeMode]);
+
   // 根据themeMode更新isDark
   useEffect(() => {
     if (themeMode === 'system') {
@@ -152,8 +170,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       setIsDark(isSystemDark);
     } else if (themeMode === 'dark') {
       setIsDark(true);
-    } else {
+    } else if (themeMode === 'light') {
       setIsDark(false);
+    } else if (themeMode === 'auto') {
+      // 日升日落模式，由上面的useEffect处理
+      const currentHour = new Date().getHours();
+      const shouldBeDark = currentHour >= 18 || currentHour < 6;
+      setIsDark(shouldBeDark);
     }
   }, [themeMode]);
 
