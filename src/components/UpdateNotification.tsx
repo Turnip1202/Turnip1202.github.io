@@ -91,7 +91,7 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
             color: '#1890ff',
             cursor: 'pointer',
             position: 'fixed',
-            top: '70px',
+            top: '100px',
             right: '20px',
             zIndex: 1000,
             animation: 'pulse 2s infinite'
