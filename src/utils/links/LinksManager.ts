@@ -199,32 +199,6 @@ export class LinksManager {
     return true;
   }
 
-  // 切换链接的收藏状态
-  toggleFavorite(categoryId: number, linkId: number): boolean {
-    const category = this.getCategoryById(categoryId);
-    if (!category) return false;
-
-    const link = category.links.find(l => l.id === linkId);
-    if (!link) return false;
-
-    link.favorite = !link.favorite;
-    this.saveSync(this.CATEGORIES_KEY, this.categories);
-    return true;
-  }
-
-  // 获取所有收藏的链接
-  getFavoriteLinks(): { categoryId: number; link: Link }[] {
-    const favorites: { categoryId: number; link: Link }[] = [];
-    this.categories.forEach(category => {
-      category.links.forEach(link => {
-        if (link.favorite) {
-          favorites.push({ categoryId: category.id, link });
-        }
-      });
-    });
-    return favorites;
-  }
-
   getSearchEngineById(id: string): SearchEngine | undefined {
     return this.engines.find(engine => engine.id === id);
   }

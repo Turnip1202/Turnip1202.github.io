@@ -4,24 +4,19 @@ import { themeManager } from '@/utils';
 import type { ThemeConfigType, IThemeConfig } from '@/types';
 import { getAntdThemeConfig } from '@/styles/antd-theme';
 
-type ThemeMode = 'light' | 'dark' | 'system' | 'auto'; // auto 表示日升日落模式
-
 interface ThemeContextValue {
   appTheme: ThemeConfigType;
   antdTheme: ThemeConfig;
   themeConfig: IThemeConfig;
   isDark: boolean;
-  themeMode: ThemeMode;
   setAppTheme: (theme: ThemeConfigType) => void;
   toggleDarkMode: () => void;
   setDarkMode: (isDark: boolean) => void;
-  setThemeMode: (mode: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const THEME_MODE_KEY = 'turnip-theme-mode';
-const THEME_MODE_TYPE_KEY = 'turnip-theme-mode-type';
 const SAVED_LIGHT_THEME_KEY = 'turnip-saved-light-theme';
 
 const DEFAULT_LIGHT_CSS_VARS = {
@@ -78,23 +73,10 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [themeConfig] = useState<IThemeConfig>(() => themeManager.getConfig());
   
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    try {
-      const saved = localStorage.getItem(THEME_MODE_TYPE_KEY);
-      return (saved as ThemeMode) || 'system';
-    } catch {
-      return 'system';
-    }
-  });
-
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(THEME_MODE_KEY);
-      if (saved) {
-        return saved === 'dark';
-      }
-      // 检测系统主题
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return saved ? saved === 'dark' : false;
     } catch {
       return false;
     }
@@ -129,57 +111,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return themeConfig.default;
   });
 
-  // 监听系统主题变化
-  useEffect(() => {
-    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-      if (themeMode === 'system') {
-        setIsDark(e.matches);
-      }
-    };
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleSystemThemeChange);
-    };
-  }, [themeMode]);
-
-  // 日升日落模式的时间检查
-  useEffect(() => {
-    if (themeMode !== 'auto') return;
-
-    const checkTime = () => {
-      const currentHour = new Date().getHours();
-      const shouldBeDark = currentHour >= 18 || currentHour < 6;
-      setIsDark(shouldBeDark);
-    };
-
-    // 立即检查一次
-    checkTime();
-    // 每分钟检查一次
-    const interval = setInterval(checkTime, 60000);
-
-    return () => clearInterval(interval);
-  }, [themeMode]);
-
-  // 根据themeMode更新isDark
-  useEffect(() => {
-    if (themeMode === 'system') {
-      const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDark(isSystemDark);
-    } else if (themeMode === 'dark') {
-      setIsDark(true);
-    } else if (themeMode === 'light') {
-      setIsDark(false);
-    } else if (themeMode === 'auto') {
-      // 日升日落模式，由上面的useEffect处理
-      const currentHour = new Date().getHours();
-      const shouldBeDark = currentHour >= 18 || currentHour < 6;
-      setIsDark(shouldBeDark);
-    }
-  }, [themeMode]);
-
   useEffect(() => {
     if (isDark) {
       applyCssVariables(true);
@@ -191,7 +122,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       setAppThemeState(themeToRestore);
       themeManager.setDefaultThemeSync(themeToRestore);
     }
-  }, [isDark, savedLightTheme, themeConfig.default]);
+  }, [isDark]);
 
   useEffect(() => {
     try {
@@ -200,14 +131,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       console.warn('Failed to save theme mode:', error);
     }
   }, [isDark]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(THEME_MODE_TYPE_KEY, themeMode);
-    } catch (error) {
-      console.warn('Failed to save theme mode type:', error);
-    }
-  }, [themeMode]);
 
   useEffect(() => {
     try {
@@ -241,11 +164,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [isDark]);
 
   const toggleDarkMode = useCallback(() => {
-    setThemeMode(prev => prev === 'dark' ? 'light' : 'dark');
+    setIsDark(prev => !prev);
   }, []);
 
   const setDarkMode = useCallback((dark: boolean) => {
-    setThemeMode(dark ? 'dark' : 'light');
+    setIsDark(dark);
   }, []);
 
   const contextValue = useMemo<ThemeContextValue>(() => ({
@@ -253,12 +176,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     antdTheme,
     themeConfig,
     isDark,
-    themeMode,
     setAppTheme,
     toggleDarkMode,
     setDarkMode,
-    setThemeMode,
-  }), [appTheme, antdTheme, themeConfig, isDark, themeMode, setAppTheme, toggleDarkMode, setDarkMode, setThemeMode]);
+  }), [appTheme, antdTheme, themeConfig, isDark, setAppTheme, toggleDarkMode, setDarkMode]);
 
   return (
     <ThemeContext.Provider value={contextValue}>

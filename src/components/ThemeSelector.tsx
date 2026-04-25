@@ -1,9 +1,8 @@
 // src/components/ThemeSelector.tsx
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import type { IThemeConfig, ThemeConfigType, BackgroundProps } from "../types"
 import { themeManager } from "../utils"
-import { useThemeContext } from "../contexts"
 import type React from 'react';
 const SelectorContainer = styled.div<{ isVisible: boolean }>`
   position: fixed;
@@ -207,7 +206,7 @@ interface Props {
 
 export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
   themeConfig = themeManager.getConfig();
-  const { isDark, themeMode, setThemeMode, appTheme } = useThemeContext();
+  // console.log("localThemeConfig", localThemeConfig)
   
   // 显示/隐藏状态
   const [isVisible, setIsVisible] = useState(() => {
@@ -217,6 +216,17 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
     } catch (error) {
       console.warn('Failed to load theme selector visibility:', error);
       return true;
+    }
+  });
+
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('turnip-theme-mode');
+      return saved ? saved === 'dark' : false;
+    } catch (error) {
+      console.warn('Failed to load theme mode:', error);
+      return false;
     }
   });
 
@@ -230,15 +240,26 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
       return themeConfig.default.id;
     }
   });
+  const [isAutoMode, setIsAutoMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('turnip-theme-auto');
+      return saved ? saved === 'true' : false;
+    } catch (error) {
+      console.warn('Failed to load auto mode:', error);
+      return false;
+    }
+  });
 
   useEffect(() => {
     try {
+      localStorage.setItem('turnip-theme-mode', isDarkMode ? 'dark' : 'light');
+      localStorage.setItem('turnip-theme-auto', String(isAutoMode));
       localStorage.setItem('turnip-theme-preset', selectedTheme);
       localStorage.setItem('turnip-theme-selector-visible', String(isVisible));
     } catch (error) {
       console.warn('Failed to save theme settings:', error);
     }
-  }, [selectedTheme, isVisible]);
+  }, [isDarkMode, isAutoMode, selectedTheme, isVisible]);
 
   // 检查当前选中的主题是否仍然存在，如果不存在则自动选择一个有效的主题
   useEffect(() => {
@@ -252,6 +273,24 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
     }
   }, [themeConfig, selectedTheme]);
 
+  useEffect(() => {
+    const checkTime = () => {
+      if (!isAutoMode) return;
+
+      const currentHour = new Date().getHours();
+      const shouldBeDark = currentHour >= 18 || currentHour < 6;
+
+      if (shouldBeDark !== isDarkMode) {
+        setIsDarkMode(shouldBeDark);
+      }
+    };
+
+    checkTime();
+    const interval = setInterval(checkTime, 60000);
+
+    return () => clearInterval(interval);
+  }, [isAutoMode, isDarkMode]);
+
   const updateTheme = useCallback(() => {
     // 安全地获取基础主题，避免数组为空时的错误
     const baseTheme = themeConfig.presets.find(theme => theme.id === selectedTheme) || 
@@ -260,16 +299,16 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
     
     const theme: ThemeConfigType = {
       id: 'custom',
-      name: isDark ? '暗黑主题' : '明亮主题',
-      backgroundImage: isDark
+      name: isDarkMode ? '暗黑主题' : '明亮主题',
+      backgroundImage: isDarkMode
         ? 'linear-gradient(120deg, #2d3436 0%, #2d3436 100%)'
         : baseTheme.backgroundImage,
       blur: baseTheme.blur,
-      opacity: isDark ? 0.85 : baseTheme.opacity,
+      opacity: isDarkMode ? 0.85 : baseTheme.opacity,
     };
     onSelect(theme);
     return theme;
-  }, [isDark, selectedTheme, onSelect, themeConfig]);
+  }, [isDarkMode, selectedTheme, onSelect, themeConfig]);
 
   // 获取当前实际应用的主题
   const currentTheme = useMemo(() => {
@@ -279,18 +318,18 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
     
     return {
       id: 'custom',
-      name: isDark ? '暗黑主题' : '明亮主题',
-      backgroundImage: isDark
+      name: isDarkMode ? '暗黑主题' : '明亮主题',
+      backgroundImage: isDarkMode
         ? 'linear-gradient(120deg, #2d3436 0%, #2d3436 100%)'
         : baseTheme.backgroundImage,
       blur: baseTheme.blur,
-      opacity: isDark ? 0.85 : baseTheme.opacity,
+      opacity: isDarkMode ? 0.85 : baseTheme.opacity,
     };
-  }, [isDark, selectedTheme, themeConfig]);
+  }, [isDarkMode, selectedTheme, themeConfig]);
 
   useEffect(() => {
     updateTheme();
-  }, [isDark, updateTheme]);
+  }, [isDarkMode, updateTheme]);
 
   return (
     <>
@@ -324,29 +363,22 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
         <ToggleContainer>
           <ToggleButton
             theme={currentTheme}
-            active={isDark}
+            active={isDarkMode}
             onClick={() => {
-              setThemeMode(prev => prev === 'dark' ? 'light' : 'dark');
+              setIsAutoMode(false);
+              setIsDarkMode(!isDarkMode);
             }}
-            title={isDark ? '切换到明亮模式' : '切换到暗黑模式'}
+            title={isDarkMode ? '切换到明亮模式' : '切换到暗黑模式'}
           >
-            {isDark ? <span>🌙</span> : <span>☀️</span>}
+            {isDarkMode ? <span>🌙</span> : <span>☀️</span>}
           </ToggleButton>
           <AutoToggleButton
             theme={currentTheme}
-            active={themeMode === 'system'}
-            onClick={() => setThemeMode(prev => prev === 'system' ? 'light' : 'system')}
-            title={themeMode === 'system' ? '关闭跟随系统' : '跟随系统'}
+            active={isAutoMode}
+            onClick={() => setIsAutoMode(!isAutoMode)}
+            title={isAutoMode ? '关闭自动切换' : '开启自动切换'}
           >
-            ⚙️
-          </AutoToggleButton>
-          <AutoToggleButton
-            theme={currentTheme}
-            active={themeMode === 'auto'}
-            onClick={() => setThemeMode(prev => prev === 'auto' ? 'light' : 'auto')}
-            title={themeMode === 'auto' ? '关闭日升日落' : '日升日落'}
-          >
-            🌅
+            🕒
           </AutoToggleButton>
         </ToggleContainer>
       </SelectorContainer>

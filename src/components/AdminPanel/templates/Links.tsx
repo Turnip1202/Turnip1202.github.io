@@ -34,8 +34,6 @@ import {
 import { linksManager } from '@/utils';
 import type { LinkCategory, Link } from '@/types';
 import { commonIcons } from './config';
-import { useThemeContext } from '@/contexts';
-import { designTokens } from '@/styles/design-tokens';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -129,9 +127,6 @@ interface LinkFormData {
 }
 
 const Links: React.FC = () => {
-  // 主题状态
-  const { isDark } = useThemeContext();
-  
   // 状态管理
   const [categories, setCategories] = useState<LinkCategory[]>([]);
   const [loading, setLoading] = useState(false);
@@ -587,8 +582,8 @@ const Links: React.FC = () => {
       >
         {categoryLocked && (
           <div style={{ 
-            background: isDark ? 'linear-gradient(90deg, #1a2e1a 0%, #1e3a1e 100%)' : 'linear-gradient(90deg, #f6ffed 0%, #f0f9f0 100%)', 
-            border: `1px solid ${isDark ? '#2d5a2d' : '#b7eb8f'}`, 
+            background: 'linear-gradient(90deg, #f6ffed 0%, #f0f9f0 100%)', 
+            border: '1px solid #b7eb8f', 
             borderRadius: '8px', 
             padding: '16px', 
             marginBottom: '24px'
@@ -596,11 +591,11 @@ const Links: React.FC = () => {
             <Space>
               <span style={{ color: '#52c41a', fontSize: '16px', fontWeight: 'bold' }}>✓</span>
               <div>
-                <Text style={{ color: isDark ? '#67c23a' : '#389e0d', fontWeight: '600' }}>
+                <Text style={{ color: '#389e0d', fontWeight: '600' }}>
                   已自动选中分类
                 </Text>
                 <br />
-                <Text style={{ color: isDark ? '#67c23a' : '#52c41a', fontSize: '12px' }}>
+                <Text style={{ color: '#52c41a', fontSize: '12px' }}>
                   若需更改分类，请从上方“添加链接”按钮进入
                 </Text>
               </div>
@@ -618,16 +613,8 @@ const Links: React.FC = () => {
                 <span>所属分类</span>
               </Space>
             }
-            style={{ 
-              marginBottom: 20,
-              background: isDark ? designTokens.dark.background : 'white'
-            }}
-            styles={{ 
-              header: { 
-                background: isDark ? 'rgba(255, 255, 255, 0.08)' : '#fafafa',
-                color: isDark ? 'white' : 'black'
-              }
-            }}
+            style={{ marginBottom: 20 }}
+            styles={{ header: { background: '#fafafa' } }}
           >
             <Form.Item 
               name="categoryId" 
@@ -664,16 +651,8 @@ const Links: React.FC = () => {
                 <span>基本信息</span>
               </Space>
             }
-            style={{ 
-              marginBottom: 20,
-              background: isDark ? designTokens.dark.background : 'white'
-            }}
-            styles={{ 
-              header: { 
-                background: isDark ? 'rgba(255, 255, 255, 0.08)' : '#fafafa',
-                color: isDark ? 'white' : 'black'
-              }
-            }}
+            style={{ marginBottom: 20 }}
+            styles={{ header: { background: '#fafafa' } }}
           >
             <Row gutter={16}>
               <Col span={16}>
@@ -753,22 +732,15 @@ const Links: React.FC = () => {
                 <span>预览效果</span>
               </Space>
             }
-            style={{ 
-              background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#fafafa'
-            }}
-            styles={{ 
-              header: { 
-                background: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f0f0f0',
-                color: isDark ? 'white' : 'black'
-              }
-            }}
+            style={{ background: '#fafafa' }}
+            styles={{ header: { background: '#f0f0f0' } }}
           >
             <div style={{ 
               padding: '20px', 
-              border: `2px dashed ${isDark ? 'rgba(255, 255, 255, 0.2)' : '#d9d9d9'}`, 
+              border: '2px dashed #d9d9d9', 
               borderRadius: '12px',
               textAlign: 'center',
-              background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'white',
+              background: 'white',
               transition: 'all 0.3s ease'
             }}>
               <Form.Item dependencies={['icon', 'name', 'url']} noStyle>
@@ -789,7 +761,7 @@ const Links: React.FC = () => {
                       <div style={{ 
                         fontSize: '16px', 
                         fontWeight: '600', 
-                        color: isDark ? 'white' : '#333', 
+                        color: '#333', 
                         marginBottom: '8px',
                         minHeight: '20px'
                       }}>
@@ -797,7 +769,7 @@ const Links: React.FC = () => {
                       </div>
                       <div style={{ 
                         fontSize: '12px', 
-                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#999', 
+                        color: '#999', 
                         wordBreak: 'break-all',
                         lineHeight: '1.5',
                         maxHeight: '40px',

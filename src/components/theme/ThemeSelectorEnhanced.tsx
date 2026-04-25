@@ -7,7 +7,7 @@ import type { MenuProps } from 'antd';
 import {
   SunOutlined, MoonOutlined, ClockCircleOutlined, EyeOutlined,
   EyeInvisibleOutlined, BgColorsOutlined, EditOutlined,
-  CheckOutlined, SettingOutlined
+  CheckOutlined
 } from '@ant-design/icons';
 import { useThemeContext } from '@/contexts';
 import type { ThemeConfigType } from '@/types';
@@ -33,16 +33,32 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
   themeConfig,
   onSelect,
 }) => {
-  const { isDark, toggleDarkMode, setDarkMode, appTheme, themeMode, setThemeMode } = useThemeContext();
+  const { isDark, toggleDarkMode, setDarkMode, appTheme } = useThemeContext();
   const themeManager = useMemo(() => getThemeManager(), []);
 
   const [isVisible, setIsVisible] = useState(true);
+  const [isAutoMode, setIsAutoMode] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<string>(appTheme.id);
   const [customColors, setCustomColors] = useState({
     primary: { r: 74, g: 144, b: 226, a: 1 },
     background: { r: 255, g: 255, b: 255, a: 0.9 },
     text: { r: 44, g: 62, b: 80, a: 1 },
   });
+
+  useEffect(() => {
+    const checkTime = () => {
+      if (!isAutoMode) return;
+      const currentHour = new Date().getHours();
+      const shouldBeDark = currentHour >= 18 || currentHour < 6;
+      if (shouldBeDark !== isDark) {
+        setDarkMode(shouldBeDark);
+      }
+    };
+
+    checkTime();
+    const interval = setInterval(checkTime, 60000);
+    return () => clearInterval(interval);
+  }, [isAutoMode, isDark, setDarkMode]);
 
   const handleThemeSelect = useCallback(async (themeId: string) => {
     const allPresets = [...themeManager.getBuiltInPresets(), ...themeManager.getCustomPresets()];
@@ -60,16 +76,17 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
   }, [themeConfig, onSelect, themeManager]);
 
   const handleDarkModeToggle = useCallback(() => {
-    setThemeMode(prev => prev === 'dark' ? 'light' : 'dark');
-  }, [setThemeMode]);
+    setIsAutoMode(false);
+    toggleDarkMode();
+  }, [toggleDarkMode]);
 
-  const handleSystemModeToggle = useCallback(() => {
-    setThemeMode(prev => prev === 'system' ? 'light' : 'system');
-  }, [setThemeMode]);
-
-  const handleAutoModeToggle = useCallback(() => {
-    setThemeMode(prev => prev === 'auto' ? 'light' : 'auto');
-  }, [setThemeMode]);
+  const handleAutoModeToggle = useCallback((checked: boolean) => {
+    setIsAutoMode(checked);
+    if (checked) {
+      const currentHour = new Date().getHours();
+      setDarkMode(currentHour >= 18 || currentHour < 6);
+    }
+  }, [setDarkMode]);
 
   const presetItems = useMemo(() => {
     const builtInPresets = themeManager.getBuiltInPresets();
@@ -134,11 +151,6 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
   }, [themeManager, selectedPreset, handleThemeSelect]);
 
   const handleApplyColors = useCallback(() => {
-    if (isDark) {
-      message.warning('请先切换到白天模式再应用自定义颜色');
-      return;
-    }
-    
     const root = document.documentElement;
     
     root.style.setProperty('--primary-color', rgbaToString(customColors.primary));
@@ -161,7 +173,7 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
     
     onSelect(customTheme);
     message.success('自定义颜色已应用');
-  }, [customColors, appTheme, onSelect, isDark]);
+  }, [customColors, appTheme, onSelect]);
 
   const colorPickerContent = (
     <div style={{ width: 320, padding: 8 }}>
@@ -260,22 +272,11 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
         />
 
         <FloatButton
-          icon={<SettingOutlined />}
-          tooltip={themeMode === 'system' ? '关闭跟随系统' : '跟随系统'}
-          onClick={handleSystemModeToggle}
-          style={{
-            background: themeMode === 'system' 
-              ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
-              : undefined,
-          }}
-        />
-
-        <FloatButton
           icon={<ClockCircleOutlined />}
-          tooltip={themeMode === 'auto' ? '关闭日升日落' : '日升日落'}
-          onClick={handleAutoModeToggle}
+          tooltip={isAutoMode ? '关闭自动切换' : '开启自动切换'}
+          onClick={() => handleAutoModeToggle(!isAutoMode)}
           style={{
-            background: themeMode === 'auto' 
+            background: isAutoMode 
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}

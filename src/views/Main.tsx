@@ -135,13 +135,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
       </Header>
       <MainContent>
         <SearchBar searchEngines={localSearchEngines} />
-        <LinkGrid 
-          categories={localCategories} 
-          onToggleFavorite={(categoryId, linkId) => {
-            linksManager.toggleFavorite(categoryId, linkId);
-            setLocalCategories(linksManager.getAllCategories());
-          }} 
-        />
+        <LinkGrid categories={localCategories} />
       </MainContent>
       <ThemeSelectorEnhanced themeConfig={localThemeConfig} onSelect={cb} />
       <Footer>

@@ -6,8 +6,6 @@ export * from './Clock';
 export * from './AdminPanel/AdminPanel';
 export * from './Modal';
 export * from './LoadingSpinner';
-export { default as UpdateNotification } from './UpdateNotification';
-export { default as UpdateLog } from './UpdateLog';
 
 export { SearchBar as SearchBarNew } from './base/SearchBar';
 export { LinkGrid as LinkGridNew } from './base/LinkGrid';

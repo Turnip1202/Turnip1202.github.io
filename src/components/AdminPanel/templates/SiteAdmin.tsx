@@ -68,7 +68,7 @@ const SiteAdmin: React.FC = () => {
       copyright: config.copyright.text,
       description: config.description || '',
       keywords: config.keywords || '',
-      author: config.author || 'Turnip1202',
+      author: config.author || '',
       favicon: config.favicon || '',
     };
     

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "rsbuild build && node scripts/generate-version.js",
+    "build": "rsbuild build",
     "check": "biome check --write",
     "dev": "rsbuild dev --open --port=80 --host=0.0.0.0",
     "format": "biome format --write",

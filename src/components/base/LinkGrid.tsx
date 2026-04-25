@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import type { CSSProperties } from 'react';
 import { Card, Row, Col, Typography, Empty, Popconfirm } from 'antd';
 import { FolderOutlined, HeartOutlined, HeartFilled, StarOutlined } from '@ant-design/icons';
 import type { LinkCategory, Link } from '@/types';
@@ -14,8 +15,8 @@ interface LinkCardProps {
   originalCategoryId: number;
 }
 
-const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFavorite, originalCategoryId }) => {
-  const cardStyle: React.CSSProperties = {
+const LinkCard: React.FC<LinkCardProps> = React.memo(function LinkCard({ link, isDark, onToggleFavorite, originalCategoryId }) {
+  const cardStyle: CSSProperties = {
     textAlign: 'center',
     height: '100%',
     minHeight: '7.5rem',
@@ -31,7 +32,7 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
     transition: 'all 0.3s ease',
   };
 
-  const iconStyle: React.CSSProperties = {
+  const iconStyle: CSSProperties = {
     fontSize: '2.5rem',
     marginBottom: '0.75rem',
     display: 'block',
@@ -86,25 +87,23 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(({ link, isDark, onToggleFa
           cancelText="取消"
         >
           <span onClick={handleFavoriteClick}>
-            {
-              link.favorite ? (
-                <HeartFilled 
-                  style={{ 
-                    color: '#ff4d4f',
-                    fontSize: '16px',
-                    cursor: 'pointer'
-                  }} 
-                />
-              ) : (
-                <HeartOutlined 
-                  style={{ 
-                    color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#999',
-                    fontSize: '16px',
-                    cursor: 'pointer'
-                  }} 
-                />
-              )
-            }
+            {link.favorite ? (
+              <HeartFilled 
+                style={{ 
+                  color: '#ff4d4f',
+                  fontSize: '16px',
+                  cursor: 'pointer'
+                }} 
+              />
+            ) : (
+              <HeartOutlined 
+                style={{ 
+                  color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#999',
+                  fontSize: '16px',
+                  cursor: 'pointer'
+                }} 
+              />
+            )}
           </span>
         </Popconfirm>
       ]}
@@ -128,7 +127,7 @@ interface CategorySectionProps {
   category: LinkCategory;
   isDark: boolean;
   animationDelay: string;
-  onToggleFavorite: (linkId: number, originalCategoryId: number) => void;
+  onToggleFavorite: (categoryId: number, linkId: number) => void;
   originalCategoryId: number;
 }
 
@@ -283,12 +282,20 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
                 cat.links.some(l => l.id === link.id)
               );
               
+              // 为收藏分类中的链接创建专门的处理函数
+              const handleFavoriteForLink = (categoryId: number, linkId: number) => {
+                // 确保使用原始分类ID
+                if (originalCategory) {
+                  handleFavoriteToggle(originalCategory.id, linkId);
+                }
+              };
+              
               return (
                 <Col key={link.id} xs={12} sm={8} md={6} lg={4} xl={3}>
                   <LinkCard 
                     link={link} 
                     isDark={isDark} 
-                    onToggleFavorite={handleFavoriteToggle} 
+                    onToggleFavorite={handleFavoriteForLink} 
                     originalCategoryId={originalCategory?.id || -1}
                   />
                 </Col>
