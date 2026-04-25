@@ -240,7 +240,7 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
 
   const contentStyle: React.CSSProperties = {
     flex: 1,
-    overflow: 'auto',
+    overflow: 'visible',
     display: collapsed ? 'none' : 'block',
   };
 
