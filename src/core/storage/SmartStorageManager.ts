@@ -1,13 +1,13 @@
-import type { StorageAdapter, StorageType } from './types';
-import { LocalStorageAdapter } from './LocalStorageAdapter';
 import { IndexedDBAdapter } from './IndexedDBAdapter';
+import { LocalStorageAdapter } from './LocalStorageAdapter';
+import type { StorageAdapter, StorageType } from './types';
 
 const SMALL_DATA_THRESHOLD = 1024 * 100; // 100KB
 const LOCAL_STORAGE_QUOTA = 1024 * 1024 * 5; // 5MB (typical localStorage limit)
 
 export class SmartStorageManager implements StorageAdapter {
   readonly name = 'smartStorage';
-  
+
   private localStorage: LocalStorageAdapter;
   private indexedDB: IndexedDBAdapter;
   private preferredStorage: StorageType;
@@ -26,7 +26,7 @@ export class SmartStorageManager implements StorageAdapter {
     if (this.preferredStorage === 'localStorage') {
       return this.localStorage;
     }
-    
+
     if (this.preferredStorage === 'indexedDB') {
       return this.indexedDB;
     }
@@ -57,7 +57,7 @@ export class SmartStorageManager implements StorageAdapter {
 
   async get<T>(key: string): Promise<T | null> {
     // Try localStorage first for small data
-    let result = await this.localStorage.get<T>(key);
+    const result = await this.localStorage.get<T>(key);
     if (result !== null) return result;
 
     // Fall back to IndexedDB
@@ -67,7 +67,7 @@ export class SmartStorageManager implements StorageAdapter {
   async set<T>(key: string, value: T): Promise<void> {
     const size = this.estimateSize(value);
     const adapter = this.selectAdapter(size);
-    
+
     // If using IndexedDB, remove from localStorage to avoid duplication
     if (adapter === this.indexedDB) {
       await this.localStorage.remove(key);
@@ -82,15 +82,12 @@ export class SmartStorageManager implements StorageAdapter {
   async remove(key: string): Promise<void> {
     await Promise.all([
       this.localStorage.remove(key),
-      this.indexedDB.remove(key)
+      this.indexedDB.remove(key),
     ]);
   }
 
   async clear(): Promise<void> {
-    await Promise.all([
-      this.localStorage.clear(),
-      this.indexedDB.clear()
-    ]);
+    await Promise.all([this.localStorage.clear(), this.indexedDB.clear()]);
   }
 
   async clearLocalStorage(): Promise<void> {
@@ -104,27 +101,27 @@ export class SmartStorageManager implements StorageAdapter {
   async keys(): Promise<string[]> {
     const [localKeys, indexedDBKeys] = await Promise.all([
       this.localStorage.keys(),
-      this.indexedDB.keys()
+      this.indexedDB.keys(),
     ]);
-    
+
     return [...new Set([...localKeys, ...indexedDBKeys])];
   }
 
   async has(key: string): Promise<boolean> {
     const [inLocal, inIndexedDB] = await Promise.all([
       this.localStorage.has(key),
-      this.indexedDB.has(key)
+      this.indexedDB.has(key),
     ]);
-    
+
     return inLocal || inIndexedDB;
   }
 
   async getSize(key: string): Promise<number> {
     const [localSize, indexedDBSize] = await Promise.all([
       this.localStorage.getSize(key),
-      this.indexedDB.getSize(key)
+      this.indexedDB.getSize(key),
     ]);
-    
+
     return Math.max(localSize || 0, indexedDBSize || 0);
   }
 
@@ -144,7 +141,9 @@ export class SmartStorageManager implements StorageAdapter {
 
     const size = this.estimateSize(value);
     if (size > LOCAL_STORAGE_QUOTA) {
-      console.warn(`[SmartStorageManager] Data too large for localStorage: ${size} bytes`);
+      console.warn(
+        `[SmartStorageManager] Data too large for localStorage: ${size} bytes`,
+      );
       return false;
     }
 
@@ -163,18 +162,18 @@ export class SmartStorageManager implements StorageAdapter {
   }> {
     const [localKeys, indexedDBKeys] = await Promise.all([
       this.localStorage.keys(),
-      this.indexedDB.keys()
+      this.indexedDB.keys(),
     ]);
 
     let localStorageSize = 0;
     let indexedDBSize = 0;
 
     for (const key of localKeys) {
-      localStorageSize += await this.localStorage.getSize(key) || 0;
+      localStorageSize += (await this.localStorage.getSize(key)) || 0;
     }
 
     for (const key of indexedDBKeys) {
-      indexedDBSize += await this.indexedDB.getSize(key) || 0;
+      indexedDBSize += (await this.indexedDB.getSize(key)) || 0;
     }
 
     return {

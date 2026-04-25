@@ -1,8 +1,8 @@
-import React from 'react';
-import { Spin, Typography } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
 import { useThemeContext } from '@/contexts';
 import { designTokens } from '@/styles/design-tokens';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin, Typography } from 'antd';
+import type React from 'react';
 
 const { Text } = Typography;
 
@@ -10,8 +10,8 @@ interface LoadingSpinnerProps {
   text?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
-  text = '正在加载精彩内容...' 
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  text = '正在加载精彩内容...',
 }) => {
   const { isDark } = useThemeContext();
 
@@ -21,9 +21,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     left: 0,
     width: '100vw',
     height: '100vh',
-    background: isDark 
-      ? 'rgba(0, 0, 0, 0.9)' 
-      : 'rgba(255, 255, 255, 0.95)',
+    background: isDark ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
     display: 'flex',

@@ -8,7 +8,7 @@ export const designTokens = {
     error: '#ff4d4f',
     info: '#1890ff',
   },
-  
+
   light: {
     background: 'rgba(255, 255, 255, 0.9)',
     backgroundHover: 'rgba(255, 255, 255, 0.95)',
@@ -20,7 +20,7 @@ export const designTokens = {
     borderHover: 'rgba(74, 144, 226, 0.2)',
     shadow: 'rgba(0, 0, 0, 0.05)',
   },
-  
+
   dark: {
     background: 'rgba(0, 0, 0, 0.6)',
     backgroundHover: 'rgba(255, 255, 255, 0.12)',

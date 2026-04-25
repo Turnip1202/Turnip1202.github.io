@@ -33,7 +33,11 @@ class UpdateLogManager {
       const now = Date.now();
 
       // 如果缓存未过期，使用缓存数据
-      if (cachedVersion && cachedTimestamp && now - parseInt(cachedTimestamp) < this.CACHE_DURATION) {
+      if (
+        cachedVersion &&
+        cachedTimestamp &&
+        now - Number.parseInt(cachedTimestamp) < this.CACHE_DURATION
+      ) {
         const cachedLogs = localStorage.getItem(this.STORAGE_KEY);
         if (cachedLogs) {
           this.logs = JSON.parse(cachedLogs);
@@ -47,15 +51,14 @@ class UpdateLogManager {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: UpdateLogsData = await response.json();
       this.logs = data.logs;
-      
+
       // 更新缓存
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.logs));
       localStorage.setItem(this.CACHE_VERSION_KEY, data.version);
       localStorage.setItem(this.CACHE_TIMESTAMP_KEY, now.toString());
-      
     } catch (error) {
       console.warn('Failed to fetch update logs:', error);
       // 加载失败时，尝试使用缓存数据

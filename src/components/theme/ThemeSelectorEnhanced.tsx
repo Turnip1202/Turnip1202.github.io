@@ -1,23 +1,43 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useThemeContext } from '@/contexts';
+import { getThemeManager } from '@/core/theme/ThemeManagerV2';
+import { designTokens } from '@/styles/design-tokens';
+import type { ThemeConfigType } from '@/types';
 import {
-  FloatButton, Tooltip, Dropdown, Button, Space, Typography,
-  Row, Col, Divider, message, Popover
+  BgColorsOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  EditOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Col,
+  Divider,
+  Dropdown,
+  FloatButton,
+  Popover,
+  Row,
+  Space,
+  Tooltip,
+  Typography,
+  message,
 } from 'antd';
 import type { MenuProps } from 'antd';
-import {
-  SunOutlined, MoonOutlined, ClockCircleOutlined, EyeOutlined,
-  EyeInvisibleOutlined, BgColorsOutlined, EditOutlined,
-  CheckOutlined
-} from '@ant-design/icons';
-import { useThemeContext } from '@/contexts';
-import type { ThemeConfigType } from '@/types';
-import { getThemeManager } from '@/core/theme/ThemeManagerV2';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RGBAColorPicker } from './RGBAColorPicker';
-import { designTokens } from '@/styles/design-tokens';
 
 const { Text, Title } = Typography;
 
-const rgbaToString = (rgba: { r: number; g: number; b: number; a: number }): string => {
+const rgbaToString = (rgba: {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}): string => {
   return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
 };
 
@@ -60,33 +80,44 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
     return () => clearInterval(interval);
   }, [isAutoMode, isDark, setDarkMode]);
 
-  const handleThemeSelect = useCallback(async (themeId: string) => {
-    const allPresets = [...themeManager.getBuiltInPresets(), ...themeManager.getCustomPresets()];
-    const preset = allPresets.find(p => p.id === themeId);
-    
-    if (preset) {
-      setSelectedPreset(themeId);
-      await themeManager.setTheme(preset.config);
-      onSelect(preset.config);
-    } else {
-      const fallbackTheme = themeConfig.presets.find(t => t.id === themeId) || themeConfig.default;
-      setSelectedPreset(themeId);
-      onSelect(fallbackTheme);
-    }
-  }, [themeConfig, onSelect, themeManager]);
+  const handleThemeSelect = useCallback(
+    async (themeId: string) => {
+      const allPresets = [
+        ...themeManager.getBuiltInPresets(),
+        ...themeManager.getCustomPresets(),
+      ];
+      const preset = allPresets.find((p) => p.id === themeId);
+
+      if (preset) {
+        setSelectedPreset(themeId);
+        await themeManager.setTheme(preset.config);
+        onSelect(preset.config);
+      } else {
+        const fallbackTheme =
+          themeConfig.presets.find((t) => t.id === themeId) ||
+          themeConfig.default;
+        setSelectedPreset(themeId);
+        onSelect(fallbackTheme);
+      }
+    },
+    [themeConfig, onSelect, themeManager],
+  );
 
   const handleDarkModeToggle = useCallback(() => {
     setIsAutoMode(false);
     toggleDarkMode();
   }, [toggleDarkMode]);
 
-  const handleAutoModeToggle = useCallback((checked: boolean) => {
-    setIsAutoMode(checked);
-    if (checked) {
-      const currentHour = new Date().getHours();
-      setDarkMode(currentHour >= 18 || currentHour < 6);
-    }
-  }, [setDarkMode]);
+  const handleAutoModeToggle = useCallback(
+    (checked: boolean) => {
+      setIsAutoMode(checked);
+      if (checked) {
+        const currentHour = new Date().getHours();
+        setDarkMode(currentHour >= 18 || currentHour < 6);
+      }
+    },
+    [setDarkMode],
+  );
 
   const presetItems = useMemo(() => {
     const builtInPresets = themeManager.getBuiltInPresets();
@@ -106,13 +137,16 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
                   height: 24,
                   background: preset.config.backgroundImage,
                   borderRadius: 4,
-                  border: selectedPreset === preset.id 
-                    ? `2px solid ${designTokens.colors.primary}`
-                    : '1px solid #d9d9d9',
+                  border:
+                    selectedPreset === preset.id
+                      ? `2px solid ${designTokens.colors.primary}`
+                      : '1px solid #d9d9d9',
                 }}
               />
               <span>{preset.name}</span>
-              {selectedPreset === preset.id && <CheckOutlined style={{ color: designTokens.colors.primary }} />}
+              {selectedPreset === preset.id && (
+                <CheckOutlined style={{ color: designTokens.colors.primary }} />
+              )}
             </Space>
           ),
           onClick: () => handleThemeSelect(preset.id),
@@ -152,39 +186,50 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
 
   const handleApplyColors = useCallback(() => {
     const root = document.documentElement;
-    
-    root.style.setProperty('--primary-color', rgbaToString(customColors.primary));
+
+    root.style.setProperty(
+      '--primary-color',
+      rgbaToString(customColors.primary),
+    );
     root.style.setProperty('--bg-color', rgbaToString(customColors.background));
     root.style.setProperty('--text-color', rgbaToString(customColors.text));
-    root.style.setProperty('--color-primary', rgbaToString(customColors.primary));
-    root.style.setProperty('--color-bg-container', rgbaToString(customColors.background));
+    root.style.setProperty(
+      '--color-primary',
+      rgbaToString(customColors.primary),
+    );
+    root.style.setProperty(
+      '--color-bg-container',
+      rgbaToString(customColors.background),
+    );
     root.style.setProperty('--color-text', rgbaToString(customColors.text));
-    
+
     const primaryHex = rgbaToString(customColors.primary);
     const bgHex = rgbaToString(customColors.background);
     const backgroundImage = `linear-gradient(135deg, ${primaryHex} 0%, ${bgHex} 100%)`;
-    
+
     const customTheme: ThemeConfigType = {
       ...appTheme,
       id: `custom_color_${Date.now()}`,
       name: '自定义颜色主题',
       backgroundImage,
     };
-    
+
     onSelect(customTheme);
     message.success('自定义颜色已应用');
   }, [customColors, appTheme, onSelect]);
 
   const colorPickerContent = (
     <div style={{ width: 320, padding: 8 }}>
-      <Title level={5} style={{ marginBottom: 12 }}>自定义颜色</Title>
+      <Title level={5} style={{ marginBottom: 12 }}>
+        自定义颜色
+      </Title>
       <Row gutter={[8, 8]}>
         <Col span={24}>
           <RGBAColorPicker
             label="主色调"
             value={customColors.primary}
             onChange={(color) => {
-              setCustomColors(prev => ({ ...prev, primary: color }));
+              setCustomColors((prev) => ({ ...prev, primary: color }));
             }}
             showPresets={false}
           />
@@ -192,11 +237,16 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
       </Row>
       <Divider style={{ margin: '12px 0' }} />
       <Space>
-        <Button size="small" onClick={() => setCustomColors({
-          primary: { r: 74, g: 144, b: 226, a: 1 },
-          background: { r: 255, g: 255, b: 255, a: 0.9 },
-          text: { r: 44, g: 62, b: 80, a: 1 },
-        })}>
+        <Button
+          size="small"
+          onClick={() =>
+            setCustomColors({
+              primary: { r: 74, g: 144, b: 226, a: 1 },
+              background: { r: 255, g: 255, b: 255, a: 0.9 },
+              text: { r: 44, g: 62, b: 80, a: 1 },
+            })
+          }
+        >
           重置
         </Button>
         <Button type="primary" size="small" onClick={handleApplyColors}>
@@ -211,20 +261,20 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
       <style>
         {`
           .theme-float-button .ant-float-btn-body {
-            background: ${isDark 
-              ? 'rgba(255, 255, 255, 0.1)' 
-              : 'rgba(255, 255, 255, 0.9)'};
+            background: ${
+              isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)'
+            };
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid ${isDark 
-              ? 'rgba(255, 255, 255, 0.2)' 
-              : 'rgba(255, 255, 255, 0.3)'};
+            border: 1px solid ${
+              isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)'
+            };
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
           }
           .theme-float-button .ant-float-btn-body:hover {
-            background: ${isDark 
-              ? 'rgba(255, 255, 255, 0.15)' 
-              : 'rgba(255, 255, 255, 0.95)'};
+            background: ${
+              isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.95)'
+            };
           }
         `}
       </style>
@@ -246,18 +296,16 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
             placement="topRight"
             trigger={['click']}
           >
-            <FloatButton
-              icon={<BgColorsOutlined />}
-              tooltip="选择主题"
-            />
+            <FloatButton icon={<BgColorsOutlined />} tooltip="选择主题" />
           </Dropdown>
         )}
 
-        <Popover content={colorPickerContent} trigger="click" placement="topRight">
-          <FloatButton
-            icon={<EditOutlined />}
-            tooltip="自定义颜色"
-          />
+        <Popover
+          content={colorPickerContent}
+          trigger="click"
+          placement="topRight"
+        >
+          <FloatButton icon={<EditOutlined />} tooltip="自定义颜色" />
         </Popover>
 
         <FloatButton
@@ -265,7 +313,7 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
           tooltip={isDark ? '切换到明亮模式' : '切换到暗黑模式'}
           onClick={handleDarkModeToggle}
           style={{
-            background: isDark 
+            background: isDark
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}
@@ -276,7 +324,7 @@ export const ThemeSelectorEnhanced: React.FC<ThemeSelectorEnhancedProps> = ({
           tooltip={isAutoMode ? '关闭自动切换' : '开启自动切换'}
           onClick={() => handleAutoModeToggle(!isAutoMode)}
           style={{
-            background: isAutoMode 
+            background: isAutoMode
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}

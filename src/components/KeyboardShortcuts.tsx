@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, List, Typography, Button, Divider } from 'antd';
-import { SettingOutlined, KeyboardOutlined } from '@ant-design/icons';
 import { keyboardManager } from '@/utils/keyboard/keyboardManager';
+import { KeyboardOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Divider, List, Modal, Typography } from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 
 const KeyboardShortcuts: React.FC = () => {
   const [visible, setVisible] = useState(false);
-  const [shortcuts, setShortcuts] = useState<Array<{ id: string; shortcut: any }>>([]);
+  const [shortcuts, setShortcuts] = useState<
+    Array<{ id: string; shortcut: any }>
+  >([]);
 
   useEffect(() => {
     // 加载快捷键列表
     const allShortcuts = keyboardManager.getAllShortcuts();
-    setShortcuts(Array.from(allShortcuts.entries()).map(([id, shortcut]) => ({ id, shortcut })));
+    setShortcuts(
+      Array.from(allShortcuts.entries()).map(([id, shortcut]) => ({
+        id,
+        shortcut,
+      })),
+    );
   }, []);
 
   const handleOpen = () => {
@@ -31,7 +39,7 @@ const KeyboardShortcuts: React.FC = () => {
           position: 'fixed',
           top: '20px',
           right: '100px',
-          zIndex: 1000
+          zIndex: 1000,
         }}
         onClick={handleOpen}
       >
@@ -42,7 +50,9 @@ const KeyboardShortcuts: React.FC = () => {
         title={
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <SettingOutlined style={{ marginRight: '8px', color: '#1890ff' }} />
-            <Title level={4} style={{ margin: 0 }}>快捷键设置</Title>
+            <Title level={4} style={{ margin: 0 }}>
+              快捷键设置
+            </Title>
           </div>
         }
         open={visible}
@@ -50,7 +60,7 @@ const KeyboardShortcuts: React.FC = () => {
         footer={[
           <Button key="close" type="primary" onClick={handleClose}>
             关闭
-          </Button>
+          </Button>,
         ]}
         width={500}
         centered
@@ -66,15 +76,23 @@ const KeyboardShortcuts: React.FC = () => {
               <List.Item>
                 <List.Item.Meta
                   title={
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <Text strong>{item.shortcut.description}</Text>
-                      <div style={{ 
-                        background: '#f0f0f0', 
-                        padding: '4px 8px', 
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontFamily: 'monospace'
-                      }}>
+                      <div
+                        style={{
+                          background: '#f0f0f0',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontFamily: 'monospace',
+                        }}
+                      >
                         {item.shortcut.keys.join(' + ')}
                       </div>
                     </div>

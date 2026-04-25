@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import { Input, Select, Button, Space } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import type { SearchEngine } from '@/types';
 import { useThemeContext } from '@/contexts';
 import { designTokens } from '@/styles/design-tokens';
+import type { SearchEngine } from '@/types';
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Select, Space } from 'antd';
+import type React from 'react';
+import { useCallback, useState } from 'react';
 
 interface SearchBarProps {
   searchEngines: SearchEngine[];
@@ -14,24 +15,29 @@ const { Search: AntSearch } = Input;
 export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
   const { isDark } = useThemeContext();
   const [query, setQuery] = useState<string>('');
-  const [selectedEngine, setSelectedEngine] = useState<string>(searchEngines[0]?.id || 'google');
+  const [selectedEngine, setSelectedEngine] = useState<string>(
+    searchEngines[0]?.id || 'google',
+  );
 
   const handleSearch = useCallback(() => {
     if (!query.trim()) return;
 
-    const engine = searchEngines.find(e => e.id === selectedEngine);
+    const engine = searchEngines.find((e) => e.id === selectedEngine);
     if (engine) {
       window.open(engine.url + encodeURIComponent(query.trim()), '_blank');
     }
   }, [query, selectedEngine, searchEngines]);
 
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  }, [handleSearch]);
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    },
+    [handleSearch],
+  );
 
-  const engineOptions = searchEngines.map(engine => ({
+  const engineOptions = searchEngines.map((engine) => ({
     value: engine.id,
     label: (
       <span>
@@ -52,7 +58,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
     gap: '12px',
     width: '100%',
     alignItems: 'center',
-    background: isDark ? designTokens.dark.background : designTokens.light.background,
+    background: isDark
+      ? designTokens.dark.background
+      : designTokens.light.background,
     borderRadius: designTokens.borderRadius.xl,
     padding: '8px 12px',
     boxShadow: designTokens.shadows.md,

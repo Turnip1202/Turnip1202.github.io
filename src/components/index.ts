@@ -6,6 +6,7 @@ export * from './Clock';
 export * from './AdminPanel/AdminPanel';
 export * from './Modal';
 export * from './LoadingSpinner';
+export * from './TodoList';
 
 export { SearchBar as SearchBarNew } from './base/SearchBar';
 export { LinkGrid as LinkGridNew } from './base/LinkGrid';

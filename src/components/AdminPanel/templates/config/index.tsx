@@ -1,10 +1,15 @@
 // src/components/AdminPanel/templates/config/index.tsx
 // 链接管理相关的配置和工具函数
 
-import React from 'react';
-import { Button, Space, Tag } from 'antd';
-import { EditOutlined, DeleteOutlined, LinkOutlined, EyeOutlined } from '@ant-design/icons';
 import type { Link, LinkCategory } from '@/types';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  LinkOutlined,
+} from '@ant-design/icons';
+import { Button, Space, Tag } from 'antd';
+import React from 'react';
 
 /**
  * 格式化URL显示
@@ -12,7 +17,7 @@ import type { Link, LinkCategory } from '@/types';
  * @param maxLength - 最大显示长度
  * @returns 格式化后的URL
  */
-export const formatUrl = (url: string, maxLength: number = 50): string => {
+export const formatUrl = (url: string, maxLength = 50): string => {
   if (!url) return '';
   if (url.length <= maxLength) return url;
   return `${url.substring(0, maxLength)}...`;
@@ -40,17 +45,15 @@ export const formRules = {
     { required: true, message: '请输入分类名称！' },
     { min: 1, max: 20, message: '分类名称长度应在1-20个字符之间！' },
   ],
-  linkName: [
-    { max: 30, message: '链接名称不能超过30个字符！' },
-  ],
+  linkName: [{ max: 30, message: '链接名称不能超过30个字符！' }],
   linkUrl: [
     { required: true, message: '请输入链接地址！' },
-    { 
+    {
       validator: (_: any, value: string) => {
         if (!value) return Promise.resolve();
         if (isValidUrl(value)) return Promise.resolve();
         return Promise.reject(new Error('请输入有效的URL地址！'));
-      }
+      },
     },
   ],
   linkIcon: [
@@ -78,9 +81,30 @@ export const defaultFormValues = {
  * 常用图标选项
  */
 export const commonIcons = [
-  '🔗', '🌐', '📚', '🎵', '🎬', '🎮', '💻', '📱',
-  '🛒', '📧', '📰', '🔍', '⭐', '❤️', '🏠', '🎨',
-  '📊', '💼', '🔧', '⚙️', '📝', '📋', '📌', '🏷️',
+  '🔗',
+  '🌐',
+  '📚',
+  '🎵',
+  '🎬',
+  '🎮',
+  '💻',
+  '📱',
+  '🛒',
+  '📧',
+  '📰',
+  '🔍',
+  '⭐',
+  '❤️',
+  '🏠',
+  '🎨',
+  '📊',
+  '💼',
+  '🔧',
+  '⚙️',
+  '📝',
+  '📋',
+  '📌',
+  '🏷️',
 ];
 
 export default {

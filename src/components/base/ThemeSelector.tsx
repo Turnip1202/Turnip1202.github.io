@@ -1,17 +1,26 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { FloatButton, Tooltip, Dropdown, Button, Space, Switch, Typography } from 'antd';
-import type { MenuProps } from 'antd';
-import {
-  SunOutlined,
-  MoonOutlined,
-  ClockCircleOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  BgColorsOutlined,
-} from '@ant-design/icons';
 import { useThemeContext } from '@/contexts';
-import type { ThemeConfigType } from '@/types';
 import { designTokens } from '@/styles/design-tokens';
+import type { ThemeConfigType } from '@/types';
+import {
+  BgColorsOutlined,
+  ClockCircleOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Dropdown,
+  FloatButton,
+  Space,
+  Switch,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type { MenuProps } from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const { Text } = Typography;
 
@@ -23,9 +32,12 @@ interface ThemeSelectorProps {
   onSelect: (theme: ThemeConfigType) => void;
 }
 
-export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSelect }) => {
+export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
+  themeConfig,
+  onSelect,
+}) => {
   const { isDark, toggleDarkMode, setDarkMode, appTheme } = useThemeContext();
-  
+
   const [isVisible, setIsVisible] = useState(() => {
     try {
       const saved = localStorage.getItem('turnip-theme-selector-visible');
@@ -46,7 +58,9 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
 
   const [selectedPreset, setSelectedPreset] = useState<string>(() => {
     try {
-      return localStorage.getItem('turnip-theme-preset') || themeConfig.default.id;
+      return (
+        localStorage.getItem('turnip-theme-preset') || themeConfig.default.id
+      );
     } catch {
       return themeConfig.default.id;
     }
@@ -80,24 +94,32 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
     return () => clearInterval(interval);
   }, [isAutoMode, isDark, setDarkMode]);
 
-  const handleThemeSelect = useCallback((themeId: string) => {
-    const theme = themeConfig.presets.find(t => t.id === themeId) || themeConfig.default;
-    setSelectedPreset(themeId);
-    onSelect(theme);
-  }, [themeConfig, onSelect]);
+  const handleThemeSelect = useCallback(
+    (themeId: string) => {
+      const theme =
+        themeConfig.presets.find((t) => t.id === themeId) ||
+        themeConfig.default;
+      setSelectedPreset(themeId);
+      onSelect(theme);
+    },
+    [themeConfig, onSelect],
+  );
 
   const handleDarkModeToggle = useCallback(() => {
     setIsAutoMode(false);
     toggleDarkMode();
   }, [toggleDarkMode]);
 
-  const handleAutoModeToggle = useCallback((checked: boolean) => {
-    setIsAutoMode(checked);
-    if (checked) {
-      const currentHour = new Date().getHours();
-      setDarkMode(currentHour >= 18 || currentHour < 6);
-    }
-  }, [setDarkMode]);
+  const handleAutoModeToggle = useCallback(
+    (checked: boolean) => {
+      setIsAutoMode(checked);
+      if (checked) {
+        const currentHour = new Date().getHours();
+        setDarkMode(currentHour >= 18 || currentHour < 6);
+      }
+    },
+    [setDarkMode],
+  );
 
   const themeMenuItems: MenuProps['items'] = useMemo(() => {
     return themeConfig.presets.map((theme) => ({
@@ -110,9 +132,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
               height: 24,
               background: theme.backgroundImage,
               borderRadius: 4,
-              border: selectedPreset === theme.id 
-                ? `2px solid ${designTokens.colors.primary}`
-                : '1px solid #d9d9d9',
+              border:
+                selectedPreset === theme.id
+                  ? `2px solid ${designTokens.colors.primary}`
+                  : '1px solid #d9d9d9',
             }}
           />
           <Text>{theme.name}</Text>
@@ -127,20 +150,20 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
       <style>
         {`
           .theme-float-button .ant-float-btn-body {
-            background: ${isDark 
-              ? 'rgba(255, 255, 255, 0.1)' 
-              : 'rgba(255, 255, 255, 0.9)'};
+            background: ${
+              isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)'
+            };
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid ${isDark 
-              ? 'rgba(255, 255, 255, 0.2)' 
-              : 'rgba(255, 255, 255, 0.3)'};
+            border: 1px solid ${
+              isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)'
+            };
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
           }
           .theme-float-button .ant-float-btn-body:hover {
-            background: ${isDark 
-              ? 'rgba(255, 255, 255, 0.15)' 
-              : 'rgba(255, 255, 255, 0.95)'};
+            background: ${
+              isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.95)'
+            };
           }
         `}
       </style>
@@ -162,10 +185,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
             placement="topRight"
             trigger={['click']}
           >
-            <FloatButton
-              icon={<BgColorsOutlined />}
-              tooltip="选择主题"
-            />
+            <FloatButton icon={<BgColorsOutlined />} tooltip="选择主题" />
           </Dropdown>
         )}
 
@@ -174,7 +194,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
           tooltip={isDark ? '切换到明亮模式' : '切换到暗黑模式'}
           onClick={handleDarkModeToggle}
           style={{
-            background: isDark 
+            background: isDark
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}
@@ -185,7 +205,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeConfig, onSel
           tooltip={isAutoMode ? '关闭自动切换' : '开启自动切换'}
           onClick={() => handleAutoModeToggle(!isAutoMode)}
           style={{
-            background: isAutoMode 
+            background: isAutoMode
               ? `linear-gradient(135deg, ${designTokens.colors.primary} 0%, ${designTokens.colors.primaryHover} 100%)`
               : undefined,
           }}

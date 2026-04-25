@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { designTokens } from '@/styles/design-tokens';
+import styled from '@emotion/styled';
 
 interface BackgroundProps {
   $isDark?: boolean;
@@ -18,7 +18,7 @@ export const Background = styled.div<BackgroundProps>`
     left: 0;
     right: 0;
     bottom: 0;
-    background: ${props => props.backgroundImage || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
+    background: ${(props) => props.backgroundImage || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
     z-index: -2;
@@ -43,11 +43,10 @@ export const Background = styled.div<BackgroundProps>`
     left: 0;
     right: 0;
     bottom: 0;
-    background: ${props => props.$isDark 
-      ? 'rgba(0, 0, 0, 0.3)' 
-      : 'rgba(255, 255, 255, 0.3)'};
-    backdrop-filter: blur(${props => props.$isDark ? '5px' : '8px'});
-    -webkit-backdrop-filter: blur(${props => props.$isDark ? '5px' : '8px'});
+    background: ${(props) =>
+      props.$isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.3)'};
+    backdrop-filter: blur(${(props) => (props.$isDark ? '5px' : '8px')});
+    -webkit-backdrop-filter: blur(${(props) => (props.$isDark ? '5px' : '8px')});
     z-index: -1;
     transition: background ${designTokens.transitions.normal};
   }

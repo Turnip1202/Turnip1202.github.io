@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-
 export const ShowAdminButton = styled.button`
   opacity: 0.5; /* 默认透明度 */
   background-color: transparent; /* 默认背景颜色设置为透明 */
@@ -17,7 +16,6 @@ export const ShowAdminButton = styled.button`
     background-color: transparent; /* 鼠标悬停时背景颜色仍为透明 */
   }
 `;
-
 
 export const Header = styled.header`
   text-align: center;
@@ -141,5 +139,3 @@ export const Footer = styled.footer`
     margin-top: 1.5rem;
   }
 `;
-
-

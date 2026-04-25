@@ -1,7 +1,7 @@
-import type React from 'react';
-import { useState, type FormEvent } from 'react'
 import styled from '@emotion/styled';
-import type { SearchEngine,BackgroundProps } from '../types';
+import type React from 'react';
+import { type FormEvent, useState } from 'react';
+import type { BackgroundProps, SearchEngine } from '../types';
 
 const SearchContainer = styled.div`
   margin: 2rem auto 3rem;
@@ -43,14 +43,14 @@ const SearchInput = styled.input<BackgroundProps>`
   flex: 1;
   padding: 15px 24px;
   font-size: 16px;
-  border: 2px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
+  border: 2px solid ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)')};
   border-radius: 30px;
   outline: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-appearance: none;
   appearance: none;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)'};
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
+  background: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)')};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333')};
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 
@@ -60,7 +60,7 @@ const SearchInput = styled.input<BackgroundProps>`
 
   &:focus {
     border-color: #4a90e2;
-    background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'white'};
+    background: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'white')};
     box-shadow: 
       0 0 0 4px rgba(74, 144, 226, 0.15),
       0 8px 24px rgba(74, 144, 226, 0.1),
@@ -69,7 +69,7 @@ const SearchInput = styled.input<BackgroundProps>`
   }
 
   &::placeholder {
-    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.4)'};
+    color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.4)')};
   }
 
   @media (max-width: 768px) {
@@ -88,7 +88,7 @@ const SelectWrapper = styled.div<BackgroundProps>`
   position: relative;
   display: inline-block;
   min-width: 140px;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#666666'};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#666666')};
   
   /* 箭头指示器 */
   &::after {
@@ -134,9 +134,9 @@ const SelectWrapper = styled.div<BackgroundProps>`
 const EngineSelect = styled.select<BackgroundProps>`
   width: 100%;
   padding: 15px 45px 15px 20px;
-  border: 2px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
+  border: 2px solid ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)')};
   border-radius: 30px;
-  background-color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)'};
+  background-color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)')};
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
@@ -144,7 +144,7 @@ const EngineSelect = styled.select<BackgroundProps>`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333')};
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 
@@ -153,13 +153,13 @@ const EngineSelect = styled.select<BackgroundProps>`
 
   &:hover {
     border-color: #4a90e2;
-    background-color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'white'};
+    background-color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'white')};
     transform: translateY(-1px);
   }
 
   &:focus {
     border-color: #4a90e2;
-    background-color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'white'};
+    background-color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'white')};
     box-shadow: 
       0 0 0 4px rgba(74, 144, 226, 0.15),
       0 8px 24px rgba(74, 144, 226, 0.1),
@@ -259,7 +259,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ searchEngines }) => {
     e.preventDefault();
     if (!query.trim()) return;
 
-    const selectedEngine = searchEngines.find(e => e.id === engine);
+    const selectedEngine = searchEngines.find((e) => e.id === engine);
     if (selectedEngine) {
       window.open(selectedEngine.url + encodeURIComponent(query), '_blank');
     }

@@ -9,7 +9,7 @@ interface KeyboardShortcut {
 
 class KeyboardManager {
   private shortcuts: Map<string, KeyboardShortcut> = new Map();
-  private isListening: boolean = false;
+  private isListening = false;
 
   // 注册快捷键
   registerShortcut(id: string, shortcut: KeyboardShortcut): void {
@@ -28,7 +28,11 @@ class KeyboardManager {
     const handleKeyDown = (e: KeyboardEvent) => {
       // 检查是否在输入框中
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
         return;
       }
 
@@ -37,13 +41,22 @@ class KeyboardManager {
       if (e.ctrlKey || e.metaKey) pressedKeys.push('Ctrl');
       if (e.altKey) pressedKeys.push('Alt');
       if (e.shiftKey) pressedKeys.push('Shift');
-      if (e.key && e.key !== 'Control' && e.key !== 'Meta' && e.key !== 'Alt' && e.key !== 'Shift') {
+      if (
+        e.key &&
+        e.key !== 'Control' &&
+        e.key !== 'Meta' &&
+        e.key !== 'Alt' &&
+        e.key !== 'Shift'
+      ) {
         pressedKeys.push(e.key.toUpperCase());
       }
 
       // 检查是否匹配任何快捷键
       for (const [id, shortcut] of this.shortcuts.entries()) {
-        if (shortcut.enabled !== false && this.compareKeys(pressedKeys, shortcut.keys)) {
+        if (
+          shortcut.enabled !== false &&
+          this.compareKeys(pressedKeys, shortcut.keys)
+        ) {
           e.preventDefault();
           e.stopPropagation();
           shortcut.callback();
@@ -65,7 +78,7 @@ class KeyboardManager {
   // 比较键组合
   private compareKeys(pressed: string[], shortcut: string[]): boolean {
     if (pressed.length !== shortcut.length) return false;
-    return pressed.every(key => shortcut.includes(key));
+    return pressed.every((key) => shortcut.includes(key));
   }
 
   // 获取所有快捷键

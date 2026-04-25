@@ -1,6 +1,6 @@
-import { EventEmitter, type ConfigEvents } from '../events/EventEmitter';
-import type { StorageAdapter } from '../storage/types';
+import { type ConfigEvents, EventEmitter } from '../events/EventEmitter';
 import { SmartStorageManager } from '../storage/SmartStorageManager';
+import type { StorageAdapter } from '../storage/types';
 
 export interface ConfigItem<T = any> {
   key: string;
@@ -31,10 +31,10 @@ export class ConfigManager extends EventEmitter<ConfigEvents> {
   private categories: Map<string, ConfigCategory> = new Map();
   private schema: ConfigSchema | null = null;
   private cache: Map<string, any> = new Map();
-  private version: string = '1.0.0';
+  private version = '1.0.0';
   private storageKey: string;
 
-  constructor(storageKey: string = 'app_config', storage?: StorageAdapter) {
+  constructor(storageKey = 'app_config', storage?: StorageAdapter) {
     super();
     this.storageKey = storageKey;
     this.storage = storage || new SmartStorageManager();
@@ -44,7 +44,7 @@ export class ConfigManager extends EventEmitter<ConfigEvents> {
     if (schema) {
       this.schema = schema;
       this.version = schema.version;
-      
+
       // Register categories
       Object.entries(schema.categories).forEach(([key, category]) => {
         this.categories.set(key, category);
@@ -66,14 +66,18 @@ export class ConfigManager extends EventEmitter<ConfigEvents> {
 
   private async load(): Promise<void> {
     try {
-      const stored = await this.storage.get<Record<string, any>>(this.storageKey);
+      const stored = await this.storage.get<Record<string, any>>(
+        this.storageKey,
+      );
       if (stored) {
         Object.entries(stored).forEach(([key, value]) => {
           const item = this.config.get(key);
           if (item) {
             // Validate stored value
             if (item.validator && !item.validator(value)) {
-              console.warn(`[ConfigManager] Invalid stored value for "${key}", using default`);
+              console.warn(
+                `[ConfigManager] Invalid stored value for "${key}", using default`,
+              );
               return;
             }
             item.value = value;
@@ -171,7 +175,7 @@ export class ConfigManager extends EventEmitter<ConfigEvents> {
     }
 
     await this.save();
-    changes.forEach(change => {
+    changes.forEach((change) => {
       this.emit('config:change', change);
     });
   }
@@ -213,7 +217,7 @@ export class ConfigManager extends EventEmitter<ConfigEvents> {
     if (!category) return {};
 
     const result: Record<string, any> = {};
-    category.items.forEach(key => {
+    category.items.forEach((key) => {
       const item = this.config.get(key);
       if (item) {
         result[key] = item.value;
@@ -238,14 +242,16 @@ export class ConfigManager extends EventEmitter<ConfigEvents> {
   async import(jsonString: string): Promise<boolean> {
     try {
       const data = JSON.parse(jsonString);
-      
+
       if (!data.config || typeof data.config !== 'object') {
         throw new Error('Invalid config format');
       }
 
       // Version migration if needed
       if (data.version && data.version !== this.version) {
-        console.log(`[ConfigManager] Migrating from version ${data.version} to ${this.version}`);
+        console.log(
+          `[ConfigManager] Migrating from version ${data.version} to ${this.version}`,
+        );
       }
 
       await this.setMany(data.config);

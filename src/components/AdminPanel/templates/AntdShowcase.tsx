@@ -1,52 +1,53 @@
-import React, { useState } from 'react';
 import {
-  Card,
-  Space,
-  Divider,
-  Typography,
-  Alert,
-  Badge,
-  Tag,
-  Progress,
-  Button,
-  Rate,
-  Input,
-  Select,
-  Table,
-  List,
-  Avatar,
-  Modal,
-  Form,
-  Row,
-  Col,
-  message,
-  notification,
-  Switch,
-  Slider,
-  Checkbox,
-  Radio,
-  DatePicker,
-  TimePicker,
-  Steps,
-  Breadcrumb,
-  Tabs,
-  Collapse,
-  Tooltip,
-  Popover,
-  Drawer,
-} from 'antd';
-import {
-  UserOutlined,
-  StarOutlined,
-  LikeOutlined,
+  BugOutlined,
   HeartOutlined,
   HomeOutlined,
-  SettingOutlined,
   InfoCircleOutlined,
-  BugOutlined,
+  LikeOutlined,
   RocketOutlined,
+  SettingOutlined,
+  StarOutlined,
   ThunderboltOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Breadcrumb,
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  Collapse,
+  DatePicker,
+  Divider,
+  Drawer,
+  Form,
+  Input,
+  List,
+  Modal,
+  Popover,
+  Progress,
+  Radio,
+  Rate,
+  Row,
+  Select,
+  Slider,
+  Space,
+  Steps,
+  Switch,
+  Table,
+  Tabs,
+  Tag,
+  TimePicker,
+  Tooltip,
+  Typography,
+  message,
+  notification,
+} from 'antd';
+import type React from 'react';
+import { useState } from 'react';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -62,9 +63,27 @@ const AntdShowcase: React.FC = () => {
   const [form] = Form.useForm();
 
   const tableData = [
-    { key: '1', name: '张三', age: 32, address: '北京市朝阳区', status: 'active' },
-    { key: '2', name: '李四', age: 28, address: '上海市浦东区', status: 'inactive' },
-    { key: '3', name: '王五', age: 35, address: '广州市天河区', status: 'active' },
+    {
+      key: '1',
+      name: '张三',
+      age: 32,
+      address: '北京市朝阳区',
+      status: 'active',
+    },
+    {
+      key: '2',
+      name: '李四',
+      age: 28,
+      address: '上海市浦东区',
+      status: 'inactive',
+    },
+    {
+      key: '3',
+      name: '王五',
+      age: 35,
+      address: '广州市天河区',
+      status: 'active',
+    },
   ];
 
   const tableColumns = [
@@ -110,7 +129,8 @@ const AntdShowcase: React.FC = () => {
   const showNotification = () => {
     notification.success({
       message: '操作成功',
-      description: '这是一个成功的通知消息示例，展示了 Ant Design 的 notification 组件功能。',
+      description:
+        '这是一个成功的通知消息示例，展示了 Ant Design 的 notification 组件功能。',
       placement: 'topRight',
       duration: 4,
     });
@@ -160,7 +180,9 @@ const AntdShowcase: React.FC = () => {
       children: (
         <div>
           <p>这是第一个面板的内容。可以包含任意的React组件。</p>
-          <Button type="primary" size="small">操作按钮</Button>
+          <Button type="primary" size="small">
+            操作按钮
+          </Button>
         </div>
       ),
     },
@@ -199,15 +221,24 @@ const AntdShowcase: React.FC = () => {
             <Button type="dashed">虚线按钮</Button>
             <Button type="text">文本按钮</Button>
             <Button type="link">链接按钮</Button>
-            <Button type="primary" danger>危险按钮</Button>
-            <Button type="primary" loading={loading} onClick={() => setLoading(!loading)}>
+            <Button type="primary" danger>
+              危险按钮
+            </Button>
+            <Button
+              type="primary"
+              loading={loading}
+              onClick={() => setLoading(!loading)}
+            >
               {loading ? '加载中' : '切换加载'}
             </Button>
             <Button icon={<StarOutlined />}>图标按钮</Button>
           </Space>
 
           <Divider titlePlacement="start">反馈组件</Divider>
-          <Space direction="vertical" style={{ width: '100%', marginBottom: 16 }}>
+          <Space
+            direction="vertical"
+            style={{ width: '100%', marginBottom: 16 }}
+          >
             <Alert message="信息提示" type="info" showIcon />
             <Alert message="成功提示" type="success" showIcon closable />
             <Alert message="警告提示" type="warning" showIcon />
@@ -269,12 +300,24 @@ const AntdShowcase: React.FC = () => {
             </Col>
             <Col span={12}>
               <Card title="步骤条" size="small">
-                <Steps current={currentStep} size="small" style={{ marginBottom: 16 }} items={stepsItems} />
+                <Steps
+                  current={currentStep}
+                  size="small"
+                  style={{ marginBottom: 16 }}
+                  items={stepsItems}
+                />
                 <Space>
-                  <Button size="small" onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}>
+                  <Button
+                    size="small"
+                    onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+                  >
                     上一步
                   </Button>
-                  <Button type="primary" size="small" onClick={() => setCurrentStep(Math.min(2, currentStep + 1))}>
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => setCurrentStep(Math.min(2, currentStep + 1))}
+                  >
                     下一步
                   </Button>
                 </Space>
@@ -292,10 +335,14 @@ const AntdShowcase: React.FC = () => {
           <Col span={12}>
             <Card title="表单控件" size="small">
               <Form form={form} onFinish={handleSubmit} layout="vertical">
-                <Form.Item name="username" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
+                <Form.Item
+                  name="username"
+                  label="用户名"
+                  rules={[{ required: true, message: '请输入用户名' }]}
+                >
                   <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
                 </Form.Item>
-                
+
                 <Form.Item name="email" label="邮箱">
                   <Input type="email" placeholder="请输入邮箱" />
                 </Form.Item>
@@ -318,7 +365,9 @@ const AntdShowcase: React.FC = () => {
                 </Form.Item>
 
                 <Form.Item>
-                  <Button type="primary" htmlType="submit">提交表单</Button>
+                  <Button type="primary" htmlType="submit">
+                    提交表单
+                  </Button>
                 </Form.Item>
               </Form>
             </Card>
@@ -328,13 +377,23 @@ const AntdShowcase: React.FC = () => {
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div>
                   <Text>开关:</Text>
-                  <Switch checked={switchValue} onChange={setSwitchValue} style={{ marginLeft: 8 }} />
-                  <Text style={{ marginLeft: 8 }}>{switchValue ? '开启' : '关闭'}</Text>
+                  <Switch
+                    checked={switchValue}
+                    onChange={setSwitchValue}
+                    style={{ marginLeft: 8 }}
+                  />
+                  <Text style={{ marginLeft: 8 }}>
+                    {switchValue ? '开启' : '关闭'}
+                  </Text>
                 </div>
 
                 <div>
                   <Text>滑动条:</Text>
-                  <Slider value={sliderValue} onChange={setSliderValue} style={{ margin: '0 8px' }} />
+                  <Slider
+                    value={sliderValue}
+                    onChange={setSliderValue}
+                    style={{ margin: '0 8px' }}
+                  />
                   <Text>值: {sliderValue}</Text>
                 </div>
 
@@ -369,7 +428,12 @@ const AntdShowcase: React.FC = () => {
           <Row gutter={[16, 16]}>
             <Col span={12}>
               <Card title="表格组件" size="small">
-                <Table dataSource={tableData} columns={tableColumns} pagination={{ pageSize: 5 }} size="small" />
+                <Table
+                  dataSource={tableData}
+                  columns={tableColumns}
+                  pagination={{ pageSize: 5 }}
+                  size="small"
+                />
               </Card>
             </Col>
             <Col span={12}>
@@ -381,12 +445,20 @@ const AntdShowcase: React.FC = () => {
                   renderItem={(item) => (
                     <List.Item
                       actions={[
-                        <Button type="link" key="edit">编辑</Button>,
-                        <Button type="link" key="more">更多</Button>,
+                        <Button type="link" key="edit">
+                          编辑
+                        </Button>,
+                        <Button type="link" key="more">
+                          更多
+                        </Button>,
                       ]}
                     >
                       <List.Item.Meta
-                        avatar={<Avatar style={{ backgroundColor: '#1890ff' }}>{item.avatar}</Avatar>}
+                        avatar={
+                          <Avatar style={{ backgroundColor: '#1890ff' }}>
+                            {item.avatar}
+                          </Avatar>
+                        }
                         title={item.title}
                         description={item.description}
                       />
@@ -426,7 +498,9 @@ const AntdShowcase: React.FC = () => {
 
               <Button icon={<LikeOutlined />}>点赞</Button>
 
-              <Button icon={<HeartOutlined />} type="primary" danger>收藏</Button>
+              <Button icon={<HeartOutlined />} type="primary" danger>
+                收藏
+              </Button>
             </Space>
           </Card>
         </>
@@ -440,7 +514,8 @@ const AntdShowcase: React.FC = () => {
         <RocketOutlined /> Ant Design 组件展示面板
       </Title>
       <Paragraph>
-        这个面板展示了 Ant Design 在本项目中的集成效果，包含了常用组件的使用示例。
+        这个面板展示了 Ant Design
+        在本项目中的集成效果，包含了常用组件的使用示例。
         所有组件都支持主题切换，并与项目的整体设计保持一致。
       </Paragraph>
 
@@ -461,7 +536,12 @@ const AntdShowcase: React.FC = () => {
           <li>遮罩层点击关闭</li>
           <li>键盘ESC关闭</li>
         </ul>
-        <Alert message="提示" description="模态框内可以嵌套任意组件" type="info" showIcon />
+        <Alert
+          message="提示"
+          description="模态框内可以嵌套任意组件"
+          type="info"
+          showIcon
+        />
       </Modal>
 
       <Drawer
@@ -476,18 +556,27 @@ const AntdShowcase: React.FC = () => {
           <Paragraph>
             抽屉组件可以从四个方向滑出，常用于展示详细信息或者侧边栏导航。
           </Paragraph>
-          
+
           <Divider />
-          
+
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Button type="primary" block>主要操作</Button>
+            <Button type="primary" block>
+              主要操作
+            </Button>
             <Button block>次要操作</Button>
-            <Button danger block onClick={() => setDrawerVisible(false)}>关闭抽屉</Button>
+            <Button danger block onClick={() => setDrawerVisible(false)}>
+              关闭抽屉
+            </Button>
           </Space>
 
           <Divider />
 
-          <Alert message="功能说明" description="抽屉组件适用于需要临时显示大量信息的场景" type="success" showIcon />
+          <Alert
+            message="功能说明"
+            description="抽屉组件适用于需要临时显示大量信息的场景"
+            type="success"
+            showIcon
+          />
         </div>
       </Drawer>
     </div>

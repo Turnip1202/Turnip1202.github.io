@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
-import type React from 'react';
+import type { BackgroundProps } from '@/types';
 import styled from '@emotion/styled';
-import type { BackgroundProps } from "@/types"
-
+import { useEffect, useState } from 'react';
+import type React from 'react';
 
 const ClockContainer = styled.div<BackgroundProps>`
   position: absolute;
   top: 1rem;
   right: 1rem;
   font-size: 1rem;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50')};
   font-weight: 500;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.9)'};
+  background: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.9)')};
   padding: 0.75rem 1rem;
   border-radius: 12px;
   box-shadow: 
@@ -80,10 +79,10 @@ export const Clock: React.FC = () => {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
-    
+
     return {
       date: `${year}-${month}-${day}`,
-      time: `${hours}:${minutes}:${seconds}`
+      time: `${hours}:${minutes}:${seconds}`,
     };
   };
 
@@ -91,7 +90,14 @@ export const Clock: React.FC = () => {
 
   return (
     <ClockContainer>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '2px',
+        }}
+      >
         <div style={{ fontSize: '0.85em', opacity: 0.8 }}>{date}</div>
         <div style={{ fontSize: '1em', fontWeight: 600 }}>{currentTime}</div>
       </div>

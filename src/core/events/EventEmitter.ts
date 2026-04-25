@@ -9,10 +9,15 @@ interface EventSubscription {
   once: boolean;
 }
 
-export class EventEmitter<EventMap extends Record<string, any> = Record<string, any>> {
+export class EventEmitter<
+  EventMap extends Record<string, any> = Record<string, any>,
+> {
   private listeners: Map<keyof EventMap, EventSubscription[]> = new Map();
 
-  on<K extends keyof EventMap>(event: K, handler: EventHandler<EventMap[K]>): () => void {
+  on<K extends keyof EventMap>(
+    event: K,
+    handler: EventHandler<EventMap[K]>,
+  ): () => void {
     const id = Symbol();
     const subscriptions = this.listeners.get(event) || [];
     subscriptions.push({ id, handler, once: false });
@@ -21,22 +26,30 @@ export class EventEmitter<EventMap extends Record<string, any> = Record<string, 
     return () => this.off(event, id);
   }
 
-  once<K extends keyof EventMap>(event: K, handler: EventHandler<EventMap[K]>): void {
+  once<K extends keyof EventMap>(
+    event: K,
+    handler: EventHandler<EventMap[K]>,
+  ): void {
     const id = Symbol();
     const subscriptions = this.listeners.get(event) || [];
     subscriptions.push({ id, handler, once: true });
     this.listeners.set(event, subscriptions);
   }
 
-  off<K extends keyof EventMap>(event: K, handlerOrId: EventHandler<EventMap[K]> | symbol): void {
+  off<K extends keyof EventMap>(
+    event: K,
+    handlerOrId: EventHandler<EventMap[K]> | symbol,
+  ): void {
     const subscriptions = this.listeners.get(event);
     if (!subscriptions) return;
 
     if (typeof handlerOrId === 'symbol') {
-      const filtered = subscriptions.filter(sub => sub.id !== handlerOrId);
+      const filtered = subscriptions.filter((sub) => sub.id !== handlerOrId);
       this.listeners.set(event, filtered);
     } else {
-      const filtered = subscriptions.filter(sub => sub.handler !== handlerOrId);
+      const filtered = subscriptions.filter(
+        (sub) => sub.handler !== handlerOrId,
+      );
       this.listeners.set(event, filtered);
     }
   }
@@ -47,19 +60,24 @@ export class EventEmitter<EventMap extends Record<string, any> = Record<string, 
 
     const toRemove: symbol[] = [];
 
-    subscriptions.forEach(sub => {
+    subscriptions.forEach((sub) => {
       try {
         sub.handler(data);
         if (sub.once) {
           toRemove.push(sub.id);
         }
       } catch (error) {
-        console.error(`[EventEmitter] Error in handler for event "${String(event)}":`, error);
+        console.error(
+          `[EventEmitter] Error in handler for event "${String(event)}":`,
+          error,
+        );
       }
     });
 
     if (toRemove.length > 0) {
-      const filtered = subscriptions.filter(sub => !toRemove.includes(sub.id));
+      const filtered = subscriptions.filter(
+        (sub) => !toRemove.includes(sub.id),
+      );
       this.listeners.set(event, filtered);
     }
   }
@@ -87,7 +105,10 @@ export interface ConfigEvents {
 }
 
 export interface ThemeEvents {
-  'theme:change': { theme: ThemeConfigType; previousTheme: ThemeConfigType | null };
+  'theme:change': {
+    theme: ThemeConfigType;
+    previousTheme: ThemeConfigType | null;
+  };
   'theme:preset:add': { preset: ThemePreset };
   'theme:preset:update': { preset: ThemePreset };
   'theme:preset:delete': { presetId: string };

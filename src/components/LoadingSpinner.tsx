@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from '@emotion/styled';
-import { keyframes } from '@emotion/react';
 import type { BackgroundProps } from '@/types';
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
+import type React from 'react';
 
 const fadeIn = keyframes`
   from {
@@ -31,9 +31,10 @@ const LoadingContainer = styled.div<BackgroundProps>`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: ${props => props.theme?.id === 'custom' && props.theme?.name === '暗黑主题' 
-    ? 'rgba(0, 0, 0, 0.9)' 
-    : 'rgba(255, 255, 255, 0.95)'};
+  background: ${(props) =>
+    props.theme?.id === 'custom' && props.theme?.name === '暗黑主题'
+      ? 'rgba(0, 0, 0, 0.9)'
+      : 'rgba(255, 255, 255, 0.95)'};
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: flex;
@@ -54,9 +55,10 @@ const SpinnerWrapper = styled.div`
 const Spinner = styled.div<BackgroundProps>`
   width: 60px;
   height: 60px;
-  border: 4px solid ${props => props.theme?.id === 'custom' && props.theme?.name === '暗黑主题' 
-    ? 'rgba(255, 255, 255, 0.1)' 
-    : 'rgba(0, 0, 0, 0.1)'};
+  border: 4px solid ${(props) =>
+    props.theme?.id === 'custom' && props.theme?.name === '暗黑主题'
+      ? 'rgba(255, 255, 255, 0.1)'
+      : 'rgba(0, 0, 0, 0.1)'};
   border-top: 4px solid #4a90e2;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -68,9 +70,10 @@ const Spinner = styled.div<BackgroundProps>`
 `;
 
 const LoadingText = styled.div<BackgroundProps>`
-  color: ${props => props.theme?.id === 'custom' && props.theme?.name === '暗黑主题' 
-    ? '#ffffff' 
-    : '#2c3e50'};
+  color: ${(props) =>
+    props.theme?.id === 'custom' && props.theme?.name === '暗黑主题'
+      ? '#ffffff'
+      : '#2c3e50'};
   font-size: 1.1rem;
   font-weight: 500;
   animation: ${pulse} 2s ease-in-out infinite;
@@ -89,9 +92,9 @@ interface LoadingSpinnerProps {
   text?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
-  theme, 
-  text = '正在加载精彩内容...' 
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  theme,
+  text = '正在加载精彩内容...',
 }) => {
   return (
     <LoadingContainer theme={theme}>

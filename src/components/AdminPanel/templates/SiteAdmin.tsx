@@ -1,45 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  Form,
-  Input,
-  Button,
-  Space,
-  message,
-  Divider,
-  Typography,
-  Row,
-  Col,
-  Switch,
-  Upload,
-  Image,
-  Alert,
-  Statistic,
-  Modal,
-} from 'antd';
-import {
-  SaveOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  ClearOutlined,
-  UploadOutlined,
-  GlobalOutlined,
-  RedoOutlined,
-  ExclamationCircleOutlined,
-  DownloadOutlined,
-  EyeOutlined,
-  HistoryOutlined,
-  ExportOutlined,
-} from '@ant-design/icons';
-import { siteManager, themeManager, linksManager } from '@/utils';
-import { configVersionManager, VersionUtils } from '@/utils/version';
-import { themeConfig } from '@/config/theme';
-import { siteConfig as defaultSiteConfig } from '@/config/site';
-import { linkCategories, searchEngines } from '@/config/links';
-import type { ISiteConfig } from '@/types';
 import { StorageSelector } from '@/components/theme';
-import { getThemeManager } from '@/core/theme/ThemeManagerV2';
+import { linkCategories, searchEngines } from '@/config/links';
+import { siteConfig as defaultSiteConfig } from '@/config/site';
+import { themeConfig } from '@/config/theme';
 import { useThemeContext } from '@/contexts/ThemeContext';
+import { getThemeManager } from '@/core/theme/ThemeManagerV2';
+import type { ISiteConfig } from '@/types';
+import { linksManager, siteManager, themeManager } from '@/utils';
+import { VersionUtils, configVersionManager } from '@/utils/version';
+import {
+  ClearOutlined,
+  DownloadOutlined,
+  ExclamationCircleOutlined,
+  ExportOutlined,
+  EyeOutlined,
+  GlobalOutlined,
+  HistoryOutlined,
+  RedoOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+  SettingOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Divider,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Row,
+  Space,
+  Statistic,
+  Switch,
+  Typography,
+  Upload,
+  message,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -62,7 +63,7 @@ const SiteAdmin: React.FC = () => {
     const config = siteManager.getConfig();
     console.log('loadSiteConfig - 获取到的配置:', config); // 调试信息
     setSiteConfig(config);
-    
+
     const formValues = {
       title: config.title,
       copyright: config.copyright.text,
@@ -71,16 +72,16 @@ const SiteAdmin: React.FC = () => {
       author: config.author || '',
       favicon: config.favicon || '',
     };
-    
+
     console.log('loadSiteConfig - 设置表单值:', formValues); // 调试信息
     form.setFieldsValue(formValues);
-    
+
     // 验证表单值是否正确设置
     setTimeout(() => {
       const actualFavicon = form.getFieldValue('favicon');
       console.log('loadSiteConfig - 设置后实际的favicon值:', actualFavicon);
     }, 50);
-    
+
     // 初始化favicon预览
     setTimeout(() => {
       const favicon = config.favicon as string;
@@ -107,16 +108,19 @@ const SiteAdmin: React.FC = () => {
       setLoading(true);
       const values = await form.validateFields();
       console.log('handleSave - 获取到的表单值:', values);
-      
+
       // 额外检查单个favicon字段值
       const faviconValue = form.getFieldValue('favicon');
       console.log('handleSave - 单独获取favicon字段:', faviconValue);
       console.log('handleSave - favicon类型:', typeof faviconValue);
-      console.log('handleSave - favicon长度:', faviconValue ? faviconValue.length : 'undefined');
-      
+      console.log(
+        'handleSave - favicon长度:',
+        faviconValue ? faviconValue.length : 'undefined',
+      );
+
       // 更新标题
       siteManager.updateTitle(values.title);
-      
+
       // 更新版权信息
       siteManager.updateCopyright(values.copyright);
 
@@ -174,31 +178,30 @@ const SiteAdmin: React.FC = () => {
   const handleResetWebsite = async () => {
     try {
       setLoading(true);
-      
+
       // 如果需要备份，先保存当前版本
       if (backupBeforeReset) {
         configVersionManager.createVersion({
           name: `重置前备份_${new Date().toLocaleString('zh-CN')}`,
           description: '系统重置前的自动备份',
-          tags: ['系统重置', '自动备份']
+          tags: ['系统重置', '自动备份'],
         });
         message.success('当前配置已保存为版本');
         // 等待一下让用户看到备份成功的消息
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-      
+
       // 重置所有数据
       siteManager.resetToDefault(defaultSiteConfig);
       themeManager.resetToDefaultSync(themeConfig);
       linksManager.resetToDefault(linkCategories, searchEngines);
-      
+
       message.success('网站重置成功！页面将2秒后刷新');
-      
+
       // 延迟刷新页面
       setTimeout(() => {
         window.location.reload();
       }, 2000);
-      
     } catch (error) {
       message.error('重置失败，请重试');
     } finally {
@@ -212,7 +215,7 @@ const SiteAdmin: React.FC = () => {
   const generateFullPreview = () => {
     const themeManagerV2 = getThemeManager();
     const allPresets = themeManagerV2.getAllPresets();
-    
+
     const fullConfig = {
       // 网站基本信息
       site: {
@@ -227,29 +230,31 @@ const SiteAdmin: React.FC = () => {
       theme: {
         default: themeManager.getDefaultTheme(),
         presets: themeManager.getPresets(),
-        allPresets: allPresets.map(p => ({
+        allPresets: allPresets.map((p) => ({
           id: p.id,
           name: p.name,
           isBuiltIn: p.isBuiltIn,
-          backgroundImage: p.config.backgroundImage
+          backgroundImage: p.config.backgroundImage,
         })),
         totalPresets: allPresets.length,
-        builtInPresets: allPresets.filter(p => p.isBuiltIn).length,
-        customPresets: allPresets.filter(p => !p.isBuiltIn).length,
+        builtInPresets: allPresets.filter((p) => p.isBuiltIn).length,
+        customPresets: allPresets.filter((p) => !p.isBuiltIn).length,
       },
       // 链接数据
       links: {
         categories: linksManager.getAllCategories(),
         totalCategories: linksManager.getAllCategories().length,
-        totalLinks: linksManager.getAllCategories().reduce((total, cat) => total + (cat.links?.length || 0), 0),
+        totalLinks: linksManager
+          .getAllCategories()
+          .reduce((total, cat) => total + (cat.links?.length || 0), 0),
         searchEngines: linksManager.getAllSearchEngines(),
         totalSearchEngines: linksManager.getAllSearchEngines().length,
       },
       // 系统信息
       system: {
         storageSize: getStorageSize(),
-        ...VersionUtils.getSystemSummary()
-      }
+        ...VersionUtils.getSystemSummary(),
+      },
     };
     return fullConfig;
   };
@@ -269,9 +274,7 @@ const SiteAdmin: React.FC = () => {
       <Title level={2}>
         <SettingOutlined /> 网站配置面板
       </Title>
-      <Paragraph>
-        管理网站的基本信息、SEO配置和系统设置。
-      </Paragraph>
+      <Paragraph>管理网站的基本信息、SEO配置和系统设置。</Paragraph>
 
       {/* 系统状态 */}
       <Card title="系统状态" style={{ marginBottom: 16 }}>
@@ -287,14 +290,23 @@ const SiteAdmin: React.FC = () => {
           <Col span={6}>
             <Statistic
               title="主题数量"
-              value={JSON.parse(localStorage.getItem('turnip-theme-config') || '{"presets":[]}').presets.length}
+              value={
+                JSON.parse(
+                  localStorage.getItem('turnip-theme-config') ||
+                    '{"presets":[]}',
+                ).presets.length
+              }
               valueStyle={{ color: '#52c41a' }}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title="链接分类"
-              value={JSON.parse(localStorage.getItem('turnip_link_categories') || '[]').length}
+              value={
+                JSON.parse(
+                  localStorage.getItem('turnip_link_categories') || '[]',
+                ).length
+              }
               valueStyle={{ color: '#722ed1' }}
             />
           </Col>
@@ -310,11 +322,7 @@ const SiteAdmin: React.FC = () => {
 
       {/* 基本配置 */}
       <Card title="基本信息" style={{ marginBottom: 16 }}>
-        <Form
-          form={form}
-          layout="vertical"
-          onValuesChange={handleFormChange}
-        >
+        <Form form={form} layout="vertical" onValuesChange={handleFormChange}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -322,36 +330,24 @@ const SiteAdmin: React.FC = () => {
                 label="网站标题"
                 rules={[{ required: true, message: '请输入网站标题' }]}
               >
-                <Input 
+                <Input
                   placeholder="例如: Turnip起始页"
                   prefix={<GlobalOutlined />}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name="author"
-                label="作者"
-              >
+              <Form.Item name="author" label="作者">
                 <Input placeholder="例如: Turnip1202" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item
-            name="description"
-            label="网站描述"
-          >
-            <TextArea
-              rows={3}
-              placeholder="网站的简短描述，用于SEO优化"
-            />
+          <Form.Item name="description" label="网站描述">
+            <TextArea rows={3} placeholder="网站的简短描述，用于SEO优化" />
           </Form.Item>
 
-          <Form.Item
-            name="keywords"
-            label="关键词"
-          >
+          <Form.Item name="keywords" label="关键词">
             <Input placeholder="多个关键词用逗号分隔，例如: 起始页,导航,工具" />
           </Form.Item>
 
@@ -363,108 +359,111 @@ const SiteAdmin: React.FC = () => {
             <Input placeholder="例如: © 2024 Turnip1202. All rights reserved." />
           </Form.Item>
 
-<Space.Compact
-  block // 使 Compact 占满父容器宽度
-  style={{
-    display: 'flex',
-    width: '100%',
-    flexDirection: 'column',
-  }}
->
-  <div
-    style={{
-      display: 'flex',
-      width: '100%',
-      alignItems: 'center',
-    }}
-  >
-    <Form.Item
-      name="favicon"
-      label="网站图标URL"
-      style={{
-        flex: 1,
-        marginBottom: 0, // 避免 Form.Item 默认 margin 影响垂直对齐
-      }}
-    >
-      <Input
-        placeholder="例如: /favicon.ico"
-        onChange={(e) => {
-          const value = e.target.value;
-          handleFormChange(); // 标记表单变化
+          <Space.Compact
+            block // 使 Compact 占满父容器宽度
+            style={{
+              display: 'flex',
+              width: '100%',
+              flexDirection: 'column',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+              }}
+            >
+              <Form.Item
+                name="favicon"
+                label="网站图标URL"
+                style={{
+                  flex: 1,
+                  marginBottom: 0, // 避免 Form.Item 默认 margin 影响垂直对齐
+                }}
+              >
+                <Input
+                  placeholder="例如: /favicon.ico"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    handleFormChange(); // 标记表单变化
 
-          // 可选：setFieldValue 不是必须的，Form 会自动管理
-          // form.setFieldValue('favicon', value); // Ant Design v5+ 自动同步
+                    // 可选：setFieldValue 不是必须的，Form 会自动管理
+                    // form.setFieldValue('favicon', value); // Ant Design v5+ 自动同步
 
-          // 实时预览逻辑
-          if (value && value.trim()) {
-            setTimeout(() => {
-                const img = document.createElement('img');
-              img.onload = () => {
-                const previewEl = document.getElementById('favicon-preview');
-                if (previewEl) {
-                  previewEl.style.backgroundImage = `url(${value})`;
-                  previewEl.style.backgroundColor = 'transparent';
-                }
-              };
-              img.onerror = () => {
-                const previewEl = document.getElementById('favicon-preview');
-                if (previewEl) {
-                  previewEl.style.backgroundImage = 'none';
-                  previewEl.style.backgroundColor = '#ff4d4f';
-                }
-              };
-              img.src = value;
-            }, 500);
-          } else {
-            const previewEl = document.getElementById('favicon-preview');
-            if (previewEl) {
-              previewEl.style.backgroundImage = 'none';
-              previewEl.style.backgroundColor = '#f0f0f0';
-            }
-          }
-        }}
-      />
-    </Form.Item>
+                    // 实时预览逻辑
+                    if (value && value.trim()) {
+                      setTimeout(() => {
+                        const img = document.createElement('img');
+                        img.onload = () => {
+                          const previewEl =
+                            document.getElementById('favicon-preview');
+                          if (previewEl) {
+                            previewEl.style.backgroundImage = `url(${value})`;
+                            previewEl.style.backgroundColor = 'transparent';
+                          }
+                        };
+                        img.onerror = () => {
+                          const previewEl =
+                            document.getElementById('favicon-preview');
+                          if (previewEl) {
+                            previewEl.style.backgroundImage = 'none';
+                            previewEl.style.backgroundColor = '#ff4d4f';
+                          }
+                        };
+                        img.src = value;
+                      }, 500);
+                    } else {
+                      const previewEl =
+                        document.getElementById('favicon-preview');
+                      if (previewEl) {
+                        previewEl.style.backgroundImage = 'none';
+                        previewEl.style.backgroundColor = '#f0f0f0';
+                      }
+                    }
+                  }}
+                />
+              </Form.Item>
 
-    {/* 预览图标 */}
-    <div
-      id="favicon-preview"
-      style={{
-        width: '32px',
-        height: '32px',
-        border: '1px solid #d9d9d9',
-        borderLeft: 'none',
-        borderRadius: '0 6px 6px 0',
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundColor: '#f0f0f0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '12px',
-        marginTop: '30px',
-        color: '#666',
-        marginLeft: '-1px', // 与 input 边框衔接
-      }}
-      title="图标预览"
-    >
-      🌐
-    </div>
-  </div>
+              {/* 预览图标 */}
+              <div
+                id="favicon-preview"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  border: '1px solid #d9d9d9',
+                  borderLeft: 'none',
+                  borderRadius: '0 6px 6px 0',
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  backgroundColor: '#f0f0f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  marginTop: '30px',
+                  color: '#666',
+                  marginLeft: '-1px', // 与 input 边框衔接
+                }}
+                title="图标预览"
+              >
+                🌐
+              </div>
+            </div>
 
-  {/* 提示文字 */}
-  <div
-    style={{
-      fontSize: '12px',
-      color: '#666',
-      marginTop: '4px',
-      paddingLeft: '12px', // 与 label 对齐
-    }}
-  >
-    支持 .ico、.png、.svg 等格式，建议尺寸 16×16 或 32×32 像素
-  </div>
-</Space.Compact>
+            {/* 提示文字 */}
+            <div
+              style={{
+                fontSize: '12px',
+                color: '#666',
+                marginTop: '4px',
+                paddingLeft: '12px', // 与 label 对齐
+              }}
+            >
+              支持 .ico、.png、.svg 等格式，建议尺寸 16×16 或 32×32 像素
+            </div>
+          </Space.Compact>
         </Form>
 
         {hasChanges && (
@@ -506,10 +505,12 @@ const SiteAdmin: React.FC = () => {
             type="error"
             showIcon
           />
-          
+
           {/* 版本管理与数据管理 */}
           <div>
-            <Title level={5} style={{ marginBottom: 8 }}>📋 版本管理与数据备份</Title>
+            <Title level={5} style={{ marginBottom: 8 }}>
+              📋 版本管理与数据备份
+            </Title>
             <Space wrap>
               <Button
                 type="primary"
@@ -518,7 +519,7 @@ const SiteAdmin: React.FC = () => {
                   const options = {
                     name: `网站配置快照_${new Date().toLocaleDateString('zh-CN')}`,
                     description: '从网站配置面板创建的配置快照',
-                    tags: ['手动保存', '网站配置']
+                    tags: ['手动保存', '网站配置'],
                   };
                   configVersionManager.createVersion(options);
                   message.success('配置版本已保存！');
@@ -526,7 +527,7 @@ const SiteAdmin: React.FC = () => {
               >
                 保存当前版本
               </Button>
-              
+
               <Button
                 icon={<HistoryOutlined />}
                 onClick={() => {
@@ -536,7 +537,7 @@ const SiteAdmin: React.FC = () => {
               >
                 查看版本历史
               </Button>
-              
+
               <Button
                 type="dashed"
                 icon={<ExportOutlined />}
@@ -556,7 +557,7 @@ const SiteAdmin: React.FC = () => {
               >
                 导出版本历史
               </Button>
-              
+
               <Button
                 type="default"
                 icon={<EyeOutlined />}
@@ -566,16 +567,20 @@ const SiteAdmin: React.FC = () => {
               </Button>
             </Space>
           </div>
-          
+
           {/* 数据存储设置 */}
           <div>
-            <Title level={5} style={{ marginBottom: 8 }}>💾 数据存储设置</Title>
+            <Title level={5} style={{ marginBottom: 8 }}>
+              💾 数据存储设置
+            </Title>
             <StorageSelector showStats={true} />
           </div>
-          
+
           {/* 数据清理 */}
           <div>
-            <Title level={5} style={{ marginBottom: 8 }}>🗑️ 数据清理</Title>
+            <Title level={5} style={{ marginBottom: 8 }}>
+              🗑️ 数据清理
+            </Title>
             <Space wrap>
               <Button
                 danger
@@ -584,7 +589,7 @@ const SiteAdmin: React.FC = () => {
               >
                 清除所有数据
               </Button>
-              
+
               <Button
                 danger
                 type="primary"
@@ -599,7 +604,7 @@ const SiteAdmin: React.FC = () => {
       </Card>
 
       {/* 当前配置预览 */}
-      <Card 
+      <Card
         title="当前配置预览"
         extra={
           <Space>
@@ -633,19 +638,23 @@ const SiteAdmin: React.FC = () => {
           </Space>
         }
       >
-        <div style={{ 
-          background: isDark ? '#1a1a1a' : '#f5f5f5', 
-          color: isDark ? '#e0e0e0' : '#333',
-          padding: 16, 
-          borderRadius: 6 
-        }}>
-          <pre style={{ 
-            margin: 0, 
-            fontSize: 12, 
-            maxHeight: 400, 
-            overflow: 'auto',
-            color: 'inherit'
-          }}>
+        <div
+          style={{
+            background: isDark ? '#1a1a1a' : '#f5f5f5',
+            color: isDark ? '#e0e0e0' : '#333',
+            padding: 16,
+            borderRadius: 6,
+          }}
+        >
+          <pre
+            style={{
+              margin: 0,
+              fontSize: 12,
+              maxHeight: 400,
+              overflow: 'auto',
+              color: 'inherit',
+            }}
+          >
             {JSON.stringify(generateFullPreview(), null, 2)}
           </pre>
         </div>
@@ -676,7 +685,7 @@ const SiteAdmin: React.FC = () => {
             showIcon
             style={{ marginBottom: 20 }}
           />
-          
+
           <div style={{ marginBottom: 16 }}>
             <Text strong>重置将影响的数据：</Text>
             <ul style={{ marginTop: 8, paddingLeft: 20 }}>
@@ -686,7 +695,7 @@ const SiteAdmin: React.FC = () => {
               <li>🔍 搜索引擎配置</li>
             </ul>
           </div>
-          
+
           <div style={{ marginBottom: 16 }}>
             <Text strong>重置后将恢复为：</Text>
             <ul style={{ marginTop: 8, paddingLeft: 20 }}>
@@ -696,16 +705,18 @@ const SiteAdmin: React.FC = () => {
               <li>✅ 默认搜索引擎（百度、谷歌、必应）</li>
             </ul>
           </div>
-          
-          <div style={{ 
-            background: '#f6ffed', 
-            border: '1px solid #b7eb8f', 
-            borderRadius: '6px', 
-            padding: '12px' 
-          }}>
+
+          <div
+            style={{
+              background: '#f6ffed',
+              border: '1px solid #b7eb8f',
+              borderRadius: '6px',
+              padding: '12px',
+            }}
+          >
             <Space>
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={backupBeforeReset}
                 onChange={(e) => setBackupBeforeReset(e.target.checked)}
                 id="backup-checkbox"
@@ -731,25 +742,33 @@ const SiteAdmin: React.FC = () => {
         open={previewModalVisible}
         onCancel={() => setPreviewModalVisible(false)}
         footer={[
-          <Button key="export" icon={<DownloadOutlined />} onClick={() => {
-            const config = generateFullPreview();
-            const dataStr = JSON.stringify(config, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `turnip-full-config-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            message.success('完整配置已导出');
-          }}>
+          <Button
+            key="export"
+            icon={<DownloadOutlined />}
+            onClick={() => {
+              const config = generateFullPreview();
+              const dataStr = JSON.stringify(config, null, 2);
+              const blob = new Blob([dataStr], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `turnip-full-config-${new Date().toISOString().split('T')[0]}.json`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+              message.success('完整配置已导出');
+            }}
+          >
             导出完整配置
           </Button>,
-          <Button key="close" type="primary" onClick={() => setPreviewModalVisible(false)}>
+          <Button
+            key="close"
+            type="primary"
+            onClick={() => setPreviewModalVisible(false)}
+          >
             关闭
-          </Button>
+          </Button>,
         ]}
         width={900}
         centered
@@ -761,77 +780,93 @@ const SiteAdmin: React.FC = () => {
           return (
             <div style={{ maxHeight: '70vh', overflow: 'auto' }}>
               {/* 网站基本信息 */}
-              <Card size="small" title="🌐 网站基本信息" style={{ marginBottom: 16 }}>
+              <Card
+                size="small"
+                title="🌐 网站基本信息"
+                style={{ marginBottom: 16 }}
+              >
                 <Row gutter={[16, 8]}>
                   <Col span={12}>
                     <Text strong>网站标题：</Text>
-                    <div style={{ 
-                      marginTop: 4, 
-                      padding: '4px 8px', 
-                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
-                      borderRadius: '4px',
-                      color: isDark ? '#e0e0e0' : '#333'
-                    }}>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        padding: '4px 8px',
+                        background: isDark ? '#2a2a2a' : '#f5f5f5',
+                        borderRadius: '4px',
+                        color: isDark ? '#e0e0e0' : '#333',
+                      }}
+                    >
                       {fullConfig.site.title}
                     </div>
                   </Col>
                   <Col span={12}>
                     <Text strong>作者：</Text>
-                    <div style={{ 
-                      marginTop: 4, 
-                      padding: '4px 8px', 
-                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
-                      borderRadius: '4px',
-                      color: isDark ? '#e0e0e0' : '#333'
-                    }}>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        padding: '4px 8px',
+                        background: isDark ? '#2a2a2a' : '#f5f5f5',
+                        borderRadius: '4px',
+                        color: isDark ? '#e0e0e0' : '#333',
+                      }}
+                    >
                       {fullConfig.site.author}
                     </div>
                   </Col>
                   <Col span={24}>
                     <Text strong>版权信息：</Text>
-                    <div style={{ 
-                      marginTop: 4, 
-                      padding: '4px 8px', 
-                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
-                      borderRadius: '4px',
-                      color: isDark ? '#e0e0e0' : '#333'
-                    }}>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        padding: '4px 8px',
+                        background: isDark ? '#2a2a2a' : '#f5f5f5',
+                        borderRadius: '4px',
+                        color: isDark ? '#e0e0e0' : '#333',
+                      }}
+                    >
                       {fullConfig.site.copyright}
                     </div>
                   </Col>
                   <Col span={24}>
                     <Text strong>网站描述：</Text>
-                    <div style={{ 
-                      marginTop: 4, 
-                      padding: '4px 8px', 
-                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
-                      borderRadius: '4px',
-                      color: isDark ? '#e0e0e0' : '#333'
-                    }}>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        padding: '4px 8px',
+                        background: isDark ? '#2a2a2a' : '#f5f5f5',
+                        borderRadius: '4px',
+                        color: isDark ? '#e0e0e0' : '#333',
+                      }}
+                    >
                       {fullConfig.site.description}
                     </div>
                   </Col>
                   <Col span={12}>
                     <Text strong>关键词：</Text>
-                    <div style={{ 
-                      marginTop: 4, 
-                      padding: '4px 8px', 
-                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
-                      borderRadius: '4px',
-                      color: isDark ? '#e0e0e0' : '#333'
-                    }}>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        padding: '4px 8px',
+                        background: isDark ? '#2a2a2a' : '#f5f5f5',
+                        borderRadius: '4px',
+                        color: isDark ? '#e0e0e0' : '#333',
+                      }}
+                    >
                       {fullConfig.site.keywords}
                     </div>
                   </Col>
                   <Col span={12}>
                     <Text strong>网站图标：</Text>
-                    <div style={{ 
-                      marginTop: 4, 
-                      padding: '4px 8px', 
-                      background: isDark ? '#2a2a2a' : '#f5f5f5', 
-                      borderRadius: '4px',
-                      color: isDark ? '#e0e0e0' : '#333'
-                    }}>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        padding: '4px 8px',
+                        background: isDark ? '#2a2a2a' : '#f5f5f5',
+                        borderRadius: '4px',
+                        color: isDark ? '#e0e0e0' : '#333',
+                      }}
+                    >
                       {fullConfig.site.favicon}
                     </div>
                   </Col>
@@ -839,35 +874,54 @@ const SiteAdmin: React.FC = () => {
               </Card>
 
               {/* 主题配置 */}
-              <Card size="small" title="🎨 主题配置" style={{ marginBottom: 16 }}>
+              <Card
+                size="small"
+                title="🎨 主题配置"
+                style={{ marginBottom: 16 }}
+              >
                 <Row gutter={[16, 8]}>
                   <Col span={24}>
                     <div style={{ marginBottom: 12 }}>
                       <Text strong>当前默认主题：</Text>
-                      <div style={{ 
-                        marginTop: 8,
-                        padding: '12px',
-                        border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
-                        borderRadius: '8px',
-                        background: isDark ? '#2a2a2a' : '#fafafa',
-                        color: isDark ? '#e0e0e0' : '#333'
-                      }}>
+                      <div
+                        style={{
+                          marginTop: 8,
+                          padding: '12px',
+                          border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
+                          borderRadius: '8px',
+                          background: isDark ? '#2a2a2a' : '#fafafa',
+                          color: isDark ? '#e0e0e0' : '#333',
+                        }}
+                      >
                         <Row align="middle" gutter={16}>
                           <Col span={4}>
-                            <div style={{
-                              width: 60,
-                              height: 30,
-                              background: fullConfig.theme.default.backgroundImage,
-                              borderRadius: '4px',
-                              border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`
-                            }} />
+                            <div
+                              style={{
+                                width: 60,
+                                height: 30,
+                                background:
+                                  fullConfig.theme.default.backgroundImage,
+                                borderRadius: '4px',
+                                border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
+                              }}
+                            />
                           </Col>
                           <Col span={20}>
                             <div>
-                              <Text strong>{fullConfig.theme.default.name}</Text>
+                              <Text strong>
+                                {fullConfig.theme.default.name}
+                              </Text>
                               <br />
-                              <Text type="secondary" style={{ fontSize: '12px' }}>
-                                模糊度: {fullConfig.theme.default.blur} | 透明度: {Math.round(fullConfig.theme.default.opacity * 100)}%
+                              <Text
+                                type="secondary"
+                                style={{ fontSize: '12px' }}
+                              >
+                                模糊度: {fullConfig.theme.default.blur} |
+                                透明度:{' '}
+                                {Math.round(
+                                  fullConfig.theme.default.opacity * 100,
+                                )}
+                                %
                               </Text>
                             </div>
                           </Col>
@@ -876,39 +930,49 @@ const SiteAdmin: React.FC = () => {
                     </div>
                   </Col>
                   <Col span={24}>
-                    <Text strong>预设主题 ({fullConfig.theme.presets.length} 个)：</Text>
+                    <Text strong>
+                      预设主题 ({fullConfig.theme.presets.length} 个)：
+                    </Text>
                     <div style={{ marginTop: 8 }}>
                       {fullConfig.theme.presets.length > 0 ? (
                         <Row gutter={[8, 8]}>
                           {fullConfig.theme.presets.map((theme, index) => (
                             <Col key={theme.id} span={8}>
-                              <div style={{
-                                padding: '8px',
-                                border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
-                                borderRadius: '6px',
-                                background: isDark ? '#2a2a2a' : '#fafafa',
-                                color: isDark ? '#e0e0e0' : '#333'
-                              }}>
-                                <div style={{
-                                  width: '100%',
-                                  height: 20,
-                                  background: theme.backgroundImage,
-                                  borderRadius: '3px',
-                                  marginBottom: '4px'
-                                }} />
-                                <Text style={{ fontSize: '12px' }}>{theme.name}</Text>
+                              <div
+                                style={{
+                                  padding: '8px',
+                                  border: `1px solid ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
+                                  borderRadius: '6px',
+                                  background: isDark ? '#2a2a2a' : '#fafafa',
+                                  color: isDark ? '#e0e0e0' : '#333',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: '100%',
+                                    height: 20,
+                                    background: theme.backgroundImage,
+                                    borderRadius: '3px',
+                                    marginBottom: '4px',
+                                  }}
+                                />
+                                <Text style={{ fontSize: '12px' }}>
+                                  {theme.name}
+                                </Text>
                               </div>
                             </Col>
                           ))}
                         </Row>
                       ) : (
-                        <div style={{ 
-                          padding: '20px', 
-                          textAlign: 'center', 
-                          color: isDark ? '#999' : '#999',
-                          background: isDark ? '#2a2a2a' : 'transparent',
-                          borderRadius: '4px'
-                        }}>
+                        <div
+                          style={{
+                            padding: '20px',
+                            textAlign: 'center',
+                            color: isDark ? '#999' : '#999',
+                            background: isDark ? '#2a2a2a' : 'transparent',
+                            borderRadius: '4px',
+                          }}
+                        >
                           暂无预设主题
                         </div>
                       )}
@@ -918,7 +982,11 @@ const SiteAdmin: React.FC = () => {
               </Card>
 
               {/* 链接数据 */}
-              <Card size="small" title="🔗 链接数据" style={{ marginBottom: 16 }}>
+              <Card
+                size="small"
+                title="🔗 链接数据"
+                style={{ marginBottom: 16 }}
+              >
                 <Row gutter={[16, 8]} style={{ marginBottom: 16 }}>
                   <Col span={8}>
                     <Statistic
@@ -942,31 +1010,50 @@ const SiteAdmin: React.FC = () => {
                     />
                   </Col>
                 </Row>
-                
+
                 {fullConfig.links.categories.length > 0 && (
                   <div>
                     <Text strong>分类详情：</Text>
-                    <div style={{ marginTop: 8, maxHeight: 200, overflow: 'auto' }}>
+                    <div
+                      style={{ marginTop: 8, maxHeight: 200, overflow: 'auto' }}
+                    >
                       {fullConfig.links.categories.map((category) => (
-                        <div key={category.id} style={{
-                          marginBottom: '8px',
-                          padding: '8px',
-                          border: `1px solid ${isDark ? '#3a3a3a' : '#f0f0f0'}`,
-                          borderRadius: '4px',
-                          background: isDark ? '#2a2a2a' : '#fafafa',
-                          color: isDark ? '#e0e0e0' : '#333'
-                        }}>
+                        <div
+                          key={category.id}
+                          style={{
+                            marginBottom: '8px',
+                            padding: '8px',
+                            border: `1px solid ${isDark ? '#3a3a3a' : '#f0f0f0'}`,
+                            borderRadius: '4px',
+                            background: isDark ? '#2a2a2a' : '#fafafa',
+                            color: isDark ? '#e0e0e0' : '#333',
+                          }}
+                        >
                           <Row justify="space-between" align="middle">
                             <Col>
                               <Text strong>{category.name}</Text>
                             </Col>
                             <Col>
-                              <Text type="secondary">{category.links?.length || 0} 个链接</Text>
+                              <Text type="secondary">
+                                {category.links?.length || 0} 个链接
+                              </Text>
                             </Col>
                           </Row>
                           {category.links && category.links.length > 0 && (
-                            <div style={{ marginTop: 4, fontSize: '12px', color: isDark ? '#aaa' : '#666' }}>
-                              {category.links.slice(0, 3).map(link => link.icon + ' ' + (link.name || '未命名')).join(', ')}
+                            <div
+                              style={{
+                                marginTop: 4,
+                                fontSize: '12px',
+                                color: isDark ? '#aaa' : '#666',
+                              }}
+                            >
+                              {category.links
+                                .slice(0, 3)
+                                .map(
+                                  (link) =>
+                                    link.icon + ' ' + (link.name || '未命名'),
+                                )
+                                .join(', ')}
                               {category.links.length > 3 && '...'}
                             </div>
                           )}
@@ -996,7 +1083,9 @@ const SiteAdmin: React.FC = () => {
                     <Text strong>生成时间：</Text>
                     <div style={{ marginTop: 4 }}>
                       <Text style={{ fontSize: '12px' }}>
-                        {new Date(fullConfig.system.lastModified).toLocaleString('zh-CN')}
+                        {new Date(
+                          fullConfig.system.lastModified,
+                        ).toLocaleString('zh-CN')}
                       </Text>
                     </div>
                   </Col>
@@ -1009,7 +1098,9 @@ const SiteAdmin: React.FC = () => {
                   <Col span={16}>
                     <Text strong>当前配置版本：</Text>
                     <div style={{ marginTop: 4 }}>
-                      <Text style={{ color: '#1890ff' }}>{fullConfig.system.currentConfigVersion}</Text>
+                      <Text style={{ color: '#1890ff' }}>
+                        {fullConfig.system.currentConfigVersion}
+                      </Text>
                     </div>
                   </Col>
                 </Row>

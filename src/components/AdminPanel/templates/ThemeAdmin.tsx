@@ -1,38 +1,47 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { ThemeEditor } from '@/components/theme';
 import {
-  Card,
+  type EnhancedThemeConfig,
+  type ThemePreset,
+  getThemeManager,
+} from '@/core/theme/ThemeManagerV2';
+import type { ThemeConfigType } from '@/types';
+import { themeManager } from '@/utils';
+import {
+  BgColorsOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
   Button,
+  Card,
+  Col,
+  Modal,
+  Popconfirm,
+  Row,
   Space,
   Table,
-  Modal,
-  message,
   Typography,
-  Row,
-  Col,
-  Popconfirm,
-  Alert,
+  message,
 } from 'antd';
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  BgColorsOutlined,
-} from '@ant-design/icons';
-import { themeManager } from '@/utils';
-import type { ThemeConfigType } from '@/types';
-import { ThemeEditor } from '@/components/theme';
-import { getThemeManager, type EnhancedThemeConfig, type ThemePreset } from '@/core/theme/ThemeManagerV2';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const { Title, Paragraph } = Typography;
 
 const ThemeAdmin: React.FC = () => {
   const [presets, setPresets] = useState<ThemePreset[]>([]);
-  const [defaultTheme, setDefaultTheme] = useState<ThemeConfigType | null>(null);
+  const [defaultTheme, setDefaultTheme] = useState<ThemeConfigType | null>(
+    null,
+  );
   const [editorVisible, setEditorVisible] = useState(false);
-  const [editingEnhancedTheme, setEditingEnhancedTheme] = useState<EnhancedThemeConfig | undefined>();
+  const [editingEnhancedTheme, setEditingEnhancedTheme] = useState<
+    EnhancedThemeConfig | undefined
+  >();
   const [editorMode, setEditorMode] = useState<'create' | 'edit'>('create');
-  
+
   const themeManagerV2 = useMemo(() => getThemeManager(), []);
 
   useEffect(() => {
@@ -42,7 +51,7 @@ const ThemeAdmin: React.FC = () => {
   const loadThemes = useCallback(() => {
     const allPresets = themeManagerV2.getAllPresets();
     setPresets(allPresets);
-    
+
     const config = themeManager.getConfig();
     setDefaultTheme(config.default);
   }, [themeManagerV2]);
@@ -53,56 +62,68 @@ const ThemeAdmin: React.FC = () => {
     setEditorVisible(true);
   }, []);
 
-  const handlePreviewEnhanced = useCallback((theme: EnhancedThemeConfig) => {
-    themeManagerV2.setPreviewTheme(theme);
-    message.info('主题预览已应用，刷新页面可恢复');
-  }, [themeManagerV2]);
+  const handlePreviewEnhanced = useCallback(
+    (theme: EnhancedThemeConfig) => {
+      themeManagerV2.setPreviewTheme(theme);
+      message.info('主题预览已应用，刷新页面可恢复');
+    },
+    [themeManagerV2],
+  );
 
-  const handleSaveEnhanced = useCallback(async (theme: EnhancedThemeConfig) => {
-    try {
-      if (editorMode === 'edit') {
-        await themeManagerV2.updateCustomPreset({
-          id: theme.id,
-          name: theme.name,
-          description: `自定义主题 - ${theme.name}`,
-          config: theme,
-        });
-        message.success('主题更新成功！');
-      } else {
-        await themeManagerV2.addCustomPreset({
-          id: theme.id,
-          name: theme.name,
-          description: `自定义主题 - ${theme.name}`,
-          config: theme,
-        });
-        message.success('主题创建成功！');
+  const handleSaveEnhanced = useCallback(
+    async (theme: EnhancedThemeConfig) => {
+      try {
+        if (editorMode === 'edit') {
+          await themeManagerV2.updateCustomPreset({
+            id: theme.id,
+            name: theme.name,
+            description: `自定义主题 - ${theme.name}`,
+            config: theme,
+          });
+          message.success('主题更新成功！');
+        } else {
+          await themeManagerV2.addCustomPreset({
+            id: theme.id,
+            name: theme.name,
+            description: `自定义主题 - ${theme.name}`,
+            config: theme,
+          });
+          message.success('主题创建成功！');
+        }
+        loadThemes();
+        setEditorVisible(false);
+      } catch (error) {
+        message.error('保存主题失败');
       }
-      loadThemes();
-      setEditorVisible(false);
-    } catch (error) {
-      message.error('保存主题失败');
-    }
-  }, [themeManagerV2, editorMode, loadThemes]);
+    },
+    [themeManagerV2, editorMode, loadThemes],
+  );
 
-  const handleDelete = useCallback(async (presetId: string) => {
-    try {
-      await themeManagerV2.deleteCustomPreset(presetId);
-      message.success('主题删除成功！');
-      loadThemes();
-    } catch (error) {
-      if (error instanceof Error) {
-        message.error(error.message);
-      } else {
-        message.error('删除失败');
+  const handleDelete = useCallback(
+    async (presetId: string) => {
+      try {
+        await themeManagerV2.deleteCustomPreset(presetId);
+        message.success('主题删除成功！');
+        loadThemes();
+      } catch (error) {
+        if (error instanceof Error) {
+          message.error(error.message);
+        } else {
+          message.error('删除失败');
+        }
       }
-    }
-  }, [themeManagerV2, loadThemes]);
+    },
+    [themeManagerV2, loadThemes],
+  );
 
-  const handleSetDefault = useCallback((theme: ThemeConfigType) => {
-    themeManager.setDefaultThemeSync(theme);
-    message.success('默认主题设置成功！');
-    loadThemes();
-  }, [loadThemes]);
+  const handleSetDefault = useCallback(
+    (theme: ThemeConfigType) => {
+      themeManager.setDefaultThemeSync(theme);
+      message.success('默认主题设置成功！');
+      loadThemes();
+    },
+    [loadThemes],
+  );
 
   const restoreDefaultThemes = useCallback(async () => {
     const defaultThemes: Omit<ThemePreset, 'isBuiltIn'>[] = [
@@ -113,7 +134,8 @@ const ThemeAdmin: React.FC = () => {
         config: {
           id: 'purple',
           name: '渐变紫',
-          backgroundImage: 'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)',
+          backgroundImage:
+            'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)',
           blur: '10px',
           opacity: 0.95,
           isDark: false,
@@ -139,17 +161,20 @@ const ThemeAdmin: React.FC = () => {
         config: {
           id: 'night',
           name: '夜空',
-          backgroundImage: 'linear-gradient(to right, #243949 0%, #517fa4 100%)',
+          backgroundImage:
+            'linear-gradient(to right, #243949 0%, #517fa4 100%)',
           blur: '10px',
           opacity: 0.92,
           isDark: true,
         },
       },
     ];
-    
+
     try {
       for (const theme of defaultThemes) {
-        const existing = themeManagerV2.getAllPresets().find(p => p.id === theme.id);
+        const existing = themeManagerV2
+          .getAllPresets()
+          .find((p) => p.id === theme.id);
         if (!existing) {
           await themeManagerV2.addCustomPreset(theme);
         }
@@ -173,7 +198,8 @@ const ThemeAdmin: React.FC = () => {
         border: { r: 0, g: 0, b: 0, a: 0.1 },
         accent: { r: 74, g: 144, b: 226, a: 0.2 },
       },
-      isDark: theme.isDark ?? (theme.id === 'night' || theme.name?.includes('暗黑')),
+      isDark:
+        theme.isDark ?? (theme.id === 'night' || theme.name?.includes('暗黑')),
     };
   };
 
@@ -190,7 +216,9 @@ const ThemeAdmin: React.FC = () => {
       render: (_: any, record: ThemePreset) => (
         <Space>
           <span>{record.name}</span>
-          {record.isBuiltIn && <span style={{ color: '#999', fontSize: 12 }}>(内置)</span>}
+          {record.isBuiltIn && (
+            <span style={{ color: '#999', fontSize: 12 }}>(内置)</span>
+          )}
         </Space>
       ),
     },
@@ -220,7 +248,8 @@ const ThemeAdmin: React.FC = () => {
       title: '透明度',
       key: 'opacity',
       width: 80,
-      render: (_: any, record: ThemePreset) => `${Math.round(record.config.opacity * 100)}%`,
+      render: (_: any, record: ThemePreset) =>
+        `${Math.round(record.config.opacity * 100)}%`,
     },
     {
       title: '操作',
@@ -295,7 +324,8 @@ const ThemeAdmin: React.FC = () => {
                 {defaultTheme.name}
               </Title>
               <Paragraph style={{ margin: 0, color: '#666' }}>
-                模糊度: {defaultTheme.blur} | 透明度: {Math.round(defaultTheme.opacity * 100)}%
+                模糊度: {defaultTheme.blur} | 透明度:{' '}
+                {Math.round(defaultTheme.opacity * 100)}%
               </Paragraph>
             </Col>
           </Row>
@@ -312,10 +342,7 @@ const ThemeAdmin: React.FC = () => {
             创建主题
           </Button>
           {presets.length === 0 && (
-            <Button
-              type="dashed"
-              onClick={restoreDefaultThemes}
-            >
+            <Button type="dashed" onClick={restoreDefaultThemes}>
               恢复默认主题
             </Button>
           )}
@@ -330,12 +357,14 @@ const ThemeAdmin: React.FC = () => {
             您还没有创建任何自定义主题，可以点击上方按钮添加新主题或恢复默认主题。
           </Paragraph>
           <Space>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => showEnhancedEditor()}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => showEnhancedEditor()}
+            >
               创建第一个主题
             </Button>
-            <Button onClick={restoreDefaultThemes}>
-              恢复默认主题
-            </Button>
+            <Button onClick={restoreDefaultThemes}>恢复默认主题</Button>
           </Space>
         </Card>
       ) : (

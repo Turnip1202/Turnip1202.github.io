@@ -1,38 +1,39 @@
-import React, { useState, useEffect } from 'react';
 import {
-  Table,
+  ClearOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  FolderOutlined,
+  GlobalOutlined,
+  LinkOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
+import {
+  Avatar,
   Button,
-  Modal,
+  Card,
+  Col,
+  Descriptions,
+  Divider,
   Form,
   Input,
-  Space,
-  Card,
-  Typography,
-  Popconfirm,
-  message,
-  Row,
-  Col,
-  Select,
   List,
-  Divider,
-  Descriptions,
-  Avatar,
+  Modal,
+  Popconfirm,
+  Row,
+  Select,
+  Space,
+  Table,
   Tooltip,
+  Typography,
+  message,
 } from 'antd';
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  LinkOutlined,
-  FolderOutlined,
-  ReloadOutlined,
-  ClearOutlined,
-  EyeOutlined,
-  GlobalOutlined,
-} from '@ant-design/icons';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
+import type { Link, LinkCategory } from '@/types';
 import { linksManager } from '@/utils';
-import type { LinkCategory, Link } from '@/types';
 import { commonIcons } from './config';
 
 const { Title, Paragraph, Text } = Typography;
@@ -130,19 +131,23 @@ const Links: React.FC = () => {
   // 状态管理
   const [categories, setCategories] = useState<LinkCategory[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   // 模态框状态
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [linkModalVisible, setLinkModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
-  
+
   // 编辑状态
-  const [editingCategory, setEditingCategory] = useState<LinkCategory | null>(null);
+  const [editingCategory, setEditingCategory] = useState<LinkCategory | null>(
+    null,
+  );
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [viewingLink, setViewingLink] = useState<Link | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null,
+  );
   const [categoryLocked, setCategoryLocked] = useState(false);
-  
+
   // 表单实例
   const [categoryForm] = Form.useForm<CategoryFormData>();
   const [linkForm] = Form.useForm<LinkFormData>();
@@ -177,7 +182,7 @@ const Links: React.FC = () => {
   const handleCategorySubmit = async () => {
     try {
       const values = await categoryForm.validateFields();
-      
+
       if (editingCategory) {
         // 更新分类
         linksManager.updateCategory(editingCategory.id, values.name);
@@ -187,7 +192,7 @@ const Links: React.FC = () => {
         linksManager.addCategory(values.name);
         message.success('分类添加成功！');
       }
-      
+
       await loadCategories();
       setCategoryModalVisible(false);
     } catch (error) {
@@ -206,17 +211,21 @@ const Links: React.FC = () => {
   };
 
   // 链接管理方法
-  const showLinkModal = (link?: Link, categoryId?: number, lockCategory = false) => {
+  const showLinkModal = (
+    link?: Link,
+    categoryId?: number,
+    lockCategory = false,
+  ) => {
     setEditingLink(link || null);
     setSelectedCategoryId(categoryId || null);
     linkForm.resetFields();
-    
+
     if (link && categoryId) {
       linkForm.setFieldsValue({ ...link, categoryId });
     } else if (categoryId) {
       linkForm.setFieldsValue({ categoryId });
     }
-    
+
     // 设置分类选择是否锁定
     setCategoryLocked(lockCategory);
     setLinkModalVisible(true);
@@ -230,7 +239,7 @@ const Links: React.FC = () => {
   const handleLinkSubmit = async () => {
     try {
       const values = await linkForm.validateFields();
-      
+
       if (editingLink && selectedCategoryId) {
         // 更新链接
         linksManager.updateLink(selectedCategoryId, editingLink.id, {
@@ -241,10 +250,15 @@ const Links: React.FC = () => {
         message.success('链接更新成功！');
       } else {
         // 添加链接
-        linksManager.addLink(values.categoryId, values.name, values.url, values.icon);
+        linksManager.addLink(
+          values.categoryId,
+          values.name,
+          values.url,
+          values.icon,
+        );
         message.success('链接添加成功！');
       }
-      
+
       await loadCategories();
       setLinkModalVisible(false);
     } catch (error) {
@@ -317,7 +331,10 @@ const Links: React.FC = () => {
               dataSource={links}
               renderItem={(link: Link) => (
                 <List.Item
-                  style={{ padding: '4px 0', borderBottom: '1px solid #f0f0f0' }}
+                  style={{
+                    padding: '4px 0',
+                    borderBottom: '1px solid #f0f0f0',
+                  }}
                   actions={[
                     <Button
                       key="view"
@@ -360,13 +377,15 @@ const Links: React.FC = () => {
                       </Space>
                     }
                     description={
-                      <a 
-                        href={link.url} 
-                        target="_blank" 
+                      <a
+                        href={link.url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         style={{ fontSize: '12px', color: '#666' }}
                       >
-                        {link.url.length > 30 ? `${link.url.substring(0, 30)}...` : link.url}
+                        {link.url.length > 30
+                          ? `${link.url.substring(0, 30)}...`
+                          : link.url}
                       </a>
                     }
                   />
@@ -374,7 +393,9 @@ const Links: React.FC = () => {
               )}
             />
           ) : (
-            <div style={{ textAlign: 'center', color: '#999', padding: '20px 0' }}>
+            <div
+              style={{ textAlign: 'center', color: '#999', padding: '20px 0' }}
+            >
               暂无链接
             </div>
           )}
@@ -440,7 +461,9 @@ const Links: React.FC = () => {
               <Title level={3} style={{ margin: 0, color: '#1890ff' }}>
                 {categories.length}
               </Title>
-              <Paragraph style={{ margin: 0, color: '#666' }}>分类总数</Paragraph>
+              <Paragraph style={{ margin: 0, color: '#666' }}>
+                分类总数
+              </Paragraph>
             </div>
           </Card>
         </Col>
@@ -448,9 +471,14 @@ const Links: React.FC = () => {
           <Card>
             <div style={{ textAlign: 'center' }}>
               <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
-                {categories.reduce((total, cat) => total + (cat.links?.length || 0), 0)}
+                {categories.reduce(
+                  (total, cat) => total + (cat.links?.length || 0),
+                  0,
+                )}
               </Title>
-              <Paragraph style={{ margin: 0, color: '#666' }}>链接总数</Paragraph>
+              <Paragraph style={{ margin: 0, color: '#666' }}>
+                链接总数
+              </Paragraph>
             </div>
           </Card>
         </Col>
@@ -458,9 +486,14 @@ const Links: React.FC = () => {
           <Card>
             <div style={{ textAlign: 'center' }}>
               <Title level={3} style={{ margin: 0, color: '#fa8c16' }}>
-                {categories.filter(cat => cat.links && cat.links.length > 0).length}
+                {
+                  categories.filter((cat) => cat.links && cat.links.length > 0)
+                    .length
+                }
               </Title>
-              <Paragraph style={{ margin: 0, color: '#666' }}>活跃分类</Paragraph>
+              <Paragraph style={{ margin: 0, color: '#666' }}>
+                活跃分类
+              </Paragraph>
             </div>
           </Card>
         </Col>
@@ -497,10 +530,7 @@ const Links: React.FC = () => {
             okText="确定"
             cancelText="取消"
           >
-            <Button 
-              danger
-              icon={<ClearOutlined />}
-            >
+            <Button danger icon={<ClearOutlined />}>
               清空数据
             </Button>
           </Popconfirm>
@@ -515,9 +545,9 @@ const Links: React.FC = () => {
           <Paragraph style={{ color: '#666', marginBottom: '24px' }}>
             您还没有创建任何链接分类，点击上方按钮开始添加吧！
           </Paragraph>
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />} 
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
             onClick={() => showCategoryModal()}
           >
             创建第一个分类
@@ -533,7 +563,8 @@ const Links: React.FC = () => {
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+            showTotal: (total, range) =>
+              `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
           }}
           scroll={{ x: 800 }}
         />
@@ -548,12 +579,12 @@ const Links: React.FC = () => {
         destroyOnClose
       >
         <Form form={categoryForm} layout="vertical">
-          <Form.Item 
-            name="name" 
-            label="分类名称" 
+          <Form.Item
+            name="name"
+            label="分类名称"
             rules={[
               { required: true, message: '请输入分类名称！' },
-              { min: 1, max: 20, message: '分类名称长度应在1-20个字符之间！' }
+              { min: 1, max: 20, message: '分类名称长度应在1-20个字符之间！' },
             ]}
           >
             <Input placeholder="请输入分类名称" />
@@ -581,15 +612,25 @@ const Links: React.FC = () => {
         styles={{ body: { padding: '24px' } }}
       >
         {categoryLocked && (
-          <div style={{ 
-            background: 'linear-gradient(90deg, #f6ffed 0%, #f0f9f0 100%)', 
-            border: '1px solid #b7eb8f', 
-            borderRadius: '8px', 
-            padding: '16px', 
-            marginBottom: '24px'
-          }}>
+          <div
+            style={{
+              background: 'linear-gradient(90deg, #f6ffed 0%, #f0f9f0 100%)',
+              border: '1px solid #b7eb8f',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '24px',
+            }}
+          >
             <Space>
-              <span style={{ color: '#52c41a', fontSize: '16px', fontWeight: 'bold' }}>✓</span>
+              <span
+                style={{
+                  color: '#52c41a',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                }}
+              >
+                ✓
+              </span>
               <div>
                 <Text style={{ color: '#389e0d', fontWeight: '600' }}>
                   已自动选中分类
@@ -605,8 +646,8 @@ const Links: React.FC = () => {
 
         <Form form={linkForm} layout="vertical">
           {/* 分类选择区域 */}
-          <Card 
-            size="small" 
+          <Card
+            size="small"
             title={
               <Space>
                 <FolderOutlined style={{ color: '#1890ff' }} />
@@ -616,35 +657,48 @@ const Links: React.FC = () => {
             style={{ marginBottom: 20 }}
             styles={{ header: { background: '#fafafa' } }}
           >
-            <Form.Item 
-              name="categoryId" 
+            <Form.Item
+              name="categoryId"
               rules={[{ required: true, message: '请选择分类！' }]}
             >
-              <Select 
+              <Select
                 placeholder="请选择一个分类"
                 disabled={categoryLocked}
                 size="large"
-                options={categories.map(cat => ({ 
-                  value: cat.id, 
+                options={categories.map((cat) => ({
+                  value: cat.id,
                   label: (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '4px 0',
+                      }}
+                    >
                       <Space>
                         <FolderOutlined style={{ color: '#1890ff' }} />
                         <span style={{ fontWeight: '500' }}>{cat.name}</span>
                       </Space>
-                      <span style={{ color: '#999', fontSize: '12px', fontStyle: 'italic' }}>
+                      <span
+                        style={{
+                          color: '#999',
+                          fontSize: '12px',
+                          fontStyle: 'italic',
+                        }}
+                      >
                         {cat.links?.length || 0} 个链接
                       </span>
                     </div>
-                  )
+                  ),
                 }))}
               />
             </Form.Item>
           </Card>
 
           {/* 基本信息区域 */}
-          <Card 
-            size="small" 
+          <Card
+            size="small"
             title={
               <Space>
                 <LinkOutlined style={{ color: '#52c41a' }} />
@@ -656,51 +710,53 @@ const Links: React.FC = () => {
           >
             <Row gutter={16}>
               <Col span={16}>
-                <Form.Item 
-                  name="name" 
+                <Form.Item
+                  name="name"
                   label="链接名称"
-                  rules={[
-                    { max: 30, message: '链接名称不能超过30个字符！' }
-                  ]}
+                  rules={[{ max: 30, message: '链接名称不能超过30个字符！' }]}
                 >
-                  <Input 
-                    placeholder="请输入链接名称（可选）" 
+                  <Input
+                    placeholder="请输入链接名称（可选）"
                     size="large"
-                    prefix={<span style={{color: '#666', fontSize: '14px'}}>📝</span>}
+                    prefix={
+                      <span style={{ color: '#666', fontSize: '14px' }}>
+                        📝
+                      </span>
+                    }
                   />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item 
-                  name="icon" 
-                  label="链接图标" 
+                <Form.Item
+                  name="icon"
+                  label="链接图标"
                   rules={[
                     { required: true, message: '请选择图标！' },
-                    { max: 10, message: '图标不能超过10个字符！' }
+                    { max: 10, message: '图标不能超过10个字符！' },
                   ]}
                 >
                   <IconSelector />
                 </Form.Item>
               </Col>
             </Row>
-            
-            <Form.Item 
-              name="url" 
-              label="链接地址" 
+
+            <Form.Item
+              name="url"
+              label="链接地址"
               rules={[
                 { required: true, message: '请输入链接地址！' },
-                { type: 'url', message: '请输入有效的URL地址！' }
+                { type: 'url', message: '请输入有效的URL地址！' },
               ]}
             >
-              <Input 
-                placeholder="https://example.com" 
+              <Input
+                placeholder="https://example.com"
                 size="large"
                 prefix={<GlobalOutlined style={{ color: '#1890ff' }} />}
                 suffix={
                   <Tooltip title="测试链接">
-                    <Button 
-                      type="text" 
-                      size="small" 
+                    <Button
+                      type="text"
+                      size="small"
                       icon={<EyeOutlined />}
                       onClick={() => {
                         const url = linkForm.getFieldValue('url');
@@ -724,8 +780,8 @@ const Links: React.FC = () => {
           </Card>
 
           {/* 预览区域 */}
-          <Card 
-            size="small" 
+          <Card
+            size="small"
             title={
               <Space>
                 <EyeOutlined style={{ color: '#fa8c16' }} />
@@ -735,49 +791,59 @@ const Links: React.FC = () => {
             style={{ background: '#fafafa' }}
             styles={{ header: { background: '#f0f0f0' } }}
           >
-            <div style={{ 
-              padding: '20px', 
-              border: '2px dashed #d9d9d9', 
-              borderRadius: '12px',
-              textAlign: 'center',
-              background: 'white',
-              transition: 'all 0.3s ease'
-            }}>
+            <div
+              style={{
+                padding: '20px',
+                border: '2px dashed #d9d9d9',
+                borderRadius: '12px',
+                textAlign: 'center',
+                background: 'white',
+                transition: 'all 0.3s ease',
+              }}
+            >
               <Form.Item dependencies={['icon', 'name', 'url']} noStyle>
                 {({ getFieldValue }) => {
                   const icon = getFieldValue('icon');
                   const name = getFieldValue('name');
                   const url = getFieldValue('url');
-                  
+
                   return (
                     <div>
-                      <div style={{ 
-                        fontSize: '48px', 
-                        marginBottom: '12px',
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-                      }}>
+                      <div
+                        style={{
+                          fontSize: '48px',
+                          marginBottom: '12px',
+                          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                        }}
+                      >
                         {icon || '🔗'}
                       </div>
-                      <div style={{ 
-                        fontSize: '16px', 
-                        fontWeight: '600', 
-                        color: '#333', 
-                        marginBottom: '8px',
-                        minHeight: '20px'
-                      }}>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#333',
+                          marginBottom: '8px',
+                          minHeight: '20px',
+                        }}
+                      >
                         {name || '未命名链接'}
                       </div>
-                      <div style={{ 
-                        fontSize: '12px', 
-                        color: '#999', 
-                        wordBreak: 'break-all',
-                        lineHeight: '1.5',
-                        maxHeight: '40px',
-                        overflow: 'hidden'
-                      }}>
-                        {url ? (
-                          url.length > 50 ? `${url.substring(0, 50)}...` : url
-                        ) : 'https://example.com'}
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: '#999',
+                          wordBreak: 'break-all',
+                          lineHeight: '1.5',
+                          maxHeight: '40px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {url
+                          ? url.length > 50
+                            ? `${url.substring(0, 50)}...`
+                            : url
+                          : 'https://example.com'}
                       </div>
                     </div>
                   );
@@ -795,24 +861,33 @@ const Links: React.FC = () => {
 
       {/* 链接详情查看模态框 */}
       <Modal
-        title={<Space><EyeOutlined />链接详情</Space>}
+        title={
+          <Space>
+            <EyeOutlined />
+            链接详情
+          </Space>
+        }
         open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
-          <Button key="edit" type="primary" onClick={() => {
-            if (viewingLink) {
-              const category = categories.find(cat => 
-                cat.links?.some(link => link.id === viewingLink.id)
-              );
-              setDetailModalVisible(false);
-              showLinkModal(viewingLink, category?.id, true);
-            }
-          }}>
+          <Button
+            key="edit"
+            type="primary"
+            onClick={() => {
+              if (viewingLink) {
+                const category = categories.find((cat) =>
+                  cat.links?.some((link) => link.id === viewingLink.id),
+                );
+                setDetailModalVisible(false);
+                showLinkModal(viewingLink, category?.id, true);
+              }
+            }}
+          >
             编辑链接
           </Button>,
           <Button key="close" onClick={() => setDetailModalVisible(false)}>
             关闭
-          </Button>
+          </Button>,
         ]}
         width={600}
       >
@@ -823,19 +898,25 @@ const Links: React.FC = () => {
                 {viewingLink.id}
               </Descriptions.Item>
               <Descriptions.Item label="图标">
-                <Avatar shape="square" size={40} style={{ backgroundColor: '#f0f0f0' }}>
+                <Avatar
+                  shape="square"
+                  size={40}
+                  style={{ backgroundColor: '#f0f0f0' }}
+                >
                   <span style={{ fontSize: '20px' }}>{viewingLink.icon}</span>
                 </Avatar>
               </Descriptions.Item>
               <Descriptions.Item label="名称">
-                {viewingLink.name || <span style={{ color: '#999' }}>未命名</span>}
+                {viewingLink.name || (
+                  <span style={{ color: '#999' }}>未命名</span>
+                )}
               </Descriptions.Item>
               <Descriptions.Item label="链接地址">
                 <div>
                   <div style={{ marginBottom: 8 }}>
-                    <a 
-                      href={viewingLink.url} 
-                      target="_blank" 
+                    <a
+                      href={viewingLink.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       style={{ wordBreak: 'break-all' }}
                     >
@@ -843,15 +924,15 @@ const Links: React.FC = () => {
                     </a>
                   </div>
                   <Space>
-                    <Button 
-                      size="small" 
+                    <Button
+                      size="small"
                       icon={<GlobalOutlined />}
                       onClick={() => window.open(viewingLink.url, '_blank')}
                     >
                       打开链接
                     </Button>
-                    <Button 
-                      size="small" 
+                    <Button
+                      size="small"
                       onClick={() => {
                         navigator.clipboard.writeText(viewingLink.url);
                         message.success('链接地址已复制到剪贴板');
@@ -864,15 +945,17 @@ const Links: React.FC = () => {
               </Descriptions.Item>
               <Descriptions.Item label="所属分类">
                 {(() => {
-                  const category = categories.find(cat => 
-                    cat.links?.some(link => link.id === viewingLink.id)
+                  const category = categories.find((cat) =>
+                    cat.links?.some((link) => link.id === viewingLink.id),
                   );
                   return category ? (
                     <Space>
                       <FolderOutlined />
                       {category.name}
                     </Space>
-                  ) : '未知分类';
+                  ) : (
+                    '未知分类'
+                  );
                 })()}
               </Descriptions.Item>
             </Descriptions>

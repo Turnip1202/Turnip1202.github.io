@@ -1,7 +1,12 @@
-import type { ConfigVersion, VersionManager, VersionCreateOptions, VersionCompareResult } from '@/types/version';
-import { siteManager, themeManager, linksManager } from '../index';
+import type {
+  ConfigVersion,
+  VersionCompareResult,
+  VersionCreateOptions,
+  VersionManager,
+} from '@/types/version';
 import { SmartStorageManager } from '../../core/storage/SmartStorageManager';
 import type { StorageType } from '../../core/storage/types';
+import { linksManager, siteManager, themeManager } from '../index';
 
 const STORAGE_TYPE_KEY = 'app_storage_type';
 
@@ -10,13 +15,13 @@ export class ConfigVersionManager {
   private readonly MAX_VERSIONS = 20;
   private versionData: VersionManager;
   private storage: SmartStorageManager;
-  private initialized: boolean = false;
+  private initialized = false;
   private initPromise: Promise<void> | null = null;
 
   constructor() {
     const preferredStorage = this.getPreferredStorageType();
     this.storage = new SmartStorageManager(preferredStorage);
-    
+
     this.versionData = this.loadFromLocalStorage();
     this.initPromise = this.initialize();
   }
@@ -24,7 +29,11 @@ export class ConfigVersionManager {
   private getPreferredStorageType(): StorageType {
     try {
       const saved = localStorage.getItem(STORAGE_TYPE_KEY);
-      if (saved === 'localStorage' || saved === 'indexedDB' || saved === 'auto') {
+      if (
+        saved === 'localStorage' ||
+        saved === 'indexedDB' ||
+        saved === 'auto'
+      ) {
         return saved;
       }
     } catch {
@@ -41,16 +50,16 @@ export class ConfigVersionManager {
         return {
           versions: parsed.versions || [],
           currentVersionId: parsed.currentVersionId,
-          maxVersions: parsed.maxVersions || this.MAX_VERSIONS
+          maxVersions: parsed.maxVersions || this.MAX_VERSIONS,
         };
       }
     } catch (error) {
       console.warn('Failed to load version data:', error);
     }
-    
+
     return {
       versions: [],
-      maxVersions: this.MAX_VERSIONS
+      maxVersions: this.MAX_VERSIONS,
     };
   }
 
@@ -64,7 +73,7 @@ export class ConfigVersionManager {
 
   private async saveToStorage(): Promise<void> {
     this.saveToLocalStorage();
-    
+
     try {
       await this.storage.set(this.STORAGE_KEY, this.versionData);
     } catch (error) {
@@ -79,7 +88,7 @@ export class ConfigVersionManager {
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
-    
+
     try {
       const stored = await this.storage.get<VersionManager>(this.STORAGE_KEY);
       if (stored) {
@@ -111,12 +120,12 @@ export class ConfigVersionManager {
       site: siteManager.getConfig(),
       theme: {
         default: themeManager.getDefaultTheme(),
-        presets: themeManager.getPresets()
+        presets: themeManager.getPresets(),
       },
       links: {
         categories: linksManager.getAllCategories(),
-        searchEngines: linksManager.getAllSearchEngines()
-      }
+        searchEngines: linksManager.getAllSearchEngines(),
+      },
     };
   }
 
@@ -128,18 +137,21 @@ export class ConfigVersionManager {
       timestamp: Date.now(),
       data: this.getCurrentConfigData(),
       tags: options.tags || [],
-      isAutoSaved: options.isAutoSaved || false
+      isAutoSaved: options.isAutoSaved || false,
     };
 
     this.versionData.versions.unshift(version);
-    
+
     if (this.versionData.versions.length > this.versionData.maxVersions) {
-      this.versionData.versions = this.versionData.versions.slice(0, this.versionData.maxVersions);
+      this.versionData.versions = this.versionData.versions.slice(
+        0,
+        this.versionData.maxVersions,
+      );
     }
 
     this.versionData.currentVersionId = version.id;
     this.saveSync();
-    
+
     return version;
   }
 
@@ -148,19 +160,19 @@ export class ConfigVersionManager {
   }
 
   getVersion(id: string): ConfigVersion | null {
-    return this.versionData.versions.find(v => v.id === id) || null;
+    return this.versionData.versions.find((v) => v.id === id) || null;
   }
 
   deleteVersion(id: string): boolean {
-    const index = this.versionData.versions.findIndex(v => v.id === id);
+    const index = this.versionData.versions.findIndex((v) => v.id === id);
     if (index === -1) return false;
 
     this.versionData.versions.splice(index, 1);
-    
+
     if (this.versionData.currentVersionId === id) {
       this.versionData.currentVersionId = undefined;
     }
-    
+
     this.saveSync();
     return true;
   }
@@ -177,7 +189,7 @@ export class ConfigVersionManager {
         if (version.data.site.copyright?.text) {
           siteManager.updateCopyright(version.data.site.copyright.text);
         }
-        Object.keys(version.data.site).forEach(key => {
+        Object.keys(version.data.site).forEach((key) => {
           if (key !== 'title' && key !== 'copyright') {
             siteManager.addConfigItem(key, version.data.site[key]);
           }
@@ -191,8 +203,10 @@ export class ConfigVersionManager {
       if (version.data.links) {
         if (version.data.links.categories) {
           const currentCategories = linksManager.getAllCategories();
-          currentCategories.forEach(cat => linksManager.deleteCategory(cat.id));
-          
+          currentCategories.forEach((cat) =>
+            linksManager.deleteCategory(cat.id),
+          );
+
           version.data.links.categories.forEach((category: any) => {
             const newCat = linksManager.addCategory(category.name);
             if (category.links) {
@@ -216,25 +230,34 @@ export class ConfigVersionManager {
   compareVersions(fromId: string, toId: string): VersionCompareResult | null {
     const fromVersion = this.getVersion(fromId);
     const toVersion = this.getVersion(toId);
-    
+
     if (!fromVersion || !toVersion) return null;
 
     const changes: VersionCompareResult['changes'] = {};
     let changeCount = 0;
 
-    const siteChanges = this.compareObjects(fromVersion.data.site, toVersion.data.site);
+    const siteChanges = this.compareObjects(
+      fromVersion.data.site,
+      toVersion.data.site,
+    );
     if (siteChanges.length > 0) {
       changes.site = siteChanges;
       changeCount += siteChanges.length;
     }
 
-    const themeChanges = this.compareObjects(fromVersion.data.theme, toVersion.data.theme);
+    const themeChanges = this.compareObjects(
+      fromVersion.data.theme,
+      toVersion.data.theme,
+    );
     if (themeChanges.length > 0) {
       changes.theme = themeChanges;
       changeCount += themeChanges.length;
     }
 
-    const linksChanges = this.compareObjects(fromVersion.data.links, toVersion.data.links);
+    const linksChanges = this.compareObjects(
+      fromVersion.data.links,
+      toVersion.data.links,
+    );
     if (linksChanges.length > 0) {
       changes.links = linksChanges;
       changeCount += linksChanges.length;
@@ -242,23 +265,33 @@ export class ConfigVersionManager {
 
     return {
       changes,
-      summary: `共发现 ${changeCount} 处变更`
+      summary: `共发现 ${changeCount} 处变更`,
     };
   }
 
   private compareObjects(obj1: any, obj2: any, prefix = ''): string[] {
     const changes: string[] = [];
-    const keys = new Set([...Object.keys(obj1 || {}), ...Object.keys(obj2 || {})]);
+    const keys = new Set([
+      ...Object.keys(obj1 || {}),
+      ...Object.keys(obj2 || {}),
+    ]);
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const fullKey = prefix ? `${prefix}.${key}` : key;
       const val1 = obj1?.[key];
       const val2 = obj2?.[key];
 
-      if (typeof val1 === 'object' && typeof val2 === 'object' && val1 && val2) {
+      if (
+        typeof val1 === 'object' &&
+        typeof val2 === 'object' &&
+        val1 &&
+        val2
+      ) {
         changes.push(...this.compareObjects(val1, val2, fullKey));
       } else if (JSON.stringify(val1) !== JSON.stringify(val2)) {
-        changes.push(`${fullKey}: ${JSON.stringify(val1)} → ${JSON.stringify(val2)}`);
+        changes.push(
+          `${fullKey}: ${JSON.stringify(val1)} → ${JSON.stringify(val2)}`,
+        );
       }
     });
 
@@ -269,16 +302,16 @@ export class ConfigVersionManager {
     return this.createVersion({
       name: `自动保存_${new Date().toLocaleString('zh-CN')}`,
       description: '系统自动保存的版本',
-      isAutoSaved: true
+      isAutoSaved: true,
     });
   }
 
   cleanupAutoSaves(keepCount = 5): number {
-    const autoSaves = this.versionData.versions.filter(v => v.isAutoSaved);
+    const autoSaves = this.versionData.versions.filter((v) => v.isAutoSaved);
     const toDelete = autoSaves.slice(keepCount);
-    
+
     let deletedCount = 0;
-    toDelete.forEach(version => {
+    toDelete.forEach((version) => {
       if (this.deleteVersion(version.id)) {
         deletedCount++;
       }
@@ -302,7 +335,7 @@ export class ConfigVersionManager {
         this.versionData = {
           versions: imported.versions,
           currentVersionId: imported.currentVersionId,
-          maxVersions: imported.maxVersions || this.MAX_VERSIONS
+          maxVersions: imported.maxVersions || this.MAX_VERSIONS,
         };
         this.saveSync();
         return true;

@@ -1,10 +1,15 @@
-import React, { useMemo } from 'react';
-import type { CSSProperties } from 'react';
-import { Card, Row, Col, Typography, Empty, Popconfirm } from 'antd';
-import { FolderOutlined, HeartOutlined, HeartFilled, StarOutlined } from '@ant-design/icons';
-import type { LinkCategory, Link } from '@/types';
 import { useThemeContext } from '@/contexts';
 import { designTokens } from '@/styles/design-tokens';
+import type { Link, LinkCategory } from '@/types';
+import {
+  FolderOutlined,
+  HeartFilled,
+  HeartOutlined,
+  StarOutlined,
+} from '@ant-design/icons';
+import { Card, Col, Empty, Popconfirm, Row, Typography } from 'antd';
+import React, { useMemo } from 'react';
+import type { CSSProperties } from 'react';
 
 const { Title, Text } = Typography;
 
@@ -15,18 +20,23 @@ interface LinkCardProps {
   originalCategoryId: number;
 }
 
-const LinkCard: React.FC<LinkCardProps> = React.memo(function LinkCard({ link, isDark, onToggleFavorite, originalCategoryId }) {
+const LinkCard: React.FC<LinkCardProps> = React.memo(function LinkCard({
+  link,
+  isDark,
+  onToggleFavorite,
+  originalCategoryId,
+}) {
   const cardStyle: CSSProperties = {
     textAlign: 'center',
     height: '100%',
     minHeight: '7.5rem',
     borderRadius: designTokens.borderRadius.lg,
-    background: isDark 
-      ? 'rgba(255, 255, 255, 0.08)' 
+    background: isDark
+      ? 'rgba(255, 255, 255, 0.08)'
       : 'rgba(255, 255, 255, 0.8)',
-    border: `1px solid ${isDark 
-      ? 'rgba(255, 255, 255, 0.1)' 
-      : 'rgba(255, 255, 255, 0.3)'}`,
+    border: `1px solid ${
+      isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'
+    }`,
     backdropFilter: 'blur(8px)',
     WebkitBackdropFilter: 'blur(8px)',
     transition: 'all 0.3s ease',
@@ -81,31 +91,31 @@ const LinkCard: React.FC<LinkCardProps> = React.memo(function LinkCard({ link, i
       actions={[
         <Popconfirm
           key="favorite"
-          title={link.favorite ? "取消收藏此链接？" : "收藏此链接？"}
+          title={link.favorite ? '取消收藏此链接？' : '收藏此链接？'}
           onConfirm={handleConfirm}
           okText="确定"
           cancelText="取消"
         >
           <span onClick={handleFavoriteClick}>
             {link.favorite ? (
-              <HeartFilled 
-                style={{ 
+              <HeartFilled
+                style={{
                   color: '#ff4d4f',
                   fontSize: '16px',
-                  cursor: 'pointer'
-                }} 
+                  cursor: 'pointer',
+                }}
               />
             ) : (
-              <HeartOutlined 
-                style={{ 
+              <HeartOutlined
+                style={{
                   color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#999',
                   fontSize: '16px',
-                  cursor: 'pointer'
-                }} 
+                  cursor: 'pointer',
+                }}
               />
             )}
           </span>
-        </Popconfirm>
+        </Popconfirm>,
       ]}
     >
       <span style={iconStyle}>{link.icon}</span>
@@ -131,7 +141,13 @@ interface CategorySectionProps {
   originalCategoryId: number;
 }
 
-const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, animationDelay, onToggleFavorite, originalCategoryId }) => {
+const CategorySection: React.FC<CategorySectionProps> = ({
+  category,
+  isDark,
+  animationDelay,
+  onToggleFavorite,
+  originalCategoryId,
+}) => {
   const sectionStyle: React.CSSProperties = {
     margin: '2.5rem 0',
     animation: `categoryFadeIn 0.8s ease-out ${animationDelay} both`,
@@ -143,8 +159,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
     fontWeight: 700,
     marginBottom: '1.5rem',
     padding: '0.75rem 1rem',
-    background: isDark 
-      ? 'rgba(255, 255, 255, 0.08)' 
+    background: isDark
+      ? 'rgba(255, 255, 255, 0.08)'
       : 'rgba(255, 255, 255, 0.6)',
     borderRadius: designTokens.borderRadius.md,
     borderLeft: `0.25rem solid ${designTokens.colors.primary}`,
@@ -155,8 +171,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
   return (
     <section style={sectionStyle}>
       <style>
-        {
-          `
+        {`
           @keyframes categoryFadeIn {
             from {
               opacity: 0;
@@ -167,8 +182,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
               transform: translateY(0);
             }
           }
-          `
-        }
+          `}
       </style>
       <div style={titleStyle}>
         <FolderOutlined style={{ marginRight: '8px' }} />
@@ -177,10 +191,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, isDark, ani
       <Row gutter={[16, 16]}>
         {category.links.map((link) => (
           <Col key={link.id} xs={12} sm={8} md={6} lg={4} xl={3}>
-            <LinkCard 
-              link={link} 
-              isDark={isDark} 
-              onToggleFavorite={onToggleFavorite} 
+            <LinkCard
+              link={link}
+              isDark={isDark}
+              onToggleFavorite={onToggleFavorite}
               originalCategoryId={originalCategoryId}
             />
           </Col>
@@ -195,7 +209,10 @@ interface LinkGridProps {
   onToggleFavorite?: (categoryId: number, linkId: number) => void;
 }
 
-export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite }) => {
+export const LinkGrid: React.FC<LinkGridProps> = ({
+  categories,
+  onToggleFavorite,
+}) => {
   const { isDark } = useThemeContext();
 
   // 排序真实分类
@@ -214,33 +231,29 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
   const hasContent = categories.length > 0;
 
   if (!hasContent) {
-    return (
-      <Empty
-        description="暂无链接分类"
-        style={{ margin: '40px 0' }}
-      />
-    );
+    return <Empty description="暂无链接分类" style={{ margin: '40px 0' }} />;
   }
 
   // 收集所有收藏的链接
   const favoriteLinks = useMemo(() => {
     const result: Link[] = [];
-    
-    categories.forEach(category => {
-      category.links.forEach(link => {
+
+    categories.forEach((category) => {
+      category.links.forEach((link) => {
         if (link.favorite) {
           // 确保链接有正确的 originalCategoryId
           const linkWithCategoryId: Link = {
             ...link,
-            originalCategoryId: link.originalCategoryId !== undefined 
-              ? link.originalCategoryId 
-              : category.id
+            originalCategoryId:
+              link.originalCategoryId !== undefined
+                ? link.originalCategoryId
+                : category.id,
           };
           result.push(linkWithCategoryId);
         }
       });
     });
-    
+
     return result;
   }, [categories]);
 
@@ -248,10 +261,14 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
     <>
       {/* 收藏分类（如果有收藏链接） */}
       {favoriteLinks.length > 0 && (
-        <section style={{ margin: '2.5rem 0', animation: 'categoryFadeIn 0.8s ease-out 0.5s both' }}>
+        <section
+          style={{
+            margin: '2.5rem 0',
+            animation: 'categoryFadeIn 0.8s ease-out 0.5s both',
+          }}
+        >
           <style>
-            {
-              `
+            {`
               @keyframes categoryFadeIn {
                 from {
                   opacity: 0;
@@ -262,44 +279,53 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
                   transform: translateY(0);
                 }
               }
-              `
-            }
+              `}
           </style>
-          <div style={{
-            color: isDark ? '#ffffff' : '#2c3e50',
-            fontSize: '1.4rem',
-            fontWeight: 700,
-            marginBottom: '1.5rem',
-            padding: '0.75rem 1rem',
-            background: isDark 
-              ? 'rgba(255, 255, 255, 0.08)' 
-              : 'rgba(255, 255, 255, 0.6)',
-            borderRadius: designTokens.borderRadius.md,
-            borderLeft: `0.25rem solid ${designTokens.colors.primary}`,
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-          }}>
+          <div
+            style={{
+              color: isDark ? '#ffffff' : '#2c3e50',
+              fontSize: '1.4rem',
+              fontWeight: 700,
+              marginBottom: '1.5rem',
+              padding: '0.75rem 1rem',
+              background: isDark
+                ? 'rgba(255, 255, 255, 0.08)'
+                : 'rgba(255, 255, 255, 0.6)',
+              borderRadius: designTokens.borderRadius.md,
+              borderLeft: `0.25rem solid ${designTokens.colors.primary}`,
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+            }}
+          >
             <StarOutlined style={{ marginRight: '8px' }} />
             收藏
           </div>
           <Row gutter={[16, 16]}>
             {favoriteLinks.map((link) => {
               // 为收藏分类中的链接创建专门的处理函数
-              const handleFavoriteForLink = (receivedCategoryId: number, linkId: number) => {
+              const handleFavoriteForLink = (
+                receivedCategoryId: number,
+                linkId: number,
+              ) => {
                 // 确保使用原始分类ID
-                const actualCategoryId = link.originalCategoryId !== undefined 
-                  ? link.originalCategoryId 
-                  : receivedCategoryId;
+                const actualCategoryId =
+                  link.originalCategoryId !== undefined
+                    ? link.originalCategoryId
+                    : receivedCategoryId;
                 handleFavoriteToggle(actualCategoryId, linkId);
               };
-              
+
               return (
                 <Col key={link.id} xs={12} sm={8} md={6} lg={4} xl={3}>
-                  <LinkCard 
-                    link={link} 
-                    isDark={isDark} 
-                    onToggleFavorite={handleFavoriteForLink} 
-                    originalCategoryId={link.originalCategoryId !== undefined ? link.originalCategoryId : -1}
+                  <LinkCard
+                    link={link}
+                    isDark={isDark}
+                    onToggleFavorite={handleFavoriteForLink}
+                    originalCategoryId={
+                      link.originalCategoryId !== undefined
+                        ? link.originalCategoryId
+                        : -1
+                    }
                   />
                 </Col>
               );
@@ -307,7 +333,7 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
           </Row>
         </section>
       )}
-      
+
       {/* 普通分类 */}
       {sortedCategories.map((category, index) => (
         <CategorySection

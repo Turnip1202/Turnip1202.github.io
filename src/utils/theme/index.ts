@@ -1,5 +1,5 @@
-import {ThemeManager} from "./ThemeManager"
 import { themeConfig } from '@/config/theme';
+import { ThemeManager } from './ThemeManager';
 export const themeManager = new ThemeManager(themeConfig);
 
-export {ThemeManager}
+export { ThemeManager };

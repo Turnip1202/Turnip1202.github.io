@@ -26,23 +26,25 @@ export class VersionUtils {
     try {
       const allVersions = configVersionManager.getAllVersions();
       const currentVersionId = configVersionManager.getCurrentVersionId();
-      
+
       let currentName = '默认配置';
       if (currentVersionId && allVersions.length > 0) {
-        const currentVersion = allVersions.find(v => v.id === currentVersionId);
+        const currentVersion = allVersions.find(
+          (v) => v.id === currentVersionId,
+        );
         currentName = currentVersion ? currentVersion.name : '未知版本';
       }
-      
+
       return {
         total: allVersions.length,
         current: currentVersionId || null,
-        currentName
+        currentName,
       };
     } catch (error) {
       return {
         total: 0,
         current: null,
-        currentName: '获取失败'
+        currentName: '获取失败',
       };
     }
   }
@@ -52,11 +54,11 @@ export class VersionUtils {
    */
   static getVersionStatusText(): string {
     const info = this.getConfigVersionInfo();
-    
+
     if (info.total === 0) {
       return '无版本记录';
     }
-    
+
     return `${info.currentName} (共${info.total}个版本)`;
   }
 
@@ -70,12 +72,12 @@ export class VersionUtils {
     lastModified: string;
   } {
     const configInfo = this.getConfigVersionInfo();
-    
+
     return {
       projectVersion: this.getProjectVersion(),
       configVersions: configInfo.total,
       currentConfigVersion: configInfo.currentName,
-      lastModified: new Date().toISOString()
+      lastModified: new Date().toISOString(),
     };
   }
 }

@@ -1,6 +1,6 @@
-import type React from 'react';
 import styled from '@emotion/styled';
-import type { LinkCategory,BackgroundProps } from '../types';
+import type React from 'react';
+import type { BackgroundProps, LinkCategory } from '../types';
 
 const CategorySection = styled.section<BackgroundProps>`
   margin: 2.5rem 0;
@@ -31,12 +31,12 @@ const CategorySection = styled.section<BackgroundProps>`
 `;
 
 const CategoryTitle = styled.h2<BackgroundProps>`
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50')};
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
   padding: 0.75rem 1rem;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.6)'};
+  background: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.6)')};
   border-radius: 12px;
   border-left: 4px solid #4a90e2;
   backdrop-filter: blur(8px);
@@ -89,14 +89,14 @@ const LinkCard = styled.a<BackgroundProps>`
   align-items: center;
   justify-content: center;
   padding: 1.5rem 1rem;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.8)'};
+  background: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.8)')};
   border-radius: 16px;
   text-decoration: none;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333'};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#333333')};
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'};
+  border: 1px solid ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)')};
   box-shadow: 
     0 4px 12px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -124,18 +124,22 @@ const LinkCard = styled.a<BackgroundProps>`
 
   &:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
-    ? '0 12px 32px rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.1)'
-    : '0 12px 32px rgba(74, 144, 226, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)'};
-    background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
-    ? 'rgba(255, 255, 255, 0.12)'
-    : 'rgba(255, 255, 255, 0.95)'};
-    border-color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
-    ? 'rgba(255, 255, 255, 0.2)'
-    : 'rgba(74, 144, 226, 0.2)'};
-    color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题'
-    ? '#ffffff'
-    : '#2c3e50'};
+    box-shadow: ${(props) =>
+      props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+        ? '0 12px 32px rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.1)'
+        : '0 12px 32px rgba(74, 144, 226, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)'};
+    background: ${(props) =>
+      props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+        ? 'rgba(255, 255, 255, 0.12)'
+        : 'rgba(255, 255, 255, 0.95)'};
+    border-color: ${(props) =>
+      props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+        ? 'rgba(255, 255, 255, 0.2)'
+        : 'rgba(74, 144, 226, 0.2)'};
+    color: ${(props) =>
+      props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+        ? '#ffffff'
+        : '#2c3e50'};
     
     &::before {
       opacity: 1;
@@ -148,7 +152,7 @@ const LinkCard = styled.a<BackgroundProps>`
     }
     
     span:last-of-type {
-      color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50'};
+      color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#ffffff' : '#2c3e50')};
       font-weight: 600;
     }
   }
@@ -169,7 +173,7 @@ const LinkIcon = styled.span`
 const LinkName = styled.span<BackgroundProps>`
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.9)' : '#555555'};
+  color: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.9)' : '#555555')};
   text-align: center;
   line-height: 1.4;
   transition: all 0.3s ease;
@@ -182,24 +186,26 @@ interface LinkGridProps {
 export const LinkGrid: React.FC<LinkGridProps> = ({ categories }) => {
   return (
     <>
-      {categories.sort((a, b) => a.id - b.id).map(category => (
-        <CategorySection key={category.id}>
-          <CategoryTitle>{category.name}</CategoryTitle>
-          <LinksGrid>
-            {category.links.map(link => (
-              <LinkCard
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <LinkIcon>{link.icon}</LinkIcon>
-                <LinkName>{link.name}</LinkName>
-              </LinkCard>
-            ))}
-          </LinksGrid>
-        </CategorySection>
-      ))}
+      {categories
+        .sort((a, b) => a.id - b.id)
+        .map((category) => (
+          <CategorySection key={category.id}>
+            <CategoryTitle>{category.name}</CategoryTitle>
+            <LinksGrid>
+              {category.links.map((link) => (
+                <LinkCard
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <LinkIcon>{link.icon}</LinkIcon>
+                  <LinkName>{link.name}</LinkName>
+                </LinkCard>
+              ))}
+            </LinksGrid>
+          </CategorySection>
+        ))}
     </>
   );
 };

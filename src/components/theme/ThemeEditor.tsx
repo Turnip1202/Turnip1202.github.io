@@ -1,12 +1,26 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Card, Row, Col, Form, Input, Slider, Switch, Button, Space, message
-} from 'antd';
-import { SaveOutlined, EyeOutlined, UndoOutlined } from '@ant-design/icons';
-import type { EnhancedThemeConfig, ThemeColors, RGBAColor } from '@/core/theme/ThemeManagerV2';
-import { ThemeManagerV2 } from '@/core/theme/ThemeManagerV2';
-import { RGBAColorPicker } from './RGBAColorPicker';
 import { useThemeContext } from '@/contexts';
+import type {
+  EnhancedThemeConfig,
+  RGBAColor,
+  ThemeColors,
+} from '@/core/theme/ThemeManagerV2';
+import { ThemeManagerV2 } from '@/core/theme/ThemeManagerV2';
+import { EyeOutlined, SaveOutlined, UndoOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  Row,
+  Slider,
+  Space,
+  Switch,
+  message,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { RGBAColorPicker } from './RGBAColorPicker';
 
 interface ThemeEditorProps {
   theme?: EnhancedThemeConfig;
@@ -44,10 +58,11 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
 }) => {
   const { isDark, setDarkMode } = useThemeContext();
   const [editingTheme, setEditingTheme] = useState<EnhancedThemeConfig>(
-    initialTheme || createDefaultTheme()
+    initialTheme || createDefaultTheme(),
   );
   const [hasChanges, setHasChanges] = useState(false);
-  const [originalTheme, setOriginalTheme] = useState<EnhancedThemeConfig | null>(null);
+  const [originalTheme, setOriginalTheme] =
+    useState<EnhancedThemeConfig | null>(null);
 
   useEffect(() => {
     if (initialTheme) {
@@ -57,20 +72,23 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
   }, [initialTheme]);
 
   const updateTheme = useCallback((updates: Partial<EnhancedThemeConfig>) => {
-    setEditingTheme(prev => ({ ...prev, ...updates }));
+    setEditingTheme((prev) => ({ ...prev, ...updates }));
     setHasChanges(true);
   }, []);
 
-  const updateColor = useCallback((colorKey: keyof ThemeColors, color: RGBAColor) => {
-    setEditingTheme(prev => ({
-      ...prev,
-      colors: {
-        ...(prev.colors || defaultColors),
-        [colorKey]: color,
-      },
-    }));
-    setHasChanges(true);
-  }, []);
+  const updateColor = useCallback(
+    (colorKey: keyof ThemeColors, color: RGBAColor) => {
+      setEditingTheme((prev) => ({
+        ...prev,
+        colors: {
+          ...(prev.colors || defaultColors),
+          [colorKey]: color,
+        },
+      }));
+      setHasChanges(true);
+    },
+    [],
+  );
 
   const handlePreview = useCallback(() => {
     onPreview?.(editingTheme);
@@ -92,10 +110,13 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
     }
   }, [originalTheme]);
 
-  const handleDarkModeChange = useCallback((checked: boolean) => {
-    updateTheme({ isDark: checked });
-    setDarkMode(checked);
-  }, [updateTheme, setDarkMode]);
+  const handleDarkModeChange = useCallback(
+    (checked: boolean) => {
+      updateTheme({ isDark: checked });
+      setDarkMode(checked);
+    },
+    [updateTheme, setDarkMode],
+  );
 
   const previewStyle: React.CSSProperties = {
     width: '100%',
@@ -111,12 +132,16 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: editingTheme.colors?.text 
+    color: editingTheme.colors?.text
       ? ThemeManagerV2.rgbaToString(editingTheme.colors.text)
-      : (editingTheme.isDark ? '#ffffff' : '#2c3e50'),
+      : editingTheme.isDark
+        ? '#ffffff'
+        : '#2c3e50',
     fontSize: 18,
     fontWeight: 600,
-    textShadow: editingTheme.isDark ? '0 2px 4px rgba(0,0,0,0.3)' : '0 2px 4px rgba(255,255,255,0.3)',
+    textShadow: editingTheme.isDark
+      ? '0 2px 4px rgba(0,0,0,0.3)'
+      : '0 2px 4px rgba(255,255,255,0.3)',
     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
   };
 
@@ -148,9 +173,9 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
             <Button icon={<EyeOutlined />} onClick={handlePreview}>
               预览
             </Button>
-            <Button 
-              type="primary" 
-              icon={<SaveOutlined />} 
+            <Button
+              type="primary"
+              icon={<SaveOutlined />}
               onClick={handleSave}
               disabled={!hasChanges && mode === 'create'}
             >
@@ -160,9 +185,7 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
         }
       >
         <Space direction="vertical" style={{ width: '100%' }} size="large">
-          <div style={previewStyle}>
-            {editingTheme.name}
-          </div>
+          <div style={previewStyle}>{editingTheme.name}</div>
 
           <Card size="small" title="基本信息">
             <Form layout="vertical">
@@ -190,7 +213,9 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
               <Form.Item label="背景渐变">
                 <Input
                   value={editingTheme.backgroundImage}
-                  onChange={(e) => updateTheme({ backgroundImage: e.target.value })}
+                  onChange={(e) =>
+                    updateTheme({ backgroundImage: e.target.value })
+                  }
                   placeholder="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
                 />
               </Form.Item>
@@ -201,7 +226,7 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
                     <Slider
                       min={0}
                       max={30}
-                      value={parseInt(editingTheme.blur) || 0}
+                      value={Number.parseInt(editingTheme.blur) || 0}
                       onChange={(v) => updateTheme({ blur: `${v}px` })}
                       marks={{ 0: '0px', 10: '10px', 20: '20px', 30: '30px' }}
                     />
@@ -244,7 +269,9 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
               <Col span={12}>
                 <RGBAColorPicker
                   label="背景色"
-                  value={editingTheme.colors?.background || defaultColors.background}
+                  value={
+                    editingTheme.colors?.background || defaultColors.background
+                  }
                   onChange={(color) => updateColor('background', color)}
                 />
               </Col>
@@ -258,7 +285,10 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({
               <Col span={12}>
                 <RGBAColorPicker
                   label="次要文本"
-                  value={editingTheme.colors?.textSecondary || defaultColors.textSecondary}
+                  value={
+                    editingTheme.colors?.textSecondary ||
+                    defaultColors.textSecondary
+                  }
                   onChange={(color) => updateColor('textSecondary', color)}
                 />
               </Col>

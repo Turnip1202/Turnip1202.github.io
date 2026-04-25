@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Button, message, Popover } from 'antd';
-import { ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import { checkForUpdates, refreshApp } from '@/utils/version/versionChecker';
+import { ReloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { Button, Popover, message } from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 interface UpdateNotificationProps {
   checkInterval?: number; // 检查间隔（毫秒），默认300000ms（5分钟）
 }
 
-const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval = 300000 }) => {
+const UpdateNotification: React.FC<UpdateNotificationProps> = ({
+  checkInterval = 300000,
+}) => {
   const [hasUpdate, setHasUpdate] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
 
@@ -91,7 +94,11 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
       content={
         <div style={{ textAlign: 'center', padding: '8px' }}>
           <p style={{ marginBottom: '8px' }}>发现新版本</p>
-          <Button type="primary" icon={<ReloadOutlined />} onClick={handleRefresh}>
+          <Button
+            type="primary"
+            icon={<ReloadOutlined />}
+            onClick={handleRefresh}
+          >
             立即刷新
           </Button>
         </div>
@@ -99,19 +106,19 @@ const UpdateNotification: React.FC<UpdateNotificationProps> = ({ checkInterval =
       title="应用更新"
       trigger="click"
     >
-      <SyncOutlined 
-          className="update-notification-btn"
-          style={{ 
-            fontSize: '1.25rem', 
-            color: '#1890ff',
-            cursor: 'pointer',
-            position: 'fixed',
-            top: '6.25rem',
-            right: '1.25rem',
-            zIndex: 1000,
-            animation: 'pulse 2s infinite'
-          }} 
-        />
+      <SyncOutlined
+        className="update-notification-btn"
+        style={{
+          fontSize: '1.25rem',
+          color: '#1890ff',
+          cursor: 'pointer',
+          position: 'fixed',
+          top: '6.25rem',
+          right: '1.25rem',
+          zIndex: 1000,
+          animation: 'pulse 2s infinite',
+        }}
+      />
     </Popover>
   );
 };

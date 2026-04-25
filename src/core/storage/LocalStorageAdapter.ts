@@ -50,7 +50,10 @@ export class LocalStorageAdapter implements StorageAdapter {
       const fullKey = this.getFullKey(key);
       localStorage.removeItem(fullKey);
     } catch (error) {
-      console.error(`[LocalStorageAdapter] Failed to remove key "${key}":`, error);
+      console.error(
+        `[LocalStorageAdapter] Failed to remove key "${key}":`,
+        error,
+      );
       throw error;
     }
   }
@@ -64,7 +67,7 @@ export class LocalStorageAdapter implements StorageAdapter {
           keysToRemove.push(key);
         }
       }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
     } catch (error) {
       console.error('[LocalStorageAdapter] Failed to clear:', error);
       throw error;

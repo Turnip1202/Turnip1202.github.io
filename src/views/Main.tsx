@@ -1,49 +1,46 @@
-import type React from 'react';
-import { useState, useEffect, useMemo } from "react";
 import {
-  SearchBarNew as SearchBar,
   LinkGridNew as LinkGrid,
-  LoadingSpinnerNew as LoadingSpinner
+  LoadingSpinnerNew as LoadingSpinner,
+  SearchBarNew as SearchBar,
 } from '@/components';
 import { ThemeSelectorEnhanced } from '@/components/theme';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import {
-  Header,
-  Title,
-  MainContent,
-  Footer
-} from "@/styles/App.css.ts";
+import { Footer, Header, MainContent, Title } from '@/styles/App.css.ts';
 
+import type { LinkCategory, ThemeConfigType } from '@/types';
 import {
-  themeManager,
+  getLocalStorageByKey,
   linksManager,
   siteManager,
-  getLocalStorageByKey
-} from "@/utils";
-import type { ThemeConfigType, LinkCategory } from "@/types";
+  themeManager,
+} from '@/utils';
 
 import { Avatar, Space, Typography } from 'antd';
 const { Text } = Typography;
-
 
 interface IMainProps {
   cb: (theme: ThemeConfigType) => void;
 }
 
-
 const Main: React.FC<IMainProps> = ({ cb }) => {
   const localThemeConfig = themeManager.getConfig();
-  const [localCategories, setLocalCategories] = useState(linksManager.getAllCategories());
+  const [localCategories, setLocalCategories] = useState(
+    linksManager.getAllCategories(),
+  );
   const localSearchEngines = linksManager.getAllSearchEngines();
   const [greeting, setGreeting] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useMemo(() => {
-    const links = getLocalStorageByKey<LinkCategory[]>("turnip_link_categories")
-    console.log("localCategories", links);
-    setLocalCategories(links)
+    const links = getLocalStorageByKey<LinkCategory[]>(
+      'turnip_link_categories',
+    );
+    console.log('localCategories', links);
+    setLocalCategories(links);
     setTimeout(() => setIsLoading(false), 100);
-  }, [])
+  }, []);
 
   useEffect(() => {
     const updateGreeting = () => {
@@ -62,7 +59,7 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
         setGreeting('🌃 夜晚时光，愿你安好');
       }
     };
-    
+
     updateGreeting();
     const timer = setInterval(updateGreeting, 60000);
     return () => clearInterval(timer);
@@ -70,59 +67,64 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
 
   const localSiteConfig = siteManager.getConfig();
   const siteInfo = localSiteConfig;
-  
-  const totalLinks = localCategories.reduce((total, cat) => total + (cat.links?.length || 0), 0);
-  
+
+  const totalLinks = localCategories.reduce(
+    (total, cat) => total + (cat.links?.length || 0),
+    0,
+  );
+
   if (isLoading) {
     return <LoadingSpinner text="正在初始化精彩内容..." />;
   }
-  
+
   return (
     <>
       <Header>
         <div style={{ position: 'relative', width: '100%' }}>
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
             <Title>{siteInfo.title}</Title>
-            <Space 
-              orientation="vertical" 
-              align="center" 
-              style={{ 
+            <Space
+              orientation="vertical"
+              align="center"
+              style={{
                 marginTop: '0.5rem',
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
-              <Text 
-                style={{ 
+              <Text
+                style={{
                   fontSize: '1rem',
                   opacity: 0.9,
-                  color: 'var(--text-color, #2c3e50)'
+                  color: 'var(--text-color, #2c3e50)',
                 }}
               >
                 {greeting}
               </Text>
               <Space size="large">
                 <Space>
-                  <Text 
-                    style={{ 
+                  <Text
+                    style={{
                       fontSize: '0.875rem',
                       opacity: 0.7,
-                      color: 'var(--text-color, #2c3e50)'
+                      color: 'var(--text-color, #2c3e50)',
                     }}
                   >
                     📁 {localCategories.length} 个分类
                   </Text>
                 </Space>
                 <Space>
-                  <Text 
-                    style={{ 
+                  <Text
+                    style={{
                       fontSize: '0.875rem',
                       opacity: 0.7,
-                      color: 'var(--text-color, #2c3e50)'
+                      color: 'var(--text-color, #2c3e50)',
                     }}
                   >
                     🔗 {totalLinks} 个链接
@@ -135,29 +137,33 @@ const Main: React.FC<IMainProps> = ({ cb }) => {
       </Header>
       <MainContent>
         <SearchBar searchEngines={localSearchEngines} />
-        <LinkGrid 
-          categories={localCategories} 
+        <LinkGrid
+          categories={localCategories}
           onToggleFavorite={(categoryId, linkId) => {
             linksManager.toggleFavorite(categoryId, linkId);
             setLocalCategories(linksManager.getAllCategories());
-          }} 
+          }}
         />
       </MainContent>
       <ThemeSelectorEnhanced themeConfig={localThemeConfig} onSelect={cb} />
       <Footer>
         <Space orientation="vertical" align="center" style={{ width: '100%' }}>
-          <Text style={{ 
-            color: 'var(--text-color, #2c3e50)',
-            opacity: 0.8
-          }}>
+          <Text
+            style={{
+              color: 'var(--text-color, #2c3e50)',
+              opacity: 0.8,
+            }}
+          >
             {siteInfo.copyright.text}
           </Text>
           {siteInfo.author && (
-            <Text style={{ 
-              fontSize: '12px',
-              color: 'var(--text-color, #2c3e50)',
-              opacity: 0.6
-            }}>
+            <Text
+              style={{
+                fontSize: '12px',
+                color: 'var(--text-color, #2c3e50)',
+                opacity: 0.6,
+              }}
+            >
               Made with ❤️ by {siteInfo.author}
             </Text>
           )}

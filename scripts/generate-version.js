@@ -11,7 +11,7 @@ const generateVersionInfo = () => {
   return {
     version,
     buildTime,
-    hash
+    hash,
   };
 };
 
@@ -19,7 +19,7 @@ const generateVersionInfo = () => {
 const generateVersionFile = () => {
   const versionInfo = generateVersionInfo();
   const distDir = path.join(__dirname, '../dist');
-  
+
   // 确保dist目录存在
   if (!fs.existsSync(distDir)) {
     fs.mkdirSync(distDir, { recursive: true });
@@ -28,7 +28,7 @@ const generateVersionFile = () => {
   // 写入version.json文件
   fs.writeFileSync(
     path.join(distDir, 'version.json'),
-    JSON.stringify(versionInfo, null, 2)
+    JSON.stringify(versionInfo, null, 2),
   );
 
   console.log('Version info generated:', versionInfo);

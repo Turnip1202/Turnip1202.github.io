@@ -4,7 +4,7 @@ import { designTokens } from './design-tokens';
 
 export const getAntdThemeConfig = (isDark: boolean): ThemeConfig => {
   const colors = isDark ? designTokens.dark : designTokens.light;
-  
+
   return {
     algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
@@ -13,9 +13,10 @@ export const getAntdThemeConfig = (isDark: boolean): ThemeConfig => {
       colorWarning: designTokens.colors.warning,
       colorError: designTokens.colors.error,
       colorInfo: designTokens.colors.info,
-      borderRadius: parseInt(designTokens.borderRadius.sm),
-      fontSize: parseInt(designTokens.fontSize.sm),
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+      borderRadius: Number.parseInt(designTokens.borderRadius.sm),
+      fontSize: Number.parseInt(designTokens.fontSize.sm),
+      fontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
       colorBgContainer: colors.background,
       colorText: colors.text,
       colorTextSecondary: colors.textSecondary,
@@ -23,40 +24,40 @@ export const getAntdThemeConfig = (isDark: boolean): ThemeConfig => {
     },
     components: {
       Card: {
-        borderRadiusLG: parseInt(designTokens.borderRadius.lg),
+        borderRadiusLG: Number.parseInt(designTokens.borderRadius.lg),
         colorBgContainer: colors.background,
       },
       Button: {
-        borderRadius: parseInt(designTokens.borderRadius.sm),
+        borderRadius: Number.parseInt(designTokens.borderRadius.sm),
         controlHeight: 40,
         primaryShadow: designTokens.shadows.primary,
       },
       Input: {
-        borderRadius: parseInt(designTokens.borderRadius.sm),
+        borderRadius: Number.parseInt(designTokens.borderRadius.sm),
         controlHeight: 40,
         colorBgContainer: colors.background,
       },
       Select: {
-        borderRadius: parseInt(designTokens.borderRadius.sm),
+        borderRadius: Number.parseInt(designTokens.borderRadius.sm),
         controlHeight: 40,
         colorBgContainer: colors.background,
       },
       Modal: {
-        borderRadiusLG: parseInt(designTokens.borderRadius.lg),
+        borderRadiusLG: Number.parseInt(designTokens.borderRadius.lg),
         contentBg: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.95)',
       },
       Table: {
-        borderRadiusLG: parseInt(designTokens.borderRadius.lg),
+        borderRadiusLG: Number.parseInt(designTokens.borderRadius.lg),
         headerBg: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.02)',
       },
       Menu: {
-        borderRadiusLG: parseInt(designTokens.borderRadius.md),
+        borderRadiusLG: Number.parseInt(designTokens.borderRadius.md),
       },
       Dropdown: {
-        borderRadiusLG: parseInt(designTokens.borderRadius.md),
+        borderRadiusLG: Number.parseInt(designTokens.borderRadius.md),
       },
       FloatButton: {
-        borderRadius: parseInt(designTokens.borderRadius.full),
+        borderRadius: Number.parseInt(designTokens.borderRadius.full),
       },
     },
   };

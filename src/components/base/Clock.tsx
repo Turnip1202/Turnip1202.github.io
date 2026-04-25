@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Typography, Space } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
 import { useThemeContext } from '@/contexts';
 import { designTokens } from '@/styles/design-tokens';
+import { ClockCircleOutlined } from '@ant-design/icons';
+import { Card, Space, Typography } from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 const { Text } = Typography;
 
@@ -38,16 +39,14 @@ export const Clock: React.FC = () => {
     position: 'absolute',
     top: '1rem',
     right: '1rem',
-    background: isDark 
-      ? 'rgba(0, 0, 0, 0.6)' 
-      : 'rgba(255, 255, 255, 0.9)',
+    background: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.9)',
     borderRadius: designTokens.borderRadius.md,
     boxShadow: designTokens.shadows.md,
     backdropFilter: 'blur(8px)',
     WebkitBackdropFilter: 'blur(8px)',
-    border: `1px solid ${isDark 
-      ? 'rgba(255, 255, 255, 0.2)' 
-      : 'rgba(255, 255, 255, 0.3)'}`,
+    border: `1px solid ${
+      isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)'
+    }`,
     zIndex: 1000,
     animation: 'clockFadeIn 0.8s ease-out 0.6s both',
     transition: 'all 0.3s ease',
@@ -96,10 +95,12 @@ export const Clock: React.FC = () => {
       >
         <Space orientation="vertical" align="center" size={2}>
           <Space size={4}>
-            <ClockCircleOutlined style={{ 
-              color: isDark ? '#ffffff' : '#2c3e50',
-              opacity: 0.8,
-            }} />
+            <ClockCircleOutlined
+              style={{
+                color: isDark ? '#ffffff' : '#2c3e50',
+                opacity: 0.8,
+              }}
+            />
             <Text
               style={{
                 color: isDark ? '#ffffff' : '#2c3e50',
@@ -116,7 +117,8 @@ export const Clock: React.FC = () => {
               color: isDark ? '#ffffff' : '#2c3e50',
               fontSize: '1em',
               fontWeight: 600,
-              fontFamily: '"SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
+              fontFamily:
+                '"SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
             }}
           >
             {currentTime}

@@ -26,21 +26,26 @@ class SearchHistoryManager {
   addHistory(query: string, engine: string): void {
     try {
       const history = this.getAllHistory();
-      
+
       // 移除重复项
-      const filteredHistory = history.filter(item => item.query !== query || item.engine !== engine);
-      
+      const filteredHistory = history.filter(
+        (item) => item.query !== query || item.engine !== engine,
+      );
+
       // 添加新项
       const newItem: SearchHistoryItem = {
         id: Date.now().toString(),
         query,
         timestamp: Date.now(),
-        engine
+        engine,
       };
-      
+
       // 限制历史记录数量
-      const updatedHistory = [newItem, ...filteredHistory].slice(0, this.MAX_HISTORY_ITEMS);
-      
+      const updatedHistory = [newItem, ...filteredHistory].slice(
+        0,
+        this.MAX_HISTORY_ITEMS,
+      );
+
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedHistory));
     } catch (error) {
       console.warn('Failed to add search history:', error);
@@ -51,7 +56,7 @@ class SearchHistoryManager {
   deleteHistory(id: string): void {
     try {
       const history = this.getAllHistory();
-      const updatedHistory = history.filter(item => item.id !== id);
+      const updatedHistory = history.filter((item) => item.id !== id);
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedHistory));
     } catch (error) {
       console.warn('Failed to delete search history:', error);
@@ -68,7 +73,7 @@ class SearchHistoryManager {
   }
 
   // 获取最近的搜索历史
-  getRecentHistory(limit: number = 5): SearchHistoryItem[] {
+  getRecentHistory(limit = 5): SearchHistoryItem[] {
     const history = this.getAllHistory();
     return history.slice(0, limit);
   }

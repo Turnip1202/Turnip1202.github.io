@@ -30,7 +30,10 @@ export class IndexedDBAdapter implements StorageAdapter {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
 
       request.onerror = () => {
-        console.error('[IndexedDBAdapter] Failed to open database:', request.error);
+        console.error(
+          '[IndexedDBAdapter] Failed to open database:',
+          request.error,
+        );
         reject(request.error);
       };
 
@@ -66,7 +69,10 @@ export class IndexedDBAdapter implements StorageAdapter {
         };
 
         request.onerror = () => {
-          console.error(`[IndexedDBAdapter] Failed to get key "${key}":`, request.error);
+          console.error(
+            `[IndexedDBAdapter] Failed to get key "${key}":`,
+            request.error,
+          );
           reject(request.error);
         };
       });
@@ -88,7 +94,10 @@ export class IndexedDBAdapter implements StorageAdapter {
 
         request.onsuccess = () => resolve();
         request.onerror = () => {
-          console.error(`[IndexedDBAdapter] Failed to set key "${key}":`, request.error);
+          console.error(
+            `[IndexedDBAdapter] Failed to set key "${key}":`,
+            request.error,
+          );
           reject(request.error);
         };
       });
@@ -110,7 +119,10 @@ export class IndexedDBAdapter implements StorageAdapter {
 
         request.onsuccess = () => resolve();
         request.onerror = () => {
-          console.error(`[IndexedDBAdapter] Failed to remove key "${key}":`, request.error);
+          console.error(
+            `[IndexedDBAdapter] Failed to remove key "${key}":`,
+            request.error,
+          );
           reject(request.error);
         };
       });
@@ -153,13 +165,16 @@ export class IndexedDBAdapter implements StorageAdapter {
         request.onsuccess = () => {
           const allKeys = request.result as string[];
           const keys = allKeys
-            .filter(key => key.startsWith(this.prefix))
-            .map(key => key.slice(this.prefix.length));
+            .filter((key) => key.startsWith(this.prefix))
+            .map((key) => key.slice(this.prefix.length));
           resolve(keys);
         };
 
         request.onerror = () => {
-          console.error('[IndexedDBAdapter] Failed to get keys:', request.error);
+          console.error(
+            '[IndexedDBAdapter] Failed to get keys:',
+            request.error,
+          );
           reject(request.error);
         };
       });
@@ -195,12 +210,18 @@ export class IndexedDBAdapter implements StorageAdapter {
         };
 
         request.onerror = () => {
-          console.error(`[IndexedDBAdapter] Failed to get size for key "${key}":`, request.error);
+          console.error(
+            `[IndexedDBAdapter] Failed to get size for key "${key}":`,
+            request.error,
+          );
           reject(request.error);
         };
       });
     } catch (error) {
-      console.error(`[IndexedDBAdapter] Failed to get size for key "${key}":`, error);
+      console.error(
+        `[IndexedDBAdapter] Failed to get size for key "${key}":`,
+        error,
+      );
       return 0;
     }
   }

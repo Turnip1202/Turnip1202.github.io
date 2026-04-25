@@ -1,43 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  Table,
-  Button,
-  Space,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Tag,
-  Typography,
-  Row,
-  Col,
-  Statistic,
-  Alert,
-  Popconfirm,
-  message,
-  Descriptions,
-  Timeline,
-  Tooltip,
-  Divider
-} from 'antd';
-import {
-  SaveOutlined,
-  HistoryOutlined,
-  RollbackOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  ExportOutlined,
-  ImportOutlined,
-  SyncOutlined,
-  TagOutlined,
-  ClockCircleOutlined,
-  BranchesOutlined,
-  UploadOutlined
-} from '@ant-design/icons';
+import { useThemeContext } from '@/contexts/ThemeContext';
 import type { ConfigVersion, VersionCreateOptions } from '@/types/version';
 import { configVersionManager } from '@/utils/version';
-import { useThemeContext } from '@/contexts/ThemeContext';
+import {
+  BranchesOutlined,
+  ClockCircleOutlined,
+  DeleteOutlined,
+  ExportOutlined,
+  EyeOutlined,
+  HistoryOutlined,
+  ImportOutlined,
+  RollbackOutlined,
+  SaveOutlined,
+  SyncOutlined,
+  TagOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Table,
+  Tag,
+  Timeline,
+  Tooltip,
+  Typography,
+  message,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -46,21 +47,25 @@ const { Option } = Select;
 const VersionAdmin: React.FC = () => {
   const [versions, setVersions] = useState<ConfigVersion[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   // 模态框状态
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [compareModalVisible, setCompareModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
-  
+
   // 选中的版本
-  const [selectedVersion, setSelectedVersion] = useState<ConfigVersion | null>(null);
-  const [compareVersions, setCompareVersions] = useState<[string, string] | null>(null);
-  
+  const [selectedVersion, setSelectedVersion] = useState<ConfigVersion | null>(
+    null,
+  );
+  const [compareVersions, setCompareVersions] = useState<
+    [string, string] | null
+  >(null);
+
   // 表单
   const [createForm] = Form.useForm();
   const [importData, setImportData] = useState('');
-  
+
   // 主题状态
   const { isDark } = useThemeContext();
 
@@ -88,9 +93,11 @@ const VersionAdmin: React.FC = () => {
       const options: VersionCreateOptions = {
         name: values.name,
         description: values.description,
-        tags: values.tags ? values.tags.split(',').map((tag: string) => tag.trim()) : []
+        tags: values.tags
+          ? values.tags.split(',').map((tag: string) => tag.trim())
+          : [],
       };
-      
+
       configVersionManager.createVersion(options);
       message.success('版本创建成功！');
       setCreateModalVisible(false);
@@ -164,7 +171,7 @@ const VersionAdmin: React.FC = () => {
       message.error('请输入导入数据');
       return;
     }
-    
+
     const success = configVersionManager.importVersions(importData);
     if (success) {
       message.success('版本数据导入成功');
@@ -180,12 +187,12 @@ const VersionAdmin: React.FC = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     if (!file.name.endsWith('.json')) {
       message.error('请选择 JSON 格式的文件');
       return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
@@ -194,13 +201,13 @@ const VersionAdmin: React.FC = () => {
         message.success('文件读取成功，请检查数据后点击导入');
       }
     };
-    
+
     reader.onerror = () => {
       message.error('文件读取失败');
     };
-    
+
     reader.readAsText(file);
-    
+
     // 清空 input，允许重复选择同一文件
     event.target.value = '';
   };
@@ -220,7 +227,9 @@ const VersionAdmin: React.FC = () => {
       key: 'name',
       render: (text: string, record: ConfigVersion) => (
         <Space>
-          <Text strong={record.id === configVersionManager.getCurrentVersionId()}>
+          <Text
+            strong={record.id === configVersionManager.getCurrentVersionId()}
+          >
             {text}
           </Text>
           {record.id === configVersionManager.getCurrentVersionId() && (
@@ -243,8 +252,10 @@ const VersionAdmin: React.FC = () => {
       key: 'tags',
       render: (tags: string[]) => (
         <>
-          {tags?.map(tag => (
-            <Tag key={tag} icon={<TagOutlined />}>{tag}</Tag>
+          {tags?.map((tag) => (
+            <Tag key={tag} icon={<TagOutlined />}>
+              {tag}
+            </Tag>
           ))}
         </>
       ),
@@ -253,7 +264,8 @@ const VersionAdmin: React.FC = () => {
       title: '创建时间',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: (timestamp: number) => new Date(timestamp).toLocaleString('zh-CN'),
+      render: (timestamp: number) =>
+        new Date(timestamp).toLocaleString('zh-CN'),
       sorter: (a: ConfigVersion, b: ConfigVersion) => a.timestamp - b.timestamp,
     },
     {
@@ -279,7 +291,9 @@ const VersionAdmin: React.FC = () => {
               <Button
                 type="text"
                 icon={<RollbackOutlined />}
-                disabled={record.id === configVersionManager.getCurrentVersionId()}
+                disabled={
+                  record.id === configVersionManager.getCurrentVersionId()
+                }
               />
             </Popconfirm>
           </Tooltip>
@@ -294,7 +308,9 @@ const VersionAdmin: React.FC = () => {
                 type="text"
                 danger
                 icon={<DeleteOutlined />}
-                disabled={record.id === configVersionManager.getCurrentVersionId()}
+                disabled={
+                  record.id === configVersionManager.getCurrentVersionId()
+                }
               />
             </Popconfirm>
           </Tooltip>
@@ -326,7 +342,7 @@ const VersionAdmin: React.FC = () => {
           <Card>
             <Statistic
               title="自动保存版本"
-              value={versions.filter(v => v.isAutoSaved).length}
+              value={versions.filter((v) => v.isAutoSaved).length}
               prefix={<SyncOutlined />}
             />
           </Card>
@@ -335,7 +351,7 @@ const VersionAdmin: React.FC = () => {
           <Card>
             <Statistic
               title="手动创建版本"
-              value={versions.filter(v => !v.isAutoSaved).length}
+              value={versions.filter((v) => !v.isAutoSaved).length}
               prefix={<SaveOutlined />}
             />
           </Card>
@@ -344,7 +360,9 @@ const VersionAdmin: React.FC = () => {
           <Card>
             <Statistic
               title="当前版本"
-              value={configVersionManager.getCurrentVersionId() ? '已设置' : '未设置'}
+              value={
+                configVersionManager.getCurrentVersionId() ? '已设置' : '未设置'
+              }
               prefix={<ClockCircleOutlined />}
             />
           </Card>
@@ -361,16 +379,10 @@ const VersionAdmin: React.FC = () => {
           >
             创建版本
           </Button>
-          <Button
-            icon={<SyncOutlined />}
-            onClick={handleAutoSave}
-          >
+          <Button icon={<SyncOutlined />} onClick={handleAutoSave}>
             立即自动保存
           </Button>
-          <Button
-            icon={<ExportOutlined />}
-            onClick={handleExport}
-          >
+          <Button icon={<ExportOutlined />} onClick={handleExport}>
             导出版本
           </Button>
           <Button
@@ -379,10 +391,7 @@ const VersionAdmin: React.FC = () => {
           >
             导入版本
           </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={handleCleanupAutoSaves}
-          >
+          <Button icon={<DeleteOutlined />} onClick={handleCleanupAutoSaves}>
             清理自动保存
           </Button>
         </Space>
@@ -406,7 +415,12 @@ const VersionAdmin: React.FC = () => {
 
       {/* 创建版本模态框 */}
       <Modal
-        title={<Space><SaveOutlined />创建新版本</Space>}
+        title={
+          <Space>
+            <SaveOutlined />
+            创建新版本
+          </Space>
+        }
         open={createModalVisible}
         onOk={handleCreateVersion}
         onCancel={() => {
@@ -423,20 +437,10 @@ const VersionAdmin: React.FC = () => {
           >
             <Input placeholder="例如: 主页改版 v1.0" />
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="版本描述"
-          >
-            <TextArea
-              rows={3}
-              placeholder="描述此版本的主要变更内容..."
-            />
+          <Form.Item name="description" label="版本描述">
+            <TextArea rows={3} placeholder="描述此版本的主要变更内容..." />
           </Form.Item>
-          <Form.Item
-            name="tags"
-            label="标签"
-            help="多个标签用逗号分隔"
-          >
+          <Form.Item name="tags" label="标签" help="多个标签用逗号分隔">
             <Input placeholder="例如: 主页,样式,功能" />
           </Form.Item>
         </Form>
@@ -444,13 +448,18 @@ const VersionAdmin: React.FC = () => {
 
       {/* 版本详情模态框 */}
       <Modal
-        title={<Space><EyeOutlined />版本详情</Space>}
+        title={
+          <Space>
+            <EyeOutlined />
+            版本详情
+          </Space>
+        }
         open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
           <Button key="close" onClick={() => setDetailModalVisible(false)}>
             关闭
-          </Button>
+          </Button>,
         ]}
         width={800}
       >
@@ -473,22 +482,24 @@ const VersionAdmin: React.FC = () => {
                 {selectedVersion.description || '无描述'}
               </Descriptions.Item>
               <Descriptions.Item label="标签" span={2}>
-                {selectedVersion.tags?.map(tag => (
+                {selectedVersion.tags?.map((tag) => (
                   <Tag key={tag}>{tag}</Tag>
                 )) || '无标签'}
               </Descriptions.Item>
             </Descriptions>
-            
+
             <Divider>配置数据预览</Divider>
-            <pre style={{ 
-              background: isDark ? '#1a1a1a' : '#f5f5f5', 
-              color: isDark ? '#e0e0e0' : '#333',
-              padding: '12px', 
-              borderRadius: '4px',
-              fontSize: '12px',
-              maxHeight: '300px',
-              overflow: 'auto'
-            }}>
+            <pre
+              style={{
+                background: isDark ? '#1a1a1a' : '#f5f5f5',
+                color: isDark ? '#e0e0e0' : '#333',
+                padding: '12px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                maxHeight: '300px',
+                overflow: 'auto',
+              }}
+            >
               {JSON.stringify(selectedVersion.data, null, 2)}
             </pre>
           </div>
@@ -497,7 +508,12 @@ const VersionAdmin: React.FC = () => {
 
       {/* 导入版本模态框 */}
       <Modal
-        title={<Space><ImportOutlined />导入版本数据</Space>}
+        title={
+          <Space>
+            <ImportOutlined />
+            导入版本数据
+          </Space>
+        }
         open={importModalVisible}
         onOk={handleImport}
         onCancel={() => {
@@ -512,18 +528,20 @@ const VersionAdmin: React.FC = () => {
           type="warning"
           style={{ marginBottom: 16 }}
         />
-        
+
         {/* 文件上传区域 */}
         <div style={{ marginBottom: 16 }}>
           <Text strong>选择文件：</Text>
-          <div style={{ 
-            marginTop: 8,
-            padding: '16px',
-            border: `2px dashed ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
-            borderRadius: '6px',
-            textAlign: 'center',
-            background: isDark ? '#2a2a2a' : '#fafafa'
-          }}>
+          <div
+            style={{
+              marginTop: 8,
+              padding: '16px',
+              border: `2px dashed ${isDark ? '#3a3a3a' : '#d9d9d9'}`,
+              borderRadius: '6px',
+              textAlign: 'center',
+              background: isDark ? '#2a2a2a' : '#fafafa',
+            }}
+          >
             <input
               type="file"
               accept=".json"
@@ -533,18 +551,32 @@ const VersionAdmin: React.FC = () => {
             />
             <label htmlFor="version-file-input" style={{ cursor: 'pointer' }}>
               <div>
-                <UploadOutlined style={{ fontSize: '24px', color: '#1890ff', marginBottom: '8px' }} />
-                <div style={{ color: isDark ? '#e0e0e0' : '#666' }}>点击选择 JSON 文件</div>
-                <div style={{ fontSize: '12px', color: isDark ? '#aaa' : '#999', marginTop: '4px' }}>
+                <UploadOutlined
+                  style={{
+                    fontSize: '24px',
+                    color: '#1890ff',
+                    marginBottom: '8px',
+                  }}
+                />
+                <div style={{ color: isDark ? '#e0e0e0' : '#666' }}>
+                  点击选择 JSON 文件
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: isDark ? '#aaa' : '#999',
+                    marginTop: '4px',
+                  }}
+                >
                   支持从版本管理导出的 .json 文件
                 </div>
               </div>
             </label>
           </div>
         </div>
-        
+
         <Divider>或</Divider>
-        
+
         {/* 手动输入区域 */}
         <div>
           <Text strong>直接粘贴 JSON 数据：</Text>
@@ -556,20 +588,28 @@ const VersionAdmin: React.FC = () => {
             style={{ fontFamily: 'monospace', fontSize: '12px', marginTop: 8 }}
           />
         </div>
-        
+
         {/* 数据预览 */}
         {importData && (
           <div style={{ marginTop: 16 }}>
             <Text strong>数据预览：</Text>
-            <div style={{ 
-              marginTop: 8,
-              background: isDark ? '#1a1a1a' : '#f5f5f5', 
-              padding: '12px',
-              borderRadius: '6px',
-              maxHeight: '150px',
-              overflow: 'auto'
-            }}>
-              <pre style={{ margin: 0, fontSize: '11px', color: isDark ? '#aaa' : '#666' }}>
+            <div
+              style={{
+                marginTop: 8,
+                background: isDark ? '#1a1a1a' : '#f5f5f5',
+                padding: '12px',
+                borderRadius: '6px',
+                maxHeight: '150px',
+                overflow: 'auto',
+              }}
+            >
+              <pre
+                style={{
+                  margin: 0,
+                  fontSize: '11px',
+                  color: isDark ? '#aaa' : '#666',
+                }}
+              >
                 {(() => {
                   try {
                     const parsed = JSON.parse(importData);
@@ -577,18 +617,22 @@ const VersionAdmin: React.FC = () => {
                       版本数量: parsed.versions?.length || 0,
                       最大版本数: parsed.maxVersions || 'N/A',
                       当前版本: parsed.currentVersionId || '无',
-                      示例版本: parsed.versions?.[0] ? {
-                        名称: parsed.versions[0].name,
-                        创建时间: new Date(parsed.versions[0].timestamp).toLocaleString('zh-CN'),
-                        是否自动保存: parsed.versions[0].isAutoSaved || false
-                      } : '无'
+                      示例版本: parsed.versions?.[0]
+                        ? {
+                            名称: parsed.versions[0].name,
+                            创建时间: new Date(
+                              parsed.versions[0].timestamp,
+                            ).toLocaleString('zh-CN'),
+                            是否自动保存:
+                              parsed.versions[0].isAutoSaved || false,
+                          }
+                        : '无',
                     };
                     return JSON.stringify(preview, null, 2);
                   } catch {
                     return '无效的JSON格式';
                   }
-                })()
-                }
+                })()}
               </pre>
             </div>
           </div>
@@ -596,7 +640,6 @@ const VersionAdmin: React.FC = () => {
       </Modal>
     </div>
   );
-
 };
 
 export default VersionAdmin;

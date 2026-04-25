@@ -1,1 +1,1 @@
-export * from "./src/MyModal"
+export * from './src/MyModal';

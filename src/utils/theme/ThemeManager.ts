@@ -1,6 +1,6 @@
-import type { IThemeConfig, ThemeConfigType } from '../../types';
 import { SmartStorageManager } from '../../core/storage/SmartStorageManager';
 import type { StorageType } from '../../core/storage/types';
+import type { IThemeConfig, ThemeConfigType } from '../../types';
 
 const STORAGE_KEY = 'turnip-theme-config';
 const STORAGE_TYPE_KEY = 'app_storage_type';
@@ -19,22 +19,27 @@ const DEFAULT_CONFIG: IThemeConfig = {
 export class ThemeManager {
   private config: IThemeConfig;
   private storage: SmartStorageManager;
-  private initialized: boolean = false;
+  private initialized = false;
   private initPromise: Promise<void> | null = null;
 
   constructor(initialConfig?: typeof import('../../config/theme').themeConfig) {
     const preferredStorage = this.getPreferredStorageType();
     this.storage = new SmartStorageManager(preferredStorage);
-    
-    this.config = this.loadFromLocalStorage() || initialConfig || { ...DEFAULT_CONFIG };
-    
+
+    this.config = this.loadFromLocalStorage() ||
+      initialConfig || { ...DEFAULT_CONFIG };
+
     this.initPromise = this.initialize();
   }
 
   private getPreferredStorageType(): StorageType {
     try {
       const saved = localStorage.getItem(STORAGE_TYPE_KEY);
-      if (saved === 'localStorage' || saved === 'indexedDB' || saved === 'auto') {
+      if (
+        saved === 'localStorage' ||
+        saved === 'indexedDB' ||
+        saved === 'auto'
+      ) {
         return saved;
       }
     } catch {
@@ -55,7 +60,7 @@ export class ThemeManager {
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
-    
+
     try {
       const stored = await this.storage.get<IThemeConfig>(STORAGE_KEY);
       if (stored) {
@@ -102,7 +107,7 @@ export class ThemeManager {
   }
 
   async addPreset(theme: ThemeConfigType): Promise<void> {
-    if (this.config.presets.some(t => t.id === theme.id)) {
+    if (this.config.presets.some((t) => t.id === theme.id)) {
       throw new Error(`Theme with id ${theme.id} already exists`);
     }
     this.config.presets.push(theme);
@@ -110,7 +115,7 @@ export class ThemeManager {
   }
 
   addPresetSync(theme: ThemeConfigType): void {
-    if (this.config.presets.some(t => t.id === theme.id)) {
+    if (this.config.presets.some((t) => t.id === theme.id)) {
       throw new Error(`Theme with id ${theme.id} already exists`);
     }
     this.config.presets.push(theme);
@@ -119,7 +124,7 @@ export class ThemeManager {
   }
 
   async updatePreset(theme: ThemeConfigType): Promise<void> {
-    const index = this.config.presets.findIndex(t => t.id === theme.id);
+    const index = this.config.presets.findIndex((t) => t.id === theme.id);
     if (index === -1) {
       throw new Error(`Theme with id ${theme.id} not found`);
     }
@@ -128,7 +133,7 @@ export class ThemeManager {
   }
 
   async deletePreset(themeId: string): Promise<void> {
-    const index = this.config.presets.findIndex(t => t.id === themeId);
+    const index = this.config.presets.findIndex((t) => t.id === themeId);
     if (index === -1) {
       throw new Error(`Theme with id ${themeId} not found`);
     }
@@ -137,7 +142,7 @@ export class ThemeManager {
   }
 
   deletePresetSync(themeId: string): void {
-    const index = this.config.presets.findIndex(t => t.id === themeId);
+    const index = this.config.presets.findIndex((t) => t.id === themeId);
     if (index === -1) {
       throw new Error(`Theme with id ${themeId} not found`);
     }
@@ -150,7 +155,7 @@ export class ThemeManager {
     if (this.config.default.id === themeId) {
       return this.config.default;
     }
-    return this.config.presets.find(t => t.id === themeId);
+    return this.config.presets.find((t) => t.id === themeId);
   }
 
   private saveToLocalStorage(): void {
@@ -163,7 +168,7 @@ export class ThemeManager {
 
   private async saveToStorage(): Promise<void> {
     this.saveToLocalStorage();
-    
+
     try {
       await this.storage.set(STORAGE_KEY, this.config);
     } catch (error) {

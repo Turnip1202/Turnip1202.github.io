@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, List, Typography, Button, Badge, Popover } from 'antd';
-import { BellOutlined, CheckOutlined } from '@ant-design/icons';
 import { updateLogManager } from '@/utils/version/updateLogManager';
+import { BellOutlined, CheckOutlined } from '@ant-design/icons';
+import { Badge, Button, List, Modal, Popover, Typography } from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -17,7 +18,7 @@ const UpdateLog: React.FC = () => {
       setLogs(updateLogManager.getAllLogs());
       setHasUnread(updateLogManager.hasUnreadLogs());
     };
-    
+
     loadLogs();
   }, []);
 
@@ -80,17 +81,17 @@ const UpdateLog: React.FC = () => {
         trigger="click"
       >
         <Badge dot={hasUnread} offset={[0, -5]}>
-          <BellOutlined 
+          <BellOutlined
             className="update-log-btn"
-            style={{ 
-              fontSize: '1.125rem', 
+            style={{
+              fontSize: '1.125rem',
               color: '#1890ff',
               cursor: 'pointer',
               position: 'fixed',
               top: '6.25rem',
               right: '3.75rem',
-              zIndex: 1000
-            }} 
+              zIndex: 1000,
+            }}
             onClick={handleOpen}
           />
         </Badge>
@@ -98,11 +99,17 @@ const UpdateLog: React.FC = () => {
 
       <Modal
         title={
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Title level={4} style={{ margin: 0 }}>📦 应用更新日志</Title>
-            {hasUnread && (
-              <Badge status="error" text="有新更新" />
-            )}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Title level={4} style={{ margin: 0 }}>
+              📦 应用更新日志
+            </Title>
+            {hasUnread && <Badge status="error" text="有新更新" />}
           </div>
         }
         open={visible}
@@ -110,7 +117,7 @@ const UpdateLog: React.FC = () => {
         footer={[
           <Button key="close" type="primary" onClick={handleClose}>
             关闭
-          </Button>
+          </Button>,
         ]}
         width={600}
         centered
@@ -132,12 +139,16 @@ const UpdateLog: React.FC = () => {
                   description={
                     <div>
                       {log.description && (
-                        <Paragraph style={{ marginBottom: '8px' }}>{log.description}</Paragraph>
+                        <Paragraph style={{ marginBottom: '8px' }}>
+                          {log.description}
+                        </Paragraph>
                       )}
                       <ul style={{ margin: '0 0 0 16px', padding: 0 }}>
                         {log.changes.map((change, index) => (
                           <li key={index} style={{ marginBottom: '4px' }}>
-                            <CheckOutlined style={{ marginRight: '8px', color: '#52c41a' }} />
+                            <CheckOutlined
+                              style={{ marginRight: '8px', color: '#52c41a' }}
+                            />
                             {change}
                           </li>
                         ))}

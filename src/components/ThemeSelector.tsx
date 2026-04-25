@@ -1,9 +1,9 @@
-// src/components/ThemeSelector.tsx
-import { useState, useCallback, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
-import type { IThemeConfig, ThemeConfigType, BackgroundProps } from "../types"
-import { themeManager } from "../utils"
+// src/components/ThemeSelector.tsx
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type React from 'react';
+import type { BackgroundProps, IThemeConfig, ThemeConfigType } from '../types';
+import { themeManager } from '../utils';
 const SelectorContainer = styled.div<{ isVisible: boolean }>`
   position: fixed;
   bottom: 24px;
@@ -17,7 +17,7 @@ const SelectorContainer = styled.div<{ isVisible: boolean }>`
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  display: ${props => props.isVisible ? 'flex' : 'none'};
+  display: ${(props) => (props.isVisible ? 'flex' : 'none')};
   flex-direction: column;
   gap: 8px;
   min-width: auto;
@@ -81,16 +81,16 @@ const ThemeButtonsContainer = styled.div`
 `;
 
 interface ThemeButtonPropsType extends BackgroundProps {
-  isSelected: boolean
+  isSelected: boolean;
 }
 
 const ThemeButton = styled.button<ThemeButtonPropsType>`
   padding: 8px;
   width: 44px;
   height: 44px;
-  border: 2px solid ${props => props.isSelected ? '#4a90e2' : 'transparent'};
+  border: 2px solid ${(props) => (props.isSelected ? '#4a90e2' : 'transparent')};
   border-radius: 12px;
-  background: ${props => props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#333' : props.theme.backgroundImage};
+  background: ${(props) => (props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#333' : props.theme.backgroundImage)};
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -119,7 +119,7 @@ const ThemeButton = styled.button<ThemeButtonPropsType>`
   &:hover {
     transform: scale(1.08);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-    border-color: ${props => props.isSelected ? '#357abd' : 'rgba(74, 144, 226, 0.5)'};
+    border-color: ${(props) => (props.isSelected ? '#357abd' : 'rgba(74, 144, 226, 0.5)')};
     
     &::before {
       left: 100%;
@@ -132,7 +132,7 @@ const ThemeButton = styled.button<ThemeButtonPropsType>`
 `;
 
 interface ToggleButtonPropsType extends BackgroundProps {
-  active: boolean
+  active: boolean;
 }
 
 const ToggleButton = styled.button<ToggleButtonPropsType>`
@@ -141,10 +141,13 @@ const ToggleButton = styled.button<ToggleButtonPropsType>`
   height: 44px;
   border: none;
   border-radius: 12px;
-  background: ${props => props.active 
-    ? 'linear-gradient(135deg, #4a90e2 0%, #357abd 100%)'
-    : props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'};
-  color: ${props => props.active ? 'white' : props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#fff' : '#666'};
+  background: ${(props) =>
+    props.active
+      ? 'linear-gradient(135deg, #4a90e2 0%, #357abd 100%)'
+      : props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+        ? 'rgba(255, 255, 255, 0.1)'
+        : 'rgba(0, 0, 0, 0.05)'};
+  color: ${(props) => (props.active ? 'white' : props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? '#fff' : '#666')};
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 18px;
@@ -152,9 +155,10 @@ const ToggleButton = styled.button<ToggleButtonPropsType>`
   align-items: center;
   justify-content: center;
   line-height: 1;
-  box-shadow: ${props => props.active 
-    ? '0 4px 12px rgba(74, 144, 226, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-    : '0 2px 8px rgba(0, 0, 0, 0.05)'};
+  box-shadow: ${(props) =>
+    props.active
+      ? '0 4px 12px rgba(74, 144, 226, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+      : '0 2px 8px rgba(0, 0, 0, 0.05)'};
   position: relative;
   overflow: hidden;
   
@@ -173,13 +177,17 @@ const ToggleButton = styled.button<ToggleButtonPropsType>`
   }
   
   &:hover {
-    background: ${props => props.active 
-      ? 'linear-gradient(135deg, #357abd 0%, #2868a3 100())'
-      : props.theme.id === 'custom' && props.theme.name === '暗黑主题' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)'};
+    background: ${(props) =>
+      props.active
+        ? 'linear-gradient(135deg, #357abd 0%, #2868a3 100())'
+        : props.theme.id === 'custom' && props.theme.name === '暗黑主题'
+          ? 'rgba(255, 255, 255, 0.15)'
+          : 'rgba(0, 0, 0, 0.1)'};
     transform: scale(1.05);
-    box-shadow: ${props => props.active 
-      ? '0 6px 16px rgba(74, 144, 226, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-      : '0 4px 12px rgba(0, 0, 0, 0.1)'};
+    box-shadow: ${(props) =>
+      props.active
+        ? '0 6px 16px rgba(74, 144, 226, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+        : '0 4px 12px rgba(0, 0, 0, 0.1)'};
   }
   
   &:active::after {
@@ -201,13 +209,13 @@ const AutoToggleButton = styled(ToggleButton)`
 
 interface Props {
   onSelect: (theme: ThemeConfigType) => void;
-  themeConfig: IThemeConfig
+  themeConfig: IThemeConfig;
 }
 
 export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
   themeConfig = themeManager.getConfig();
   // console.log("localThemeConfig", localThemeConfig)
-  
+
   // 显示/隐藏状态
   const [isVisible, setIsVisible] = useState(() => {
     try {
@@ -218,7 +226,6 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
       return true;
     }
   });
-
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     try {
@@ -263,12 +270,14 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
 
   // 检查当前选中的主题是否仍然存在，如果不存在则自动选择一个有效的主题
   useEffect(() => {
-    const currentThemeExists = themeConfig.presets.some(theme => theme.id === selectedTheme) || 
-                              selectedTheme === themeConfig.default.id;
-    
+    const currentThemeExists =
+      themeConfig.presets.some((theme) => theme.id === selectedTheme) ||
+      selectedTheme === themeConfig.default.id;
+
     if (!currentThemeExists) {
       // 如果当前主题不存在，选择第一个可用的预设主题或默认主题
-      const fallbackTheme = themeConfig.presets[0]?.id || themeConfig.default.id;
+      const fallbackTheme =
+        themeConfig.presets[0]?.id || themeConfig.default.id;
       setSelectedTheme(fallbackTheme);
     }
   }, [themeConfig, selectedTheme]);
@@ -293,10 +302,11 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
 
   const updateTheme = useCallback(() => {
     // 安全地获取基础主题，避免数组为空时的错误
-    const baseTheme = themeConfig.presets.find(theme => theme.id === selectedTheme) || 
-                      themeConfig.presets[0] || 
-                      themeConfig.default; // 如果预设为空，回退到默认主题
-    
+    const baseTheme =
+      themeConfig.presets.find((theme) => theme.id === selectedTheme) ||
+      themeConfig.presets[0] ||
+      themeConfig.default; // 如果预设为空，回退到默认主题
+
     const theme: ThemeConfigType = {
       id: 'custom',
       name: isDarkMode ? '暗黑主题' : '明亮主题',
@@ -312,10 +322,11 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
 
   // 获取当前实际应用的主题
   const currentTheme = useMemo(() => {
-    const baseTheme = themeConfig.presets.find(theme => theme.id === selectedTheme) || 
-                      themeConfig.presets[0] || 
-                      themeConfig.default;
-    
+    const baseTheme =
+      themeConfig.presets.find((theme) => theme.id === selectedTheme) ||
+      themeConfig.presets[0] ||
+      themeConfig.default;
+
     return {
       id: 'custom',
       name: isDarkMode ? '暗黑主题' : '明亮主题',
@@ -343,12 +354,12 @@ export const ThemeSelector: React.FC<Props> = ({ themeConfig, onSelect }) => {
       >
         {isVisible ? '🙈' : '🎨'}
       </ToggleShowButton>
-      
+
       {/* 主题选择器 */}
       <SelectorContainer isVisible={isVisible}>
         {!isDarkMode && (
           <ThemeButtonsContainer>
-            {themeConfig.presets.map(theme => (
+            {themeConfig.presets.map((theme) => (
               <ThemeButton
                 key={theme.id}
                 theme={currentTheme}

@@ -1,6 +1,6 @@
-import { ISiteConfig } from '../../types';
 import { SmartStorageManager } from '../../core/storage/SmartStorageManager';
 import type { StorageType } from '../../core/storage/types';
+import type { ISiteConfig } from '../../types';
 
 const STORAGE_TYPE_KEY = 'app_storage_type';
 
@@ -8,29 +8,33 @@ export class SiteManager {
   private config: ISiteConfig;
   private readonly STORAGE_KEY = 'turnip_site_config';
   private storage: SmartStorageManager;
-  private initialized: boolean = false;
+  private initialized = false;
   private initPromise: Promise<void> | null = null;
 
   constructor(defaultConfig: ISiteConfig) {
     const preferredStorage = this.getPreferredStorageType();
     this.storage = new SmartStorageManager(preferredStorage);
-    
+
     const storedConfig = this.getFromLocalStorage();
     this.config = storedConfig || { ...defaultConfig };
 
     if (!storedConfig) {
       this.saveToLocalStorage();
     }
-    
+
     this.applyConfigToDOM();
-    
+
     this.initPromise = this.initialize();
   }
 
   private getPreferredStorageType(): StorageType {
     try {
       const saved = localStorage.getItem(STORAGE_TYPE_KEY);
-      if (saved === 'localStorage' || saved === 'indexedDB' || saved === 'auto') {
+      if (
+        saved === 'localStorage' ||
+        saved === 'indexedDB' ||
+        saved === 'auto'
+      ) {
         return saved;
       }
     } catch {
@@ -53,7 +57,7 @@ export class SiteManager {
     if (this.config.title) {
       document.title = this.config.title;
     }
-    
+
     if (this.config.favicon) {
       this.updateFavicon(this.config.favicon as string);
     }
@@ -61,7 +65,7 @@ export class SiteManager {
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
-    
+
     try {
       const stored = await this.storage.get<ISiteConfig>(this.STORAGE_KEY);
       if (stored) {
@@ -95,7 +99,7 @@ export class SiteManager {
 
   private async saveToStorage(): Promise<void> {
     this.saveToLocalStorage();
-    
+
     try {
       await this.storage.set(this.STORAGE_KEY, this.config);
     } catch (error) {
@@ -126,7 +130,7 @@ export class SiteManager {
   addConfigItem<T>(key: string, value: T): void {
     (this.config as any)[key] = value;
     this.saveSync();
-    
+
     if (key === 'favicon' && value) {
       this.updateFavicon(value as string);
     }
@@ -134,16 +138,16 @@ export class SiteManager {
 
   updateFavicon(faviconUrl: string): void {
     if (!faviconUrl) return;
-    
+
     const existingFavicons = document.querySelectorAll('link[rel*="icon"]');
-    existingFavicons.forEach(link => link.remove());
-    
+    existingFavicons.forEach((link) => link.remove());
+
     const link = document.createElement('link');
     link.rel = 'shortcut icon';
     link.type = 'image/x-icon';
     link.href = faviconUrl;
     document.head.appendChild(link);
-    
+
     const iconLink = document.createElement('link');
     iconLink.rel = 'icon';
     iconLink.type = 'image/x-icon';
@@ -155,7 +159,7 @@ export class SiteManager {
     if (key === 'title' || key === 'copyright') {
       return false;
     }
-    
+
     if (key in this.config) {
       delete (this.config as any)[key];
       this.saveSync();

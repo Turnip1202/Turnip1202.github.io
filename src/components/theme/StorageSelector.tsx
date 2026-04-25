@@ -1,10 +1,34 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, Radio, Space, Typography, Progress, Button, message, Statistic, Row, Col, Divider, Modal, Alert, Checkbox } from 'antd';
-import { DatabaseOutlined, CloudOutlined, HddOutlined, SyncOutlined, DeleteOutlined, ExportOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { useThemeContext } from '@/contexts';
 import { SmartStorageManager } from '@/core/storage/SmartStorageManager';
 import type { StorageType } from '@/core/storage/types';
-import { useThemeContext } from '@/contexts';
 import { configVersionManager } from '@/utils/version';
+import {
+  CloudOutlined,
+  DatabaseOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  ExportOutlined,
+  HddOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  Divider,
+  Modal,
+  Progress,
+  Radio,
+  Row,
+  Space,
+  Statistic,
+  Typography,
+  message,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -77,12 +101,15 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
     }
   }, [showStats, loadStats]);
 
-  const handleChange = useCallback((type: StorageType) => {
-    setStorageType(type);
-    localStorage.setItem('app_storage_type', type);
-    onChange?.(type);
-    message.success(`存储方式已切换为: ${getStorageLabel(type)}`);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (type: StorageType) => {
+      setStorageType(type);
+      localStorage.setItem('app_storage_type', type);
+      onChange?.(type);
+      message.success(`存储方式已切换为: ${getStorageLabel(type)}`);
+    },
+    [onChange],
+  );
 
   const handleExportBackup = useCallback(() => {
     const data = configVersionManager.exportVersions();
@@ -106,36 +133,36 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
 
     if (exportBeforeClear) {
       handleExportBackup();
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     try {
       const preservedStorageType = localStorage.getItem('app_storage_type');
-      
+
       const clearPromises: Promise<void>[] = [];
-      
+
       if (clearTargets.localStorage) {
         clearPromises.push(storageManager.clearLocalStorage());
       }
-      
+
       if (clearTargets.indexedDB) {
         clearPromises.push(storageManager.clearIndexedDB());
       }
 
       await Promise.all(clearPromises);
-      
+
       if (preservedStorageType && clearTargets.localStorage) {
         localStorage.setItem('app_storage_type', preservedStorageType);
       }
-      
+
       setClearModalVisible(false);
-      
+
       const clearedTypes = [];
       if (clearTargets.localStorage) clearedTypes.push('localStorage');
       if (clearTargets.indexedDB) clearedTypes.push('IndexedDB');
-      
+
       message.success(`${clearedTypes.join(' 和 ')}已清空，页面即将刷新`);
-      
+
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -149,12 +176,15 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
     setClearModalVisible(true);
   }, []);
 
-  const handleClearTargetChange = useCallback((target: 'localStorage' | 'indexedDB', checked: boolean) => {
-    setClearTargets(prev => ({
-      ...prev,
-      [target]: checked
-    }));
-  }, []);
+  const handleClearTargetChange = useCallback(
+    (target: 'localStorage' | 'indexedDB', checked: boolean) => {
+      setClearTargets((prev) => ({
+        ...prev,
+        [target]: checked,
+      }));
+    },
+    [],
+  );
 
   const cardStyle: React.CSSProperties = {
     background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
@@ -165,9 +195,13 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
     padding: '16px 20px',
     borderRadius: 12,
     border: `2px solid ${selected ? '#1890ff' : isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-    background: selected 
-      ? (isDark ? 'rgba(24, 144, 255, 0.2)' : 'rgba(24, 144, 255, 0.1)')
-      : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.5)'),
+    background: selected
+      ? isDark
+        ? 'rgba(24, 144, 255, 0.2)'
+        : 'rgba(24, 144, 255, 0.1)'
+      : isDark
+        ? 'rgba(255,255,255,0.05)'
+        : 'rgba(255,255,255,0.5)',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
   });
@@ -183,7 +217,11 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
         }
         extra={
           showStats && (
-            <Button icon={<SyncOutlined />} onClick={loadStats} loading={loading}>
+            <Button
+              icon={<SyncOutlined />}
+              onClick={loadStats}
+              loading={loading}
+            >
               刷新
             </Button>
           )
@@ -195,7 +233,11 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
             选择数据持久化存储方式。不同存储方式有不同的容量限制和性能特点。
           </Paragraph>
 
-          <Radio.Group value={storageType} onChange={(e) => handleChange(e.target.value)} style={{ width: '100%' }}>
+          <Radio.Group
+            value={storageType}
+            onChange={(e) => handleChange(e.target.value)}
+            style={{ width: '100%' }}
+          >
             <Space direction="vertical" style={{ width: '100%' }} size="middle">
               <div
                 style={optionStyle(storageType === 'auto')}
@@ -239,7 +281,9 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
               >
                 <Radio value="indexedDB">
                   <Space>
-                    <DatabaseOutlined style={{ fontSize: 20, color: '#fa8c16' }} />
+                    <DatabaseOutlined
+                      style={{ fontSize: 20, color: '#fa8c16' }}
+                    />
                     <div>
                       <Text strong>IndexedDB</Text>
                       <br />
@@ -276,7 +320,9 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
                   <Col span={8}>
                     <Statistic
                       title="总数据量"
-                      value={formatSize(stats.localStorageSize + stats.indexedDBSize)}
+                      value={formatSize(
+                        stats.localStorageSize + stats.indexedDBSize,
+                      )}
                     />
                   </Col>
                 </Row>
@@ -285,7 +331,10 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
                   <Col span={12}>
                     <Text type="secondary">localStorage 使用量</Text>
                     <Progress
-                      percent={Math.min((stats.localStorageSize / (5 * 1024 * 1024)) * 100, 100)}
+                      percent={Math.min(
+                        (stats.localStorageSize / (5 * 1024 * 1024)) * 100,
+                        100,
+                      )}
                       format={() => formatSize(stats.localStorageSize)}
                       size="small"
                     />
@@ -293,7 +342,10 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
                   <Col span={12}>
                     <Text type="secondary">IndexedDB 使用量</Text>
                     <Progress
-                      percent={Math.min((stats.indexedDBSize / (50 * 1024 * 1024)) * 100, 100)}
+                      percent={Math.min(
+                        (stats.indexedDBSize / (50 * 1024 * 1024)) * 100,
+                        100,
+                      )}
                       format={() => formatSize(stats.indexedDBSize)}
                       size="small"
                       strokeColor="#fa8c16"
@@ -308,7 +360,11 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
                 <Button icon={<ExportOutlined />} onClick={handleExportBackup}>
                   导出备份
                 </Button>
-                <Button danger icon={<DeleteOutlined />} onClick={handleClearClick}>
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={handleClearClick}
+                >
                   清空存储
                 </Button>
               </Space>
@@ -329,7 +385,10 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
         onCancel={() => setClearModalVisible(false)}
         okText="确认清空"
         cancelText="取消"
-        okButtonProps={{ danger: true, disabled: !clearTargets.localStorage && !clearTargets.indexedDB }}
+        okButtonProps={{
+          danger: true,
+          disabled: !clearTargets.localStorage && !clearTargets.indexedDB,
+        }}
         width={520}
       >
         <Alert
@@ -342,16 +401,29 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
 
         <div style={{ marginBottom: 16 }}>
           <Text strong>选择要清空的存储：</Text>
-          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{
-              background: clearTargets.localStorage ? 'rgba(82, 196, 26, 0.1)' : 'transparent',
-              border: `1px solid ${clearTargets.localStorage ? '#52c41a' : '#d9d9d9'}`,
-              borderRadius: '6px',
-              padding: '12px',
-            }}>
+          <div
+            style={{
+              marginTop: 12,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                background: clearTargets.localStorage
+                  ? 'rgba(82, 196, 26, 0.1)'
+                  : 'transparent',
+                border: `1px solid ${clearTargets.localStorage ? '#52c41a' : '#d9d9d9'}`,
+                borderRadius: '6px',
+                padding: '12px',
+              }}
+            >
               <Checkbox
                 checked={clearTargets.localStorage}
-                onChange={(e) => handleClearTargetChange('localStorage', e.target.checked)}
+                onChange={(e) =>
+                  handleClearTargetChange('localStorage', e.target.checked)
+                }
               >
                 <Space>
                   <HddOutlined style={{ color: '#52c41a' }} />
@@ -359,22 +431,30 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
                     <Text strong>localStorage</Text>
                     <br />
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      {stats ? `${stats.localStorageKeys} 项数据，${formatSize(stats.localStorageSize)}` : '加载中...'}
+                      {stats
+                        ? `${stats.localStorageKeys} 项数据，${formatSize(stats.localStorageSize)}`
+                        : '加载中...'}
                     </Text>
                   </div>
                 </Space>
               </Checkbox>
             </div>
 
-            <div style={{
-              background: clearTargets.indexedDB ? 'rgba(250, 140, 22, 0.1)' : 'transparent',
-              border: `1px solid ${clearTargets.indexedDB ? '#fa8c16' : '#d9d9d9'}`,
-              borderRadius: '6px',
-              padding: '12px',
-            }}>
+            <div
+              style={{
+                background: clearTargets.indexedDB
+                  ? 'rgba(250, 140, 22, 0.1)'
+                  : 'transparent',
+                border: `1px solid ${clearTargets.indexedDB ? '#fa8c16' : '#d9d9d9'}`,
+                borderRadius: '6px',
+                padding: '12px',
+              }}
+            >
               <Checkbox
                 checked={clearTargets.indexedDB}
-                onChange={(e) => handleClearTargetChange('indexedDB', e.target.checked)}
+                onChange={(e) =>
+                  handleClearTargetChange('indexedDB', e.target.checked)
+                }
               >
                 <Space>
                   <DatabaseOutlined style={{ color: '#fa8c16' }} />
@@ -382,7 +462,9 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
                     <Text strong>IndexedDB</Text>
                     <br />
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      {stats ? `${stats.indexedDBKeys} 项数据，${formatSize(stats.indexedDBSize)}` : '加载中...'}
+                      {stats
+                        ? `${stats.indexedDBKeys} 项数据，${formatSize(stats.indexedDBSize)}`
+                        : '加载中...'}
                     </Text>
                   </div>
                 </Space>
@@ -391,12 +473,14 @@ export const StorageSelector: React.FC<StorageSelectorProps> = ({
           </div>
         </div>
 
-        <div style={{
-          background: '#f6ffed',
-          border: '1px solid #b7eb8f',
-          borderRadius: '6px',
-          padding: '12px'
-        }}>
+        <div
+          style={{
+            background: '#f6ffed',
+            border: '1px solid #b7eb8f',
+            borderRadius: '6px',
+            padding: '12px',
+          }}
+        >
           <Checkbox
             checked={exportBeforeClear}
             onChange={(e) => setExportBeforeClear(e.target.checked)}

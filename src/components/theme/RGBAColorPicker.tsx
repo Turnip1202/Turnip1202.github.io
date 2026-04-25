@@ -1,9 +1,25 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Card, Row, Col, Slider, InputNumber, Space, Typography, Button, Popover, Divider } from 'antd';
-import { BgColorsOutlined, CheckOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useThemeContext } from '@/contexts';
 import type { RGBAColor } from '@/core/theme/ThemeManagerV2';
 import { ThemeManagerV2 } from '@/core/theme/ThemeManagerV2';
-import { useThemeContext } from '@/contexts';
+import {
+  BgColorsOutlined,
+  CheckOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Col,
+  Divider,
+  InputNumber,
+  Popover,
+  Row,
+  Slider,
+  Space,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 const { Text } = Typography;
 
@@ -19,9 +35,21 @@ interface RGBAColorPickerProps {
 const defaultColor: RGBAColor = { r: 74, g: 144, b: 226, a: 1 };
 
 const defaultPresets = [
-  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-  '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-  '#F8B500', '#FF8C00', '#00CED1', '#9370DB', '#20B2AA',
+  '#FF6B6B',
+  '#4ECDC4',
+  '#45B7D1',
+  '#96CEB4',
+  '#FFEAA7',
+  '#DDA0DD',
+  '#98D8C8',
+  '#F7DC6F',
+  '#BB8FCE',
+  '#85C1E9',
+  '#F8B500',
+  '#FF8C00',
+  '#00CED1',
+  '#9370DB',
+  '#20B2AA',
 ];
 
 export const RGBAColorPicker: React.FC<RGBAColorPickerProps> = ({
@@ -34,20 +62,29 @@ export const RGBAColorPicker: React.FC<RGBAColorPickerProps> = ({
 }) => {
   const { isDark } = useThemeContext();
 
-  const handleChannelChange = useCallback((channel: keyof RGBAColor, newValue: number) => {
-    const updatedColor = { ...value, [channel]: newValue };
-    onChange?.(updatedColor);
-  }, [value, onChange]);
+  const handleChannelChange = useCallback(
+    (channel: keyof RGBAColor, newValue: number) => {
+      const updatedColor = { ...value, [channel]: newValue };
+      onChange?.(updatedColor);
+    },
+    [value, onChange],
+  );
 
-  const handleHexInput = useCallback((hex: string) => {
-    const color = ThemeManagerV2.hexToRgba(hex, value.a);
-    onChange?.(color);
-  }, [value.a, onChange]);
+  const handleHexInput = useCallback(
+    (hex: string) => {
+      const color = ThemeManagerV2.hexToRgba(hex, value.a);
+      onChange?.(color);
+    },
+    [value.a, onChange],
+  );
 
-  const handlePresetClick = useCallback((hex: string) => {
-    const color = ThemeManagerV2.hexToRgba(hex, value.a);
-    onChange?.(color);
-  }, [value.a, onChange]);
+  const handlePresetClick = useCallback(
+    (hex: string) => {
+      const color = ThemeManagerV2.hexToRgba(hex, value.a);
+      onChange?.(color);
+    },
+    [value.a, onChange],
+  );
 
   const handleReset = useCallback(() => {
     onChange?.(defaultColor);
@@ -72,9 +109,17 @@ export const RGBAColorPicker: React.FC<RGBAColorPickerProps> = ({
   const presetContent = (
     <div style={{ width: 220 }}>
       <div style={{ marginBottom: 8 }}>
-        <Text type="secondary" style={{ fontSize: 12 }}>预设颜色</Text>
+        <Text type="secondary" style={{ fontSize: 12 }}>
+          预设颜色
+        </Text>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: 8,
+        }}
+      >
         {presetColors.map((hex, index) => (
           <div
             key={index}
@@ -86,9 +131,10 @@ export const RGBAColorPicker: React.FC<RGBAColorPickerProps> = ({
               background: hex,
               cursor: 'pointer',
               transition: 'transform 0.2s ease',
-              border: hexValue.toUpperCase() === hex.toUpperCase() 
-                ? '2px solid #1890ff' 
-                : '1px solid rgba(0,0,0,0.1)',
+              border:
+                hexValue.toUpperCase() === hex.toUpperCase()
+                  ? '2px solid #1890ff'
+                  : '1px solid rgba(0,0,0,0.1)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.1)';
@@ -114,7 +160,11 @@ export const RGBAColorPicker: React.FC<RGBAColorPickerProps> = ({
       extra={
         <Space>
           {showPresets && (
-            <Popover content={presetContent} trigger="click" placement="bottomRight">
+            <Popover
+              content={presetContent}
+              trigger="click"
+              placement="bottomRight"
+            >
               <Button size="small" icon={<BgColorsOutlined />}>
                 预设
               </Button>
@@ -231,7 +281,9 @@ export const RGBAColorPicker: React.FC<RGBAColorPickerProps> = ({
           <Divider style={{ margin: '12px 0' }} />
           <Space>
             <Text type="secondary">HEX:</Text>
-            <Text code style={{ fontSize: 14 }}>{hexValue}</Text>
+            <Text code style={{ fontSize: 14 }}>
+              {hexValue}
+            </Text>
             <Text type="secondary" style={{ fontSize: 12 }}>
               ({ThemeManagerV2.rgbaToString(value)})
             </Text>
