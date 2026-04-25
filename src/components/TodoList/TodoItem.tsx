@@ -13,7 +13,8 @@ import {
 } from '@ant-design/icons';
 import { Button, Checkbox, DatePicker, Input, Select, Tooltip } from 'antd';
 import type React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { css, keyframes } from '@emotion/react';
 
 interface TodoItemProps {
   todo: TodoItemType;
@@ -46,6 +47,30 @@ const categoryNames: Record<TodoCategory, string> = {
   study: '学习',
 };
 
+// 淡入动画
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+// 淡出动画
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+`;
+
 export const TodoItem: React.FC<TodoItemProps> = ({
   todo,
   onToggleComplete,
@@ -55,9 +80,15 @@ export const TodoItem: React.FC<TodoItemProps> = ({
   const { isDark } = useThemeContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(todo.content);
+  const [isVisible, setIsVisible] = useState(false);
 
   const isOverdue =
     todo.dueDate && new Date(todo.dueDate) < new Date() && !todo.completed;
+
+  // 组件挂载时触发淡入动画
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const itemStyle: React.CSSProperties = {
     padding: '12px 16px',
@@ -71,6 +102,8 @@ export const TodoItem: React.FC<TodoItemProps> = ({
         : 'rgba(255, 77, 79, 0.05)'
       : 'transparent',
     transition: 'background 0.2s ease',
+    opacity: isVisible ? 1 : 0,
+    animation: isVisible ? `${fadeIn} 0.3s ease-out` : `${fadeOut} 0.3s ease-in`,
   };
 
   const rowStyle: React.CSSProperties = {

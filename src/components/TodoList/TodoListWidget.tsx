@@ -167,9 +167,44 @@ export const TodoListWidget: React.FC<TodoListWidgetProps> = ({
     [updateState],
   );
 
+  // 处理键盘快捷键
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Enter 键快速添加待办（在输入框聚焦时）
+      if (e.key === 'Enter' && !e.shiftKey) {
+        // 这里可以通过 ref 来判断输入框是否聚焦
+        // 暂时简单处理，后续可以优化
+      }
+
+      // Ctrl/Command + D 快速标记完成
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        // 标记第一个未完成的待办
+        const firstUncompleted = state.todos.find(todo => !todo.completed);
+        if (firstUncompleted) {
+          handleToggleComplete(firstUncompleted.id);
+        }
+      }
+
+      // Esc 取消编辑/收起面板
+      if (e.key === 'Escape') {
+        // 收起面板
+        handleCollapseToggle(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [state.todos, handleToggleComplete, handleCollapseToggle]);
+
   if (!initialized) {
     return null;
   }
+
+  // 计算未完成任务数量
+  const hasUncompletedTasks = state.todos.some(todo => !todo.completed);
 
   return (
     <DraggablePanel
@@ -184,6 +219,7 @@ export const TodoListWidget: React.FC<TodoListWidgetProps> = ({
       visible={state.panelVisible}
       onVisibleToggle={handleVisibleToggle}
       title="待办清单"
+      hasUncompletedTasks={hasUncompletedTasks}
     >
       <TodoList
         todos={state.todos}

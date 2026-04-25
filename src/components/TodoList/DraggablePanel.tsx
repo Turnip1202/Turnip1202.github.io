@@ -16,6 +16,7 @@ interface DraggablePanelProps {
   onVisibleToggle?: (visible: boolean) => void;
   children: React.ReactNode;
   title?: string;
+  hasUncompletedTasks?: boolean;
 }
 
 const DOCK_THRESHOLD = 50; // 距离边缘多少像素触发吸附
@@ -36,6 +37,7 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
   onVisibleToggle,
   children,
   title = '待办清单',
+  hasUncompletedTasks = false,
 }) => {
   const { isDark } = useThemeContext();
   const [position, setPosition] = useState(initialPosition);
@@ -258,7 +260,20 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
           }
         }}
       >
-        <span style={titleStyle}>{title}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={titleStyle}>{title}</span>
+          {hasUncompletedTasks && (
+            <div
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#ff4d4f',
+                boxShadow: '0 0 0 2px rgba(255, 77, 79, 0.2)',
+              }}
+            />
+          )}
+        </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={(e) => {
@@ -271,9 +286,7 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
               cursor: 'pointer',
               padding: '4px',
               fontSize: '16px',
-              color: isDark
-                ? designTokens.dark.text.secondary
-                : designTokens.light.text.secondary,
+              color: isDark ? designTokens.dark.text.secondary : designTokens.light.text.secondary,
             }}
           >
             {collapsed ? '▶' : '▼'}
@@ -289,9 +302,7 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
               cursor: 'pointer',
               padding: '4px',
               fontSize: '16px',
-              color: isDark
-                ? designTokens.dark.text.secondary
-                : designTokens.light.text.secondary,
+              color: isDark ? designTokens.dark.text.secondary : designTokens.light.text.secondary,
             }}
           >
             ×
