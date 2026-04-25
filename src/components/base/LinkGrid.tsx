@@ -280,7 +280,7 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
             WebkitBackdropFilter: 'blur(8px)',
           }}>
             <StarOutlined style={{ marginRight: '8px' }} />
-            ⭐ 收藏
+            收藏
           </div>
           <Row gutter={[16, 16]}>
             {favoriteLinks.map((link) => {
