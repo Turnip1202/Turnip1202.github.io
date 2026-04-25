@@ -209,7 +209,7 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
     zIndex: 9999,
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
+    overflow: 'visible',
     backdropFilter: 'blur(10px)',
     WebkitBackdropFilter: 'blur(10px)',
     opacity: isDragging ? 0.8 : 1,

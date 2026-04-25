@@ -126,11 +126,11 @@ export const TodoListWidget: React.FC<TodoListWidgetProps> = ({
   // 处理导出
   const handleExport = useCallback(() => {
     const text = todoManager.exportToText();
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `待办清单_${new Date().toLocaleDateString()}.txt`;
+    a.download = `待办清单_${new Date().toLocaleDateString()}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

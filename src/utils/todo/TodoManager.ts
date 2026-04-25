@@ -23,7 +23,7 @@ export class TodoManager {
       panelPosition: { x: window.innerWidth - 320, y: 100 },
       panelDocked: false,
       panelDockPosition: null,
-      panelCollapsed: false,
+      panelCollapsed: true,
       panelVisible: true,
     };
 
@@ -273,7 +273,7 @@ export class TodoManager {
 
   exportToText(): string {
     const todos = this.getAllTodos();
-    if (todos.length === 0) return '暂无待办';
+    if (todos.length === 0) return '# 待办清单\n\n暂无待办';
 
     const categoryNames: Record<TodoCategory, string> = {
       work: '工作',
@@ -287,19 +287,21 @@ export class TodoManager {
       low: '低',
     };
 
-    let text = '待办清单\n';
-    text += `生成时间: ${new Date().toLocaleString()}\n`;
-    text += '='.repeat(50) + '\n\n';
+    let text = '# 待办清单\n\n';
+    text += `**生成时间**: ${new Date().toLocaleString()}\n\n`;
+    text += '---\n\n';
 
     const completed = todos.filter((t) => t.completed);
     const uncompleted = todos.filter((t) => !t.completed);
 
     if (uncompleted.length > 0) {
-      text += `【未完成 (${uncompleted.length})】\n`;
+      text += `## 未完成 (${uncompleted.length})\n\n`;
       uncompleted.forEach((todo) => {
-        text += `• [${categoryNames[todo.category]}][${priorityNames[todo.priority]}] ${todo.content}`;
+        text += `- [ ] **${todo.content}**`;
+        text += `  - 分类: ${categoryNames[todo.category]}`;
+        text += `  - 优先级: ${priorityNames[todo.priority]}`;
         if (todo.dueDate) {
-          text += ` (截止: ${new Date(todo.dueDate).toLocaleDateString()})`;
+          text += `  - 截止: ${new Date(todo.dueDate).toLocaleDateString()}`;
         }
         text += '\n';
       });
@@ -307,9 +309,11 @@ export class TodoManager {
     }
 
     if (completed.length > 0) {
-      text += `【已完成 (${completed.length})】\n`;
+      text += `## 已完成 (${completed.length})\n\n`;
       completed.forEach((todo) => {
-        text += `✓ [${categoryNames[todo.category]}] ${todo.content}\n`;
+        text += `- [x] ${todo.content}`;
+        text += `  - 分类: ${categoryNames[todo.category]}`;
+        text += '\n';
       });
     }
 
