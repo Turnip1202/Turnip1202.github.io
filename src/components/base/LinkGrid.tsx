@@ -229,7 +229,14 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
     categories.forEach(category => {
       category.links.forEach(link => {
         if (link.favorite) {
-          result.push(link);
+          // 确保链接有正确的 originalCategoryId
+          const linkWithCategoryId: Link = {
+            ...link,
+            originalCategoryId: link.originalCategoryId !== undefined 
+              ? link.originalCategoryId 
+              : category.id
+          };
+          result.push(linkWithCategoryId);
         }
       });
     });
@@ -278,11 +285,12 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
           <Row gutter={[16, 16]}>
             {favoriteLinks.map((link) => {
               // 为收藏分类中的链接创建专门的处理函数
-              const handleFavoriteForLink = (categoryId: number, linkId: number) => {
+              const handleFavoriteForLink = (receivedCategoryId: number, linkId: number) => {
                 // 确保使用原始分类ID
-                if (link.originalCategoryId) {
-                  handleFavoriteToggle(link.originalCategoryId, linkId);
-                }
+                const actualCategoryId = link.originalCategoryId !== undefined 
+                  ? link.originalCategoryId 
+                  : receivedCategoryId;
+                handleFavoriteToggle(actualCategoryId, linkId);
               };
               
               return (
@@ -291,7 +299,7 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
                     link={link} 
                     isDark={isDark} 
                     onToggleFavorite={handleFavoriteForLink} 
-                    originalCategoryId={link.originalCategoryId || -1}
+                    originalCategoryId={link.originalCategoryId !== undefined ? link.originalCategoryId : -1}
                   />
                 </Col>
               );
