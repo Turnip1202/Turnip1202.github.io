@@ -94,9 +94,23 @@ export class LinksManager {
       if (storedCategories) {
         this.categories = storedCategories;
         this.categories.sort((a, b) => a.id - b.id);
+        
+        // 数据迁移：为现有链接添加 originalCategoryId 属性
+        let needsMigration = false;
         this.categories.forEach((category) => {
+          category.links.forEach((link) => {
+            if (link.originalCategoryId === undefined) {
+              link.originalCategoryId = category.id;
+              needsMigration = true;
+            }
+          });
           category.links.sort((a, b) => a.id - b.id);
         });
+        
+        // 如果需要迁移，保存更新后的数据
+        if (needsMigration) {
+          this.saveSync(this.CATEGORIES_KEY, this.categories);
+        }
       }
       
       if (storedEngines) {
@@ -164,7 +178,8 @@ export class LinksManager {
       id: newId,
       name,
       url,
-      icon
+      icon,
+      originalCategoryId: categoryId
     });
     
     this.saveSync(this.CATEGORIES_KEY, this.categories);

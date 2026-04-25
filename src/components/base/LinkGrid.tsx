@@ -277,16 +277,11 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
           </div>
           <Row gutter={[16, 16]}>
             {favoriteLinks.map((link) => {
-              // 找到链接的原始分类
-              const originalCategory = categories.find(cat => 
-                cat.links.some(l => l.id === link.id)
-              );
-              
               // 为收藏分类中的链接创建专门的处理函数
               const handleFavoriteForLink = (categoryId: number, linkId: number) => {
                 // 确保使用原始分类ID
-                if (originalCategory) {
-                  handleFavoriteToggle(originalCategory.id, linkId);
+                if (link.originalCategoryId) {
+                  handleFavoriteToggle(link.originalCategoryId, linkId);
                 }
               };
               
@@ -296,7 +291,7 @@ export const LinkGrid: React.FC<LinkGridProps> = ({ categories, onToggleFavorite
                     link={link} 
                     isDark={isDark} 
                     onToggleFavorite={handleFavoriteForLink} 
-                    originalCategoryId={originalCategory?.id || -1}
+                    originalCategoryId={link.originalCategoryId || -1}
                   />
                 </Col>
               );

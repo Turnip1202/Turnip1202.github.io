@@ -8,9 +8,11 @@ export interface Link {
     name: string;
     url: string;
     icon: string;
+    favorite?: boolean;
+    originalCategoryId?: number;
   }
-  
-  export interface LinkCategory {
+
+export interface LinkCategory {
     id: number;
     name: string;
     links: Link[];
