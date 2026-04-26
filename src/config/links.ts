@@ -59,7 +59,7 @@ export const linkCategories: LinkCategory[] = [
         url: 'https://juejin.cn/user/1684912023022440',
         icon: '🔨',
       }, // 替代：使用工具图标
-      { id: 4, name: '哔哩哔哩', url: 'https://b23.tv/zpySzz9', icon: '🎮' }, // 替代：使用游戏图标
+      { id: 4, name: '哔哩哔哩', url: 'https://b23.tv/Ju50HSv', icon: '🎮' }, // 替代：使用游戏图标
       {
         id: 5,
         name: '抖音',
