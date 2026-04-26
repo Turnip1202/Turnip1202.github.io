@@ -31,6 +31,8 @@ const { TextArea } = Input;
 const { Option } = Select;
 const { TabPane } = Tabs;
 
+const DROPDOWN_Z_INDEX = PANEL_Z_INDEX + 10;
+
 interface TodoListProps {
   todos: TodoItemType[];
   currentCategory: TodoCategory | 'all';
@@ -78,15 +80,6 @@ export const TodoList: React.FC<TodoListProps> = ({
   const [newTodoCategory, setNewTodoCategory] = useState<TodoCategory>('work');
   const [newTodoDueDate, setNewTodoDueDate] = useState<string | undefined>();
   const [confirmClear, setConfirmClear] = useState(false);
-
-  // 调试输出
-  useEffect(() => {
-    console.log('=== TodoList 调试信息 ===');
-    console.log('Priority 值:', newTodoPriority);
-    console.log('Category 值:', newTodoCategory);
-    console.log('可用 Priority 选项:', ['high', 'medium', 'low']);
-    console.log('可用 Category 选项:', ['work', 'life', 'study']);
-  }, [newTodoPriority, newTodoCategory]);
 
   const filteredTodos =
     currentCategory === 'all'
@@ -155,7 +148,6 @@ export const TodoList: React.FC<TodoListProps> = ({
     gap: '8px',
     flexWrap: 'wrap',
     position: 'relative',
-    zIndex: PANEL_Z_INDEX + 1,
   };
 
   const tabsStyle: React.CSSProperties = {
@@ -185,6 +177,15 @@ export const TodoList: React.FC<TodoListProps> = ({
   };
 
   return (
+    <>
+      <style>{`
+        .todo-datepicker-popup {
+          z-index: ${DROPDOWN_Z_INDEX} !important;
+        }
+        .ant-select-dropdown {
+          z-index: ${DROPDOWN_Z_INDEX} !important;
+        }
+      `}</style>
     <div style={containerStyle}>
       <div style={addSectionStyle}>
         <div style={inputRowStyle}>
@@ -207,20 +208,14 @@ export const TodoList: React.FC<TodoListProps> = ({
         <div style={optionsRowStyle}>
           <Select
             value={newTodoPriority}
-            onChange={(value) => {
-              console.log('Priority Select 变化:', value);
-              setNewTodoPriority(value as TodoPriority);
-            }}
+            onChange={(value) => setNewTodoPriority(value as TodoPriority)}
             style={{ width: 80 }}
             size="small"
             popupMatchSelectWidth={false}
             getPopupContainer={() => document.body}
-            onDropdownVisibleChange={(visible) => {
-              console.log('Priority 下拉菜单可见:', visible);
-            }}
-            onClick={() => {
-              console.log('Priority Select 被点击');
-            }}
+            dropdownRender={(menu) => (
+              <div style={{ zIndex: DROPDOWN_Z_INDEX, position: 'relative' }}>{menu}</div>
+            )}
           >
             <Option value="high">高</Option>
             <Option value="medium">中</Option>
@@ -228,20 +223,14 @@ export const TodoList: React.FC<TodoListProps> = ({
           </Select>
           <Select
             value={newTodoCategory}
-            onChange={(value) => {
-              console.log('Category Select 变化:', value);
-              setNewTodoCategory(value as TodoCategory);
-            }}
+            onChange={(value) => setNewTodoCategory(value as TodoCategory)}
             style={{ width: 80 }}
             size="small"
             popupMatchSelectWidth={false}
             getPopupContainer={() => document.body}
-            onDropdownVisibleChange={(visible) => {
-              console.log('Category 下拉菜单可见:', visible);
-            }}
-            onClick={() => {
-              console.log('Category Select 被点击');
-            }}
+            dropdownRender={(menu) => (
+              <div style={{ zIndex: DROPDOWN_Z_INDEX, position: 'relative' }}>{menu}</div>
+            )}
           >
             <Option value="work">工作</Option>
             <Option value="life">生活</Option>
@@ -249,20 +238,12 @@ export const TodoList: React.FC<TodoListProps> = ({
           </Select>
           <DatePicker
             placeholder="截止日期"
-            onChange={(date) => {
-              console.log('DatePicker 变化:', date);
-              setNewTodoDueDate(date?.toISOString());
-            }}
+            onChange={(date) => setNewTodoDueDate(date?.toISOString())}
             allowClear
             size="small"
             style={{ width: 120 }}
             getPopupContainer={() => document.body}
-            onOpenChange={(open) => {
-              console.log('DatePicker 打开:', open);
-            }}
-            onClick={() => {
-              console.log('DatePicker 被点击');
-            }}
+            popupClassName="todo-datepicker-popup"
           />
         </div>
       </div>
@@ -320,6 +301,7 @@ export const TodoList: React.FC<TodoListProps> = ({
         </Tooltip>
       </div>
     </div>
+    </>
   );
 };
 
