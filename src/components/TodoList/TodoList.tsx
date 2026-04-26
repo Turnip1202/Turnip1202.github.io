@@ -79,6 +79,15 @@ export const TodoList: React.FC<TodoListProps> = ({
   const [newTodoDueDate, setNewTodoDueDate] = useState<string | undefined>();
   const [confirmClear, setConfirmClear] = useState(false);
 
+  // 调试输出
+  useEffect(() => {
+    console.log('=== TodoList 调试信息 ===');
+    console.log('Priority 值:', newTodoPriority);
+    console.log('Category 值:', newTodoCategory);
+    console.log('可用 Priority 选项:', ['high', 'medium', 'low']);
+    console.log('可用 Category 选项:', ['work', 'life', 'study']);
+  }, [newTodoPriority, newTodoCategory]);
+
   const filteredTodos =
     currentCategory === 'all'
       ? todos
@@ -198,11 +207,20 @@ export const TodoList: React.FC<TodoListProps> = ({
         <div style={optionsRowStyle}>
           <Select
             value={newTodoPriority}
-            onChange={(value) => setNewTodoPriority(value as TodoPriority)}
+            onChange={(value) => {
+              console.log('Priority Select 变化:', value);
+              setNewTodoPriority(value as TodoPriority);
+            }}
             style={{ width: 80 }}
             size="small"
             popupMatchSelectWidth={false}
-            getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
+            getPopupContainer={() => document.body}
+            onDropdownVisibleChange={(visible) => {
+              console.log('Priority 下拉菜单可见:', visible);
+            }}
+            onClick={() => {
+              console.log('Priority Select 被点击');
+            }}
           >
             <Option value="high">高</Option>
             <Option value="medium">中</Option>
@@ -210,11 +228,20 @@ export const TodoList: React.FC<TodoListProps> = ({
           </Select>
           <Select
             value={newTodoCategory}
-            onChange={(value) => setNewTodoCategory(value as TodoCategory)}
+            onChange={(value) => {
+              console.log('Category Select 变化:', value);
+              setNewTodoCategory(value as TodoCategory);
+            }}
             style={{ width: 80 }}
             size="small"
             popupMatchSelectWidth={false}
-            getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
+            getPopupContainer={() => document.body}
+            onDropdownVisibleChange={(visible) => {
+              console.log('Category 下拉菜单可见:', visible);
+            }}
+            onClick={() => {
+              console.log('Category Select 被点击');
+            }}
           >
             <Option value="work">工作</Option>
             <Option value="life">生活</Option>
@@ -222,11 +249,20 @@ export const TodoList: React.FC<TodoListProps> = ({
           </Select>
           <DatePicker
             placeholder="截止日期"
-            onChange={(date) => setNewTodoDueDate(date?.toISOString())}
+            onChange={(date) => {
+              console.log('DatePicker 变化:', date);
+              setNewTodoDueDate(date?.toISOString());
+            }}
             allowClear
             size="small"
             style={{ width: 120 }}
-            getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
+            getPopupContainer={() => document.body}
+            onOpenChange={(open) => {
+              console.log('DatePicker 打开:', open);
+            }}
+            onClick={() => {
+              console.log('DatePicker 被点击');
+            }}
           />
         </div>
       </div>
