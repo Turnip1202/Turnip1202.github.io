@@ -25,6 +25,7 @@ import {
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { TodoItem } from './TodoItem';
+import { PANEL_Z_INDEX } from './DraggablePanel';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -144,6 +145,8 @@ export const TodoList: React.FC<TodoListProps> = ({
     display: 'flex',
     gap: '8px',
     flexWrap: 'wrap',
+    position: 'relative',
+    zIndex: PANEL_Z_INDEX + 1,
   };
 
   const tabsStyle: React.CSSProperties = {
@@ -198,6 +201,8 @@ export const TodoList: React.FC<TodoListProps> = ({
             onChange={(value) => setNewTodoPriority(value as TodoPriority)}
             style={{ width: 80 }}
             size="small"
+            popupMatchSelectWidth={false}
+            getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
           >
             <Option value="high">高</Option>
             <Option value="medium">中</Option>
@@ -208,6 +213,8 @@ export const TodoList: React.FC<TodoListProps> = ({
             onChange={(value) => setNewTodoCategory(value as TodoCategory)}
             style={{ width: 80 }}
             size="small"
+            popupMatchSelectWidth={false}
+            getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
           >
             <Option value="work">工作</Option>
             <Option value="life">生活</Option>
@@ -219,6 +226,7 @@ export const TodoList: React.FC<TodoListProps> = ({
             allowClear
             size="small"
             style={{ width: 120 }}
+            getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
           />
         </div>
       </div>

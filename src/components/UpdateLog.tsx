@@ -1,3 +1,4 @@
+import { DraggableWidget } from '@/components/common/DraggableWidget';
 import { updateLogManager } from '@/utils/version/updateLogManager';
 import { BellOutlined, CheckOutlined } from '@ant-design/icons';
 import { Badge, Button, List, Modal, Popover, Typography } from 'antd';
@@ -12,19 +13,16 @@ const UpdateLog: React.FC = () => {
   const [hasUnread, setHasUnread] = useState(updateLogManager.hasUnreadLogs());
 
   useEffect(() => {
-    // 加载更新日志
     const loadLogs = async () => {
       await updateLogManager.fetchUpdateLogs();
       setLogs(updateLogManager.getAllLogs());
       setHasUnread(updateLogManager.hasUnreadLogs());
     };
-
     loadLogs();
   }, []);
 
   const handleOpen = () => {
     setVisible(true);
-    // 标记为已读
     const latestLog = updateLogManager.getLatestLog();
     if (latestLog) {
       updateLogManager.markAsRead(latestLog.version);
@@ -32,70 +30,41 @@ const UpdateLog: React.FC = () => {
     }
   };
 
-  const handleClose = () => {
-    setVisible(false);
-  };
-
-  // 注入响应式样式
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @media (max-width: 768px) {
-        .update-log-btn {
-          top: 5.625rem !important;
-          right: 3.125rem !important;
-          font-size: 1rem !important;
-        }
-      }
-      @media (max-width: 480px) {
-        .update-log-btn {
-          top: 5rem !important;
-          right: 2.5rem !important;
-          font-size: 0.875rem !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   return (
     <>
-      <Popover
-        content={
-          <div style={{ padding: '8px' }}>
-            <Text strong>更新日志</Text>
-            <div style={{ marginTop: '8px' }}>
-              {hasUnread ? (
-                <Text type="danger">有新的更新</Text>
-              ) : (
-                <Text>当前已是最新版本</Text>
-              )}
-            </div>
-          </div>
-        }
-        title="更新日志"
-        trigger="click"
+      <DraggableWidget
+        initialPosition={{ x: () => window.innerWidth - 50, y: 120 }}
+        zIndex={1000}
+        storageKey="turnip-widget-updatelog-v2"
+        style={{ cursor: 'pointer' }}
       >
-        <Badge dot={hasUnread} offset={[0, -5]}>
-          <BellOutlined
-            className="update-log-btn"
-            style={{
-              fontSize: '1.125rem',
-              color: '#1890ff',
-              cursor: 'pointer',
-              position: 'fixed',
-              top: '6.25rem',
-              right: '3.75rem',
-              zIndex: 1000,
-            }}
-            onClick={handleOpen}
-          />
-        </Badge>
-      </Popover>
+        <Popover
+          content={
+            <div style={{ padding: '8px' }}>
+              <Text strong>更新日志</Text>
+              <div style={{ marginTop: '8px' }}>
+                {hasUnread ? (
+                  <Text type="danger">有新的更新</Text>
+                ) : (
+                  <Text>当前已是最新版本</Text>
+                )}
+              </div>
+            </div>
+          }
+          title="更新日志"
+          trigger="click"
+        >
+          <Badge dot={hasUnread} offset={[0, -5]}>
+            <BellOutlined
+              style={{
+                fontSize: '1.125rem',
+                color: '#1890ff',
+              }}
+              onClick={handleOpen}
+            />
+          </Badge>
+        </Popover>
+      </DraggableWidget>
 
       <Modal
         title={
@@ -113,14 +82,15 @@ const UpdateLog: React.FC = () => {
           </div>
         }
         open={visible}
-        onCancel={handleClose}
+        onCancel={() => setVisible(false)}
         footer={[
-          <Button key="close" type="primary" onClick={handleClose}>
+          <Button key="close" type="primary" onClick={() => setVisible(false)}>
             关闭
           </Button>,
         ]}
         width={600}
         centered
+        styles={{ body: { maxHeight: '60vh', overflowY: 'auto', paddingRight: '8px' } }}
       >
         {logs.length > 0 ? (
           <List

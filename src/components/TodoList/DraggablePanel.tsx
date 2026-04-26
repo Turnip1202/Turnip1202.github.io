@@ -19,10 +19,11 @@ interface DraggablePanelProps {
   hasUncompletedTasks?: boolean;
 }
 
-const DOCK_THRESHOLD = 50; // 距离边缘多少像素触发吸附
+const DOCK_THRESHOLD = 50;
 const PANEL_WIDTH = 300;
 const PANEL_MIN_HEIGHT = 400;
 const HANDLE_HEIGHT = 40;
+export const PANEL_Z_INDEX = 9999;
 
 export const DraggablePanel: React.FC<DraggablePanelProps> = ({
   initialPosition,
@@ -40,120 +41,125 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
   hasUncompletedTasks = false,
 }) => {
   const { isDark } = useThemeContext();
+
   const [position, setPosition] = useState(initialPosition);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const panelRef = useRef<HTMLDivElement>(null);
   const [hideTimer, setHideTimer] = useState<NodeJS.Timeout | null>(null);
 
-  // 处理位置变化
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
+  const positionRef = useRef(initialPosition);
+  const isInitializedRef = useRef(false);
+
   useEffect(() => {
-    setPosition(initialPosition);
+    positionRef.current = position;
+  }, [position]);
+
+  useEffect(() => {
+    if (!isInitializedRef.current) {
+      setPosition(initialPosition);
+      positionRef.current = initialPosition;
+      isInitializedRef.current = true;
+    }
   }, [initialPosition]);
 
-  // 计算面板的实际位置（考虑停靠状态）
-  const getPanelPosition = () => {
+  const getPanelStyle = (): React.CSSProperties => {
+    if (isDragging) {
+      return {
+        left: position.x,
+        top: position.y,
+        width: PANEL_WIDTH,
+        right: 'auto',
+        transform: 'none',
+      };
+    }
+
     if (!docked || !dockPosition) {
       return {
         left: position.x,
         top: position.y,
         width: PANEL_WIDTH,
+        right: 'auto',
         transform: 'none',
       };
     }
 
     switch (dockPosition) {
       case 'left':
-        return {
-          left: 0,
-          top: position.y,
-          width: PANEL_WIDTH,
-          transform: 'none',
-        };
+        return { left: 0, top: position.y, width: PANEL_WIDTH, right: 'auto', transform: 'none' };
       case 'right':
-        return {
-          right: 0,
-          top: position.y,
-          width: PANEL_WIDTH,
-          transform: 'none',
-        };
+        return { right: 0, top: position.y, width: PANEL_WIDTH, left: 'auto', transform: 'none' };
       case 'top':
-        return {
-          left: position.x,
-          top: 0,
-          width: PANEL_WIDTH,
-          transform: 'none',
-        };
+        return { left: position.x, top: 0, width: PANEL_WIDTH, right: 'auto', transform: 'none' };
       default:
-        return {
-          left: position.x,
-          top: position.y,
-          width: PANEL_WIDTH,
-          transform: 'none',
-        };
+        return { left: position.x, top: position.y, width: PANEL_WIDTH, right: 'auto', transform: 'none' };
     }
   };
 
-  const panelPos = getPanelPosition();
-
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (collapsed) return;
     e.preventDefault();
-    setIsDragging(true);
+
+    if (docked) {
+      onUndock?.();
+    }
 
     const rect = panelRef.current?.getBoundingClientRect();
-    if (rect) {
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-    }
-  };
+    if (!rect) return;
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging || !panelRef.current) return;
+    dragOffsetRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
 
-      let newX = e.clientX - dragOffset.x;
-      let newY = e.clientY - dragOffset.y;
+    const currentLeft = rect.left;
+    const currentTop = rect.top;
+    setPosition({ x: currentLeft, y: currentTop });
+    positionRef.current = { x: currentLeft, y: currentTop };
+    setIsDragging(true);
+  }, [collapsed, docked, onUndock]);
 
-      // 限制不拖出屏幕
-      const maxX = window.innerWidth - PANEL_WIDTH;
-      const maxY = window.innerHeight - HANDLE_HEIGHT;
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!panelRef.current) return;
 
-      newX = Math.max(0, Math.min(newX, maxX));
-      newY = Math.max(0, Math.min(newY, maxY));
+    const offset = dragOffsetRef.current;
+    let newX = e.clientX - offset.x;
+    let newY = e.clientY - offset.y;
 
-      setPosition({ x: newX, y: newY });
-    },
-    [isDragging, dragOffset],
-  );
+    const maxX = window.innerWidth - PANEL_WIDTH;
+    const maxY = window.innerHeight - HANDLE_HEIGHT;
+
+    newX = Math.max(0, Math.min(newX, maxX));
+    newY = Math.max(0, Math.min(newY, maxY));
+
+    const newPos = { x: newX, y: newY };
+    setPosition(newPos);
+    positionRef.current = newPos;
+  }, []);
 
   const handleMouseUp = useCallback(() => {
-    if (!isDragging) return;
     setIsDragging(false);
 
-    // 检查是否需要停靠
-    const { x, y } = position;
+    const finalPos = positionRef.current;
 
-    if (x <= DOCK_THRESHOLD) {
+    if (finalPos.x <= DOCK_THRESHOLD) {
       onDock?.('left');
-    } else if (x >= window.innerWidth - PANEL_WIDTH - DOCK_THRESHOLD) {
+    } else if (finalPos.x >= window.innerWidth - PANEL_WIDTH - DOCK_THRESHOLD) {
       onDock?.('right');
-    } else if (y <= DOCK_THRESHOLD) {
+    } else if (finalPos.y <= DOCK_THRESHOLD) {
       onDock?.('top');
     } else {
       onUndock?.();
     }
 
-    onPositionChange?.(position.x, position.y);
-  }, [isDragging, position, onDock, onUndock, onPositionChange]);
+    onPositionChange?.(finalPos.x, finalPos.y);
+  }, [onDock, onUndock, onPositionChange]);
 
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
+    if (!isDragging) return;
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -161,7 +167,6 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
     };
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  // 鼠标离开时启动自动隐藏计时器
   const handleMouseLeave = () => {
     if (docked && !collapsed) {
       const timer = setTimeout(() => {
@@ -171,7 +176,6 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
     }
   };
 
-  // 鼠标进入时取消自动隐藏
   const handleMouseEnter = () => {
     if (hideTimer) {
       clearTimeout(hideTimer);
@@ -179,7 +183,6 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
     }
   };
 
-  // 清理计时器
   useEffect(() => {
     return () => {
       if (hideTimer) {
@@ -192,7 +195,7 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
 
   const panelStyle: React.CSSProperties = {
     position: 'fixed',
-    ...panelPos,
+    ...getPanelStyle(),
     minHeight: collapsed ? HANDLE_HEIGHT : PANEL_MIN_HEIGHT,
     maxHeight: '80vh',
     background: isDark
@@ -206,15 +209,18 @@ export const DraggablePanel: React.FC<DraggablePanelProps> = ({
           : '8px 8px 0 0'
       : designTokens.borderRadius.lg,
     boxShadow: designTokens.shadows.lg,
-    zIndex: 9999,
+    zIndex: PANEL_Z_INDEX,
     display: 'flex',
     flexDirection: 'column',
     overflow: 'visible',
     backdropFilter: 'blur(10px)',
     WebkitBackdropFilter: 'blur(10px)',
     opacity: isDragging ? 0.8 : 1,
-    transition: isDragging ? 'none' : 'all 0.3s ease',
+    transition: isDragging
+      ? 'opacity 0.1s ease'
+      : 'all 0.3s ease',
     cursor: isDragging ? 'grabbing' : 'default',
+    willChange: isDragging ? 'left, top' : 'auto',
   };
 
   const headerStyle: React.CSSProperties = {
