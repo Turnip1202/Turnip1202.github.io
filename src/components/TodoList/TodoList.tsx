@@ -78,6 +78,14 @@ export const TodoList: React.FC<TodoListProps> = ({
   const [newTodoDueDate, setNewTodoDueDate] = useState<string | undefined>();
   const [confirmClear, setConfirmClear] = useState(false);
 
+  // 调试输出
+  useEffect(() => {
+    console.log('TodoList - newTodoPriority:', newTodoPriority);
+    console.log('TodoList - newTodoCategory:', newTodoCategory);
+    console.log('TodoList - Option available:', ['high', 'medium', 'low']);
+    console.log('TodoList - Category available:', ['work', 'life', 'study']);
+  }, [newTodoPriority, newTodoCategory]);
+
   const filteredTodos =
     currentCategory === 'all'
       ? todos
@@ -195,9 +203,14 @@ export const TodoList: React.FC<TodoListProps> = ({
         <div style={optionsRowStyle}>
           <Select
             value={newTodoPriority}
-            onChange={(value) => setNewTodoPriority(value as TodoPriority)}
+            onChange={(value) => {
+              console.log('Priority Select - changed to:', value);
+              setNewTodoPriority(value as TodoPriority);
+            }}
             style={{ width: 80 }}
             size="small"
+            onClick={() => console.log('Priority Select - clicked')}
+            onDropdownVisibleChange={(visible) => console.log('Priority Select - dropdown visible:', visible)}
           >
             <Option value="high">高</Option>
             <Option value="medium">中</Option>
@@ -205,9 +218,14 @@ export const TodoList: React.FC<TodoListProps> = ({
           </Select>
           <Select
             value={newTodoCategory}
-            onChange={(value) => setNewTodoCategory(value as TodoCategory)}
+            onChange={(value) => {
+              console.log('Category Select - changed to:', value);
+              setNewTodoCategory(value as TodoCategory);
+            }}
             style={{ width: 80 }}
             size="small"
+            onClick={() => console.log('Category Select - clicked')}
+            onDropdownVisibleChange={(visible) => console.log('Category Select - dropdown visible:', visible)}
           >
             <Option value="work">工作</Option>
             <Option value="life">生活</Option>
@@ -215,10 +233,15 @@ export const TodoList: React.FC<TodoListProps> = ({
           </Select>
           <DatePicker
             placeholder="截止日期"
-            onChange={(date) => setNewTodoDueDate(date?.toISOString())}
+            onChange={(date) => {
+              console.log('DatePicker - changed to:', date);
+              setNewTodoDueDate(date?.toISOString());
+            }}
             allowClear
             size="small"
             style={{ width: 120 }}
+            onClick={() => console.log('DatePicker - clicked')}
+            onOpenChange={(open) => console.log('DatePicker - open:', open)}
           />
         </div>
       </div>
